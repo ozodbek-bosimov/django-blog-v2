@@ -1,0 +1,7 @@
+Django>=5.0
+gunicorn>=21.0
+Pillow>=10.0
+django-tailwind>=3.8
+django-browser-reload>=1.12
+django-ckeditor>=6.7
+django-tinymce>=4.0
