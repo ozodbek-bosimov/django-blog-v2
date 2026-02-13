@@ -240,16 +240,17 @@
 
   // Submit Search Form function
   function submitSearchForm(event) {
-    event.preventDefault();
+    // allow normal form submission, but perform simple validation
     const searchQuery = searchInput.value.trim();
     if (!searchQuery) {
+      event.preventDefault();
       searchInput.classList.add('shake');
       setTimeout(function() {
         searchInput.classList.remove('shake');
       }, 500);
       return;
     }
-    window.open("/search/?q=" + encodeURIComponent(searchQuery));
+    // no preventDefault: let the <form> handle GET submission in same tab
   }  
 
   // Add event listeners
