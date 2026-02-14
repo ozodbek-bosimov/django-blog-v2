@@ -15,3 +15,7 @@ staticfiles/
 __pycache__/
 *.pyc
 
+# IDE
+.idea/
+.vscode/
+.cursor/

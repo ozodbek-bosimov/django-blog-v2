@@ -24,12 +24,6 @@
         font-weight: revert;
     }
   
-    /* ol,
-    ul {
-        list-style: revert;
-        margin: revert;
-        padding: revert;
-    } */
     p a {
         color: #67e8f9;
         background: 
@@ -48,5 +42,49 @@
     p img {
         border-radius: 8px;
     }
+
+    /* Code blocks - Prism.js bilan */
+    pre[class*="language-"] {
+        margin: 1rem 0 !important;
+        border-radius: 10px !important;
+        background: linear-gradient(135deg, #0f172a, #0b2236) !important;
+        border: 1px solid rgba(103, 232, 249, 0.15) !important;
+        box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
+    }
+
+    /* Inline code uchun */
+    :not(pre) > code {
+        background-color: rgba(14, 116, 144, 0.35);
+        color: #a5f3fc;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-family: 'Courier New', Courier, monospace;
+        border: 1px solid rgba(34, 211, 238, 0.25);
+    }
+
 </style>
+
+<script>
+// TinyMCE dan kelgan code bloklarni Prism.js bilan ranglash
+document.addEventListener('DOMContentLoaded', function() {
+    // Barcha <pre> taglarni topish
+    const preElements = document.querySelectorAll('pre');
+    
+    preElements.forEach(pre => {
+        const code = pre.querySelector('code');
+        
+        if (code && !code.classList.contains('language-')) {
+            // Agar class yo'q bo'lsa, default Python qilamiz
+            pre.classList.add('language-python');
+            code.classList.add('language-python');
+        }
+    });
+    
+    // Prism.js ni qayta run qilish
+    if (typeof Prism !== 'undefined') {
+        Prism.highlightAll();
+    }
+});
+</script>
 {% endblock %}

@@ -22,12 +22,12 @@ class BlogAdmin(admin.ModelAdmin):
         ('Thumbnail', {'fields': ('thumbnail_img','thumbnail_url','thumbnail_preview')}),
     )
 
+    @admin.display(description='Current thumbnail')
     def thumbnail_preview(self, obj):
         if obj.thumbnail_img:
             return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', obj.thumbnail_img.url)
         elif obj.thumbnail_url:
             return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', obj.thumbnail_url)
         return '(No image)'
-    thumbnail_preview.short_description = 'Current thumbnail'
 
 admin.site.register(Blog, BlogAdmin)
