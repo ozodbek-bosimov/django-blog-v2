@@ -6,187 +6,128 @@
 
 <div class='bg-gray-800 text-white p-3 md:px-10 lg:px-20 xl:px-40 2xl:px-72'>
     <div class='m-6'>
-        <p style="font-family: Poppins-Bold" class='text-4xl font-extrabold py-5 text-center md:text-start'>About Me</p>
-        {% comment %} <p class='text-2xl font-bold grid place-items-center mb-8'>About Me</p> {% endcomment %}
-        <p class='text-justify'>
-            &#128075; Hi,<br><br>
-
-            My name is Ozodbek and I am a highly motivated and experienced developer with a passion for creating innovative solutions for the internet.<br><br>
+        {% if about_me %}
+            <p style="font-family: Poppins-Bold" class='text-4xl font-extrabold py-5 text-center md:text-start'>About Me</p>
             
-            After completing my schooling in 2021, I have chosen to further my education in Computer Science while concurrently taking on freelance projects and blogging to expand my skillset. I possess a diverse range of technical knowledge and experience, including proficiency in programming languages such as Python, HTML, CSS, Javascript and SQL, as well as experience with frameworks such as Tailwind CSS and Django.<br><br>
-            
-            I have applied these skills to develop a number of successful real-world applications such as a password manager, antivirus application, and full-stack blog website. Here are my <span class='group text-cyan-200'><a href='/projects' class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>projects</a></span> in action.<br><br>
-            
-            I am continuously seeking new opportunities to expand my knowledge and improve my abilities as a developer, in order to assist clients in achieving their project goals.
-            {% comment %} I'm Ashish. I am passionate about developing things for the internet. This passion led me to learn various technologies such as Python, HTML, CSS, Javascript and so on.<br><br>
-
-            After completing my schooling in 2021, I looked forward to pursue further studies in Computer Science. Part time I started Freelancing, Blogging and learning various programming languages. I learned HTML, CSS, Javascript, Python, SQL and various CSS Frameworks such as Tailwind CSS and Python Libraries such as Django.<br><br>
-
-            Using these skills I developed various real world applications such as Passsave - Password Manager using Python, PyShiels - Antivirus Application using Python,Full Stack Blogging Website and more. Checkout more projects on Projects page.<br><br>
-
-            Currently I am extending my learnings to be a skillled developer who can assist you in your projects. {% endcomment %}
-        </p>
-        <div class='my-10'>
-            <p style="font-family: Poppins-Bold" class='text-4xl font-extrabold py-5 text-center md:text-start'>Skills</p>
-            {% comment %} <p class='text-2xl font-bold grid place-items-center mb-8'>My Skills</p> {% endcomment %}
-            <div class='grid grid-cols-1 md:grid-cols-2 md:space-x-4 lg:space-x-10'>
-                <div>
-                    <div class='my-3'>
-                        <p class="text-base font-medium my-3">HTML</p>
-                        <div class="progress-bar w-full md:w-80 lg:w-full bg-gray-700 rounded-full h-2.5">
-                            <div class="html bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full"></div>
-                        </div>  
-                    </div>
-                    <div class='my-3'>
-                        <p class="text-base font-medium my-3">Javascript</p>
-                        <div class="progress-bar w-full md:w-80 lg:w-full bg-gray-700 rounded-full h-2.5">
-                            <div class="js bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-                        </div>  
-                    </div>
-                    <div class='my-3'>
-                        <p class="text-base font-medium my-3">SQL</p>
-                        <div class="progress-bar w-full md:w-80 lg:w-full bg-gray-700 rounded-full h-2.5">
-                            <div class="sql bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-                        </div>  
-                    </div>
+            <!-- Profile Section with Image and Info Side by Side -->
+            <div class='flex flex-col md:flex-row gap-6 md:gap-8 my-6'>
+                <!-- Profile Image -->
+                <div class='flex justify-center md:justify-start shrink-0'>
+                    <img src="{{ about_me.profile_image_url }}" alt="{{ about_me.name }}" class='w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg'>
                 </div>
-
-                <div>
-                    <div class='my-3'>
-                        <p class="text-base font-medium my-3">CSS</p>
-                        <div class="progress-bar w-full md:w-80 lg:w-full bg-gray-700 rounded-full h-2.5">
-                            <div class="css bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-                        </div>  
+                
+                <!-- Personal Info and Social Links -->
+                <div class='flex-1'>
+                    <!-- Personal Info -->
+                    <div class='mb-4'>
+                        <h2 style="font-family: Poppins-Bold" class='text-2xl md:text-3xl font-bold text-cyan-200'>{{ about_me.name }}</h2>
+                        <p class='text-lg md:text-xl text-gray-300 mb-3'>{{ about_me.profession }}</p>
+                        {% if about_me.email %}
+                            <p class='text-md text-gray-400 mb-1'>
+                                <i class="bi bi-envelope"></i> {{ about_me.email }}
+                            </p>
+                        {% endif %}
+                        {% if about_me.phone %}
+                            <p class='text-md text-gray-400'>
+                                <i class="bi bi-telephone"></i> {{ about_me.phone }}
+                            </p>
+                        {% endif %}
                     </div>
-                    <div class='my-3'>
-                        <p class="progress-bar text-base font-medium my-3">Python</p>
-                        <div class="progress-bar w-full md:w-80 lg:w-full bg-gray-700 rounded-full h-2.5">
-                            <div class="py bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-                        </div>  
+                    
+                    <!-- Social Links -->
+                    <div class='flex gap-3'>
+                        {% if about_me.github_url %}
+                            <a href="{{ about_me.github_url }}" target="_blank" 
+                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-300 hover:scale-110">
+                               <i class="bi bi-github text-xl"></i>
+                            </a>
+                        {% endif %}
+                        {% if about_me.linkedin_url %}
+                            <a href="{{ about_me.linkedin_url }}" target="_blank" 
+                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white transition-all duration-300 hover:scale-110">
+                               <i class="bi bi-linkedin text-xl"></i>
+                            </a>
+                        {% endif %}
+                        {% if about_me.telegram_url %}
+                            <a href="{{ about_me.telegram_url }}" target="_blank" 
+                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white transition-all duration-300 hover:scale-110">
+                               <i class="bi bi-telegram text-xl"></i>
+                            </a>
+                        {% endif %}
+                        {% if about_me.x_url %}
+                            <a href="{{ about_me.x_url }}" target="_blank" 
+                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-black hover:border-black transition-all duration-300 hover:scale-110 group">
+                               <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" 
+                                    alt="X" 
+                                    class="w-5 h-5 filter brightness-0 invert transition-all">
+                            </a>
+                        {% endif %}
+                        {% if about_me.leetcode_url %}
+                            <a href="{{ about_me.leetcode_url }}" target="_blank" 
+                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#FFA116] hover:border-[#FFA116] transition-all duration-300 hover:scale-110 group">
+                               <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/leetcode.svg" 
+                                    alt="LeetCode" 
+                                    class="w-5 h-5 filter invert group-hover:invert-0 transition-all">
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
+            
+            <!-- Bio with Rich Text Content -->
+            <div class='mt-6 prose prose-invert max-w-none'>
+                {{ about_me.bio|safe }}
+            </div>
+        {% else %}
+            <p class='text-center text-gray-400 py-10'>No about information available yet.</p>
+        {% endif %}
+        
+        <!-- Skills Section -->
+        <div class='my-10'>
+            <p style="font-family: Poppins-Bold" class='text-4xl font-extrabold py-5 text-center md:text-start'>Skills</p>
+            {% if skills %}
+                <div class='grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10'>
+                    {% for skill in skills %}
+                        <div class='my-3'>
+                            <div class='flex justify-between items-center mb-2'>
+                                <p class="text-base font-medium">{{ skill.name }}</p>
+                                <span class="text-sm text-cyan-300">{{ skill.percentage }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2.5">
+                                <div class="skill-bar bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full" data-percentage="{{ skill.percentage }}" style="width: 0%"></div>
+                            </div>  
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class='text-center text-gray-400'>No skills added yet.</p>
+            {% endif %}
         </div>
     </div>
 
     <style>
-        
-        .progress-bar {
-            animation: progress-bar-animation 1s normal forwards;
+        .skill-bar {
+            animation: skill-animation 2s ease-out forwards;
         }
-        @keyframes progress-bar-animation {
-            0%   {  width: 0%; }
-            100% {  width: 100%; }
-        }
-        .html {
-            animation: html-animation 3s normal forwards;
-        }
-        @keyframes html-animation {
-            0%   {  width: 0%; }
-            100% {  width: 95%; }
-        }
-        .css {
-            animation: css-animation 3s normal forwards
-        }
-        @keyframes css-animation {
-            0%   {  width: 0%; }
-            100% {  width: 85%; }
-        }
-        .js {
-            animation: js-animation 3s normal forwards
-        }
-        @keyframes js-animation {
-            0%   {  width: 0%; }
-            100% {  width: 70%; }
-        }
-        .py {
-            animation: py-animation 3s normal forwards
-        }
-        @keyframes py-animation {
-            0%   {  width: 0%; }
-            100% {  width: 90%; }
-        }
-        .sql {
-            animation: sql-animation 3s normal forwards
-        }
-        @keyframes sql-animation {
-            0%   {  width: 0%; }
-            100% {  width: 80%; }
+        @keyframes skill-animation {
+            0%   { width: 0%; }
+            100% { width: var(--target-width); }
         }
     </style>
 
-    {% comment %} <script>
-        let html_progress = 0;
-        let html_invervalSpeed = 10;
-        let html_incrementSpeed = 1;
+    <script>
+        // Animate skill bars on page load
         document.addEventListener("DOMContentLoaded", function(){
-            let html_bar = document.querySelector('.html');
-            html_progressInterval = setInterval(function(){
-            html_progress += html_incrementSpeed;
-            html_bar.style.width = html_progress + "%";
-            if(html_progress >= 95){
-                clearInterval(html_progressInterval);
-            }
-        }, html_invervalSpeed);
-    });
-
-        let css_progress = 0;
-        let css_invervalSpeed = 10;
-        let css_incrementSpeed = 1;
-        document.addEventListener("DOMContentLoaded", function(){
-            let css_bar = document.querySelector('.css');
-            css_progressInterval = setInterval(function(){
-            css_progress += css_incrementSpeed;
-            css_bar.style.width = css_progress + "%";
-            if(css_progress >= 80){
-                clearInterval(css_progressInterval);
-            }
-        }, css_invervalSpeed);
-    });
-
-        let js_progress = 0;
-        let js_invervalSpeed = 10;
-        let js_incrementSpeed = 1;
-        document.addEventListener("DOMContentLoaded", function(){
-            let js_bar = document.querySelector('.js');
-            js_progressInterval = setInterval(function(){
-            js_progress += js_incrementSpeed;
-            js_bar.style.width = js_progress + "%";
-            if(js_progress >= 60){
-                clearInterval(js_progressInterval);
-            }
-        }, js_invervalSpeed);
-    });
-
-    let py_progress = 0;
-    let py_invervalSpeed = 10;
-    let py_incrementSpeed = 1;
-    document.addEventListener("DOMContentLoaded", function(){
-        let py_bar = document.querySelector('.py');
-        py_progressInterval = setInterval(function(){
-        py_progress += py_incrementSpeed;
-        py_bar.style.width = py_progress + "%";
-        if(py_progress >= 80){
-            clearInterval(py_progressInterval);
-        }
-    }, py_invervalSpeed);
-});
-
-    let sql_progress = 0;
-    let sql_invervalSpeed = 10;
-    let sql_incrementSpeed = 1;
-        document.addEventListener("DOMContentLoaded", function(){
-        let sql_bar = document.querySelector('.sql');
-        sql_progressInterval = setInterval(function(){
-        sql_progress += sql_incrementSpeed;
-        sql_bar.style.width = sql_progress + "%";
-        if(sql_progress >= 85){
-            clearInterval(sql_progressInterval);
-        }
-    }, sql_invervalSpeed);
-});
-
-    </script> {% endcomment %}
+            const skillBars = document.querySelectorAll('.skill-bar');
+            skillBars.forEach(bar => {
+                const percentage = bar.getAttribute('data-percentage');
+                bar.style.setProperty('--target-width', percentage + '%');
+                setTimeout(() => {
+                    bar.style.width = percentage + '%';
+                }, 100);
+            });
+        });
+    </script>
 </div>
 
 {% endblock %}

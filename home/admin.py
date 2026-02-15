@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from home.models import Blog
+from home.models import Blog, AboutMe, Skill, Project
 from django.utils.html import format_html
 
 # Register your models here.
@@ -121,3 +121,69 @@ class BlogAdmin(admin.ModelAdmin):
         return '(No image)'
 
 admin.site.register(Blog, BlogAdmin)
+
+
+class AboutMeAdminForm(forms.ModelForm):
+    bio = forms.CharField(widget=forms.Textarea(attrs={'id': "richtext_field"}))
+
+    class Meta:
+        model = AboutMe
+        fields = "__all__"
+
+
+class AboutMeAdmin(admin.ModelAdmin):
+    """Admin for singleton AboutMe model"""
+    form = AboutMeAdminForm
+    readonly_fields = ('profile_image_preview',)
+    fieldsets = (
+        ('Personal Info', {'fields': ('name', 'profession', 'email', 'phone')}),
+        ('About', {'fields': ('bio',)}),
+        ('Profile Image', {'fields': ('profile_image_url', 'profile_image_preview')}),
+        ('Social Links', {'fields': ('linkedin_url', 'github_url', 'telegram_url', 'x_url', 'leetcode_url')}),
+    )
+
+    def has_add_permission(self, request):
+        """Limit to one instance only"""
+        if AboutMe.objects.exists():
+            return False
+        return super().has_add_permission(request)
+
+    @admin.display(description='Profile Image Preview')
+    def profile_image_preview(self, obj):
+        if obj and obj.profile_image_url:
+            return format_html('<img src="{}" style="max-width: 200px; height: auto; border-radius: 50%;" />', obj.profile_image_url)
+        return '(No image)'
+
+
+class SkillAdmin(admin.ModelAdmin):
+    """Admin for Skill model"""
+    list_display = ['name', 'percentage', 'order']
+    list_editable = ['order']
+    list_filter = ['percentage']
+    search_fields = ['name']
+
+
+class ProjectAdmin(admin.ModelAdmin):
+    """Admin for Project model"""
+    list_display = ['title', 'order', 'created_at']
+    list_editable = ['order']
+    readonly_fields = ('thumbnail_preview', 'created_at')
+    fieldsets = (
+        ('Basic Info', {'fields': ('title', 'description')}),
+        ('Media', {'fields': ('thumbnail_url', 'thumbnail_preview')}),
+        ('Links', {'fields': ('github_link', 'demo_link')}),
+        ('Technical', {'fields': ('technologies',)}),
+        ('Meta', {'fields': ('order', 'created_at')}),
+    )
+    search_fields = ['title', 'description', 'technologies']
+
+    @admin.display(description='Thumbnail Preview')
+    def thumbnail_preview(self, obj):
+        if obj and obj.thumbnail_url:
+            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', obj.thumbnail_url)
+        return '(No image)'
+
+
+admin.site.register(AboutMe, AboutMeAdmin)
+admin.site.register(Skill, SkillAdmin)
+admin.site.register(Project, ProjectAdmin)

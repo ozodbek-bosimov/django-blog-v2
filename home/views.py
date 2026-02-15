@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
 
-from home.models import Blog
+from home.models import Blog, AboutMe, Skill, Project
 
 import random
 import re
@@ -20,7 +20,10 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'about.html')
+    about_me = AboutMe.objects.first()
+    skills = Skill.objects.all()
+    context = {'about_me': about_me, 'skills': skills}
+    return render(request, 'about.html', context)
 
 
 def thanks(request):
@@ -76,7 +79,9 @@ Phone:   {}
 
 
 def projects(request):
-    return render(request, 'projects.html')
+    projects = Project.objects.all()
+    context = {'projects': projects}
+    return render(request, 'projects.html', context)
 
 
 def blog(request):
