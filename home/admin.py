@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django import forms
 from home.models import Blog
+from django.utils.html import format_html
 
 # Register your models here.
 class BlogAdminForm(forms.ModelForm):
@@ -9,8 +10,97 @@ class BlogAdminForm(forms.ModelForm):
     class Meta:
         model = Blog
         fields = "__all__"
+    
+    def clean_content(self):
+        """Convert YouTube watch URLs to embed URLs and ensure proper iframe format"""
+        content = self.cleaned_data.get('content', '')
+        if content:
+            import re
 
-from django.utils.html import format_html
+            def time_to_seconds(time_str):
+                if not time_str:
+                    return None
+                time_str = time_str.strip()
+                if time_str.isdigit():
+                    return int(time_str)
+                match = re.match(r'(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$', time_str)
+                if not match:
+                    return None
+                hours = int(match.group(1) or 0)
+                minutes = int(match.group(2) or 0)
+                seconds = int(match.group(3) or 0)
+                total = (hours * 3600) + (minutes * 60) + seconds
+                return total if total > 0 else None
+
+            def build_embed_url(video_id, time_str):
+                base = f"https://www.youtube.com/embed/{video_id}"
+                start_seconds = time_to_seconds(time_str)
+                if start_seconds is None:
+                    return base
+                return f"{base}?start={start_seconds}"
+
+            def add_rel_param(url):
+                if 'rel=' in url:
+                    return url
+                separator = '&' if '?' in url else '?'
+                return f"{url}{separator}rel=0"
+
+            def ensure_iframe_attr(tag, attr, value=None):
+                if attr == 'allowfullscreen':
+                    if re.search(r'\ballowfullscreen\b', tag, re.IGNORECASE):
+                        return tag
+                    return tag[:-1] + ' allowfullscreen>'
+                if re.search(rf'\b{attr}\s*=', tag, re.IGNORECASE):
+                    return tag
+                return tag[:-1] + f' {attr}="{value}">'
+            
+            # Convert watch URLs to embed URLs (for media plugin)
+            content = re.sub(
+                r'https://www\.youtube\.com/watch\?v=([a-zA-Z0-9_-]+)(?:&t=([0-9hms]+))?',
+                lambda match: build_embed_url(match.group(1), match.group(2)),
+                content
+            )
+            
+            # Also handle youtu.be short URLs
+            content = re.sub(
+                r'https://youtu\.be/([a-zA-Z0-9_-]+)(?:\?t=([0-9hms]+))?',
+                lambda match: build_embed_url(match.group(1), match.group(2)),
+                content
+            )
+
+            # Normalize embed URLs that use ?t=
+            content = re.sub(
+                r'https://www\.youtube\.com/embed/([a-zA-Z0-9_-]+)\?t=([0-9hms]+)',
+                lambda match: build_embed_url(match.group(1), match.group(2)),
+                content
+            )
+
+            # Ensure rel=0 for YouTube embed URLs
+            content = re.sub(
+                r'https://www\.youtube\.com/embed/[a-zA-Z0-9_-]+(?:\?[^"\s>]*)?',
+                lambda match: add_rel_param(match.group(0)),
+                content
+            )
+
+            # Ensure iframe attributes needed for YouTube playback
+            def augment_iframe(match):
+                tag = match.group(0)
+                if 'youtube.com/embed' not in tag:
+                    return tag
+                tag = ensure_iframe_attr(
+                    tag,
+                    'allow',
+                    'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                )
+                tag = ensure_iframe_attr(tag, 'referrerpolicy', 'strict-origin-when-cross-origin')
+                tag = ensure_iframe_attr(tag, 'title', 'YouTube video player')
+                tag = ensure_iframe_attr(tag, 'frameborder', '0')
+                tag = ensure_iframe_attr(tag, 'allowfullscreen')
+                return tag
+
+            content = re.sub(r'<iframe[^>]*>', augment_iframe, content, flags=re.IGNORECASE)
+        return content
+
 
 class BlogAdmin(admin.ModelAdmin):
     form = BlogAdminForm
