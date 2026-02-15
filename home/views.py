@@ -1,6 +1,4 @@
 from django.conf import settings
-from django.contrib import messages
-from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
@@ -24,58 +22,6 @@ def about(request):
     skills = Skill.objects.all()
     context = {'about_me': about_me, 'skills': skills}
     return render(request, 'about.html', context)
-
-
-def thanks(request):
-    return render(request, 'thanks.html')
-
-
-def contact(request):
-    if request.method == 'POST':
-        name = (request.POST.get('name') or '').strip()
-        email = (request.POST.get('email') or '').strip()
-        phone = (request.POST.get('phone') or '').strip()
-        message_text = (request.POST.get('message') or '').strip()
-
-        if not name or not email or not phone or not message_text:
-            messages.error(request, 'One or more fields are empty!')
-        else:
-            email_pattern = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
-            # Allow international phone numbers: optional +, 9–15 digits
-            phone_pattern = re.compile(r'^\+?[0-9]{9,15}$')
-
-            if email_pattern.match(email) and phone_pattern.match(phone):
-                form_data = {
-                    'name': name,
-                    'email': email,
-                    'phone': phone,
-                    'message': message_text,
-                }
-                body = '''
-From:    {}
-Message: {}
-Email:   {}
-Phone:   {}
-'''.format(
-                    form_data['name'],
-                    form_data['message'],
-                    form_data['email'],
-                    form_data['phone'],
-                )
-
-                recipient = getattr(settings, 'EMAIL_HOST_USER', None)
-                if recipient:
-                    send_mail(
-                        subject='You got a mail!',
-                        message=body,
-                        from_email=recipient,
-                        recipient_list=[recipient],
-                        fail_silently=True,
-                    )
-                messages.success(request, 'Your message was sent.')
-            else:
-                messages.error(request, 'Email or Phone is Invalid!')
-    return render(request, 'contact.html', {})
 
 
 def projects(request):
