@@ -2,7 +2,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-gray-900">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,87 +20,66 @@
     <title>{% block title %}{% endblock title %} - Ozodbek Bosimov</title>
     {% tailwind_css %}
 </head>
-<body class="min-h-screen flex flex-col">
-    {% comment %} <div class="z-50 fixed hidden inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
-  id="my-modal"></div> {% endcomment %}
-    <nav class="nav bg-gray-900 text-white flex justify-between items-center p-3 px-8 md:px-20">
-        <a href="/" class="text-lg font-mono">Ozodbek Bosimov</a>
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
+    <nav class="nav sticky top-0 z-50 backdrop-blur-lg bg-gray-900/80 border-b border-gray-800 text-white flex justify-between items-center py-4 px-8 md:px-20">
+        <a href="/" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent hover:from-blue-300 hover:to-purple-400 transition-all">Ozodbek Bosimov</a>
         <div class='flex space-x-4 text-xl'>
             <i class="searchBtn mt-1 bi bi-search text-sm cursor-pointer md:hidden"></i>
             <i class="nav-btn bi bi-list cursor-pointer md:hidden"></i>
         </div>
-        <div class="bg-gray-900 hidden items-center md:block">
-            <a href="/" class="p-2 px-3 my-1 text-white rounded-[8px] hover:bg-gray-800">Home</a>
-            <a href="/about" class="p-2 px-3 my-1 text-white rounded-[8px] hover:bg-gray-800">About</a>
-            <a href="/contact" class="p-2 px-3 my-1 text-white rounded-[8px] hover:bg-gray-800">Contact</a>
-            <a href="/blog" class="p-2 px-3 my-1 text-white rounded-[8px] hover:bg-gray-800">Blog</a>
-            <a href="/projects" class="p-2 px-3 my-1 text-white rounded-[8px] hover:bg-gray-800">Projects</a>
-            <i class="searchBtn1 p-2 px-3 my-1 text-white rounded-[8px] hover:bg-gray-800 mt-1 bi bi-search text-sm cursor-pointer"></i>
+        <div class="hidden items-center gap-2 md:flex">
+            <a href="/" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Home</a>
+            <a href="/about" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">About</a>
+            <a href="/blog" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Blog</a>
+            <a href="/contact" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Contact</a>
+            <a href="/projects" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Projects</a>
+            <button class="searchBtn1 p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer">
+                <i class="bi bi-search text-lg"></i>
+            </button>
           </div>
     </nav>
 
-    <div class="mob-nav bg-gray-900 hidden flex-col items-center w-full h-64 md:hidden">
-        <a href="/" class="p-2 px-36 my-1 text-white rounded-[8px] hover:bg-gray-800">Home</a>
-        <a href="/about" class="p-2 px-36 my-1 text-white rounded-[8px] hover:bg-gray-800">About</a>
-        <a href="/contact" class="p-2 px-36 my-1 text-white rounded-[8px] hover:bg-gray-800">Contact</a>
-        <a href="/blog" class="p-2 px-36 my-1 text-white rounded-[8px] hover:bg-gray-800 ">Blog</a>
-        <a href="/projects" class="p-2 px-36 my-1 text-white rounded-[8px] hover:bg-gray-800 ">Projects</a>
+    <div class="mob-nav backdrop-blur-lg bg-gray-900/95 border-b border-gray-800 hidden flex-col items-center w-full py-4 md:hidden">
+        <a href="/" class="py-3 px-24 my-1 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Home</a>
+        <a href="/about" class="py-3 px-24 my-1 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">About</a>
+        <a href="/blog" class="py-3 px-24 my-1 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Blog</a>
+        <a href="/contact" class="py-3 px-24 my-1 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Contact</a>
+        <a href="/projects" class="py-3 px-24 my-1 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Projects</a>
       </div>
 
       <main class="flex-1 bg-gray-800">
         {% block content %}{% endblock %}
       </main>
       
-    <footer class='bg-gray-900 text-white p-8 pb-2 grid md:grid-cols-3 md:gap-10 lg:gap-20 xl:gap-30 2xl:gap-40 md:px-40'>
-        <div class='blog-name'>
-            <p class='text-xl font-bold'>Ozodbek Bosimov<p>
-            <p class='my-3 text-justify'>Explore my developer portfolio and blog to empower your development skills and create something amazing together.</p>
-        </div>
-        <div class='pages'>
-            <p class='text-xl font-bold'>Pages<p>
-            <ul class='my-3'>
-                <li><a href='/'><i class="bi bi-arrow-right-short"></i> Privacy Policy</a></li>
-                <li><a href='/'><i class="bi bi-arrow-right-short"></i> Disclaimer</a></li>
-            </ul>
-        </div>
-        <div class='socials'>
-            <p class='text-xl font-bold'>Follow me<p>
-              <ul class="my-3 flex items-center text-xl">
-                <li>
-                    <a href="https://github.com/ozodbek-bosimov" 
-                       target="_blank"
-                       class="hover:text-blue-100">
-                       <i class="bi bi-github"></i>
+    <footer class='border-t border-gray-800 bg-gray-900/50 backdrop-blur-sm text-white py-8 px-8 md:px-20'>
+        <div class='flex flex-col md:flex-row justify-between items-center gap-6'>
+            <div>
+                <h3 class='text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent'>Ozodbek Bosimov</h3>
+                <p class='text-sm text-gray-400 mt-1'>Memory keeps ideas, not code.</p>
+            </div>
+            <div>
+                <div class="flex items-center gap-3">
+                    <a href="https://github.com/ozodbek-bosimov" target="_blank" 
+                       class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-300 hover:scale-110">
+                       <i class="bi bi-github text-xl"></i>
                     </a>
-                </li>
-            
-                <li class="px-2">
-                    <a href="https://linkedin.com/in/ozodbek-bosimov/" 
-                       target="_blank"
-                       class="hover:text-blue-100">
-                       <i class="bi bi-linkedin"></i>
+                    <a href="https://linkedin.com/in/ozodbek-bosimov/" target="_blank" 
+                       class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white transition-all duration-300 hover:scale-110">
+                       <i class="bi bi-linkedin text-xl"></i>
                     </a>
-                </li>
-
-                <li class="px-2">
-                  <a href="https://leetcode.com/ozodbek-bosimov/" 
-                     target="_blank"
-                     class="hover:text-blue-100 flex items-center">
-                     
-                     <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/leetcode.svg"
-                          alt="LeetCode"
-                          width="20"
-                          class="transform -translate-x-[10px] translate-y-[-1px]"
-                          style="filter: invert(1);">
-                  </a>
-              </li>
-              
-            </ul>
+                    <a href="https://leetcode.com/u/ozodbek_bosimov/" target="_blank" 
+                       class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#FFA116] hover:border-[#FFA116] transition-all duration-300 hover:scale-110 group">
+                       <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/leetcode.svg" 
+                            alt="LeetCode" 
+                            class="w-5 h-5 filter invert group-hover:invert-0 transition-all">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class='border-t border-gray-800 mt-6 pt-4 text-center'>
+            <p class='text-sm text-gray-400'>&copy;<script>document.write(new Date().getFullYear())</script> ozodbek.me</p>
         </div>
     </footer>
-    <div class='bg-slate-800 text-white text-justify flex justify-center items-center'>
-        <p class='p-2'>ozodbek.me &copy;<script>document.write(new Date().getFullYear())</script> <span class="text-blue-300 text-justify"><a href="/" target="_blank">Ozodbek Bosimov</a></span> All Rights Reserved</p>
-    </div>
 
     <div class="searchModal text-white z-50 fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
         <div class="fixed inset-0 transition-opacity">
