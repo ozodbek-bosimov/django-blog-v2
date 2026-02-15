@@ -12,3 +12,16 @@
     font-family: 'Schabo';
     src: url("../fonts//schabo.woff") format('truetype');
 }
+
+/* Image thumbnail styling for blog posts */
+.post-img-url {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure proper image scaling without distortion */
+img {
+    max-width: 100%;
+    height: auto;
+}

@@ -68,7 +68,7 @@
     {% for blog in results %}
         <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);" class='flex flex-col md:flex-row gap-4 md:gap-x-8 bg-gray-900 p-5 mb-4 rounded-lg'>
             {% if blog.effective_thumbnail %}
-            <img class="post-img-url rounded-lg object-cover" width='350px' height='180px' src="{{ blog.effective_thumbnail }}" alt="image">
+            <img class="post-img-url rounded-lg object-contain" style="width: 350px; height: 180px; flex-shrink: 0;" src="{{ blog.effective_thumbnail }}" alt="image">
             {% endif %}
             <div>
                 <a class='text-blue-100 hover:text-blue-300 transition duration-300' href='/blogpost/{{blog.slug}}'><span class='text-xl font-extrabold'>{{blog.title|slice:80}}</span></a><br>

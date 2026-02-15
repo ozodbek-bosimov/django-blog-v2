@@ -45,7 +45,7 @@
                 <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);" class='hover:scale-105 hover:transform bg-gray-800 p-5 rounded-lg max-w-sm h-auto shadow-2xl transition-all duration-300'>
                     <a href='/blogpost/{{blog.slug}}'>
                         {% if blog.effective_thumbnail %}
-                            <img class='rounded-lg mb-4' src="{{ blog.effective_thumbnail }}">
+                            <img class='rounded-lg mb-4 w-full object-contain' style="aspect-ratio: 16/9;" src="{{ blog.effective_thumbnail }}" alt="image">
                         {% endif %}
                     </a>
                     <a class='text-blue-100 hover:text-blue-300 transition duration-300' href='/blogpost/{{blog.slug}}'><span class='text-xl font-extrabold'>{{blog.title|slice:80}}</span></a><br>
