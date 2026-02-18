@@ -6,7 +6,7 @@ venv/
 #  Django
 # db.sqlite3
 # media/
-# staticfiles/
+staticfiles/
 .env
 
 # macOS
