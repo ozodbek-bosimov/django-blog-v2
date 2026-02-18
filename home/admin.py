@@ -2,10 +2,11 @@ from django.contrib import admin
 from django import forms
 from home.models import Blog, AboutMe, Skill, Project
 from django.utils.html import format_html
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 # Register your models here.
 class BlogAdminForm(forms.ModelForm):
-    content = forms.CharField(widget=forms.Textarea(attrs={'id': "richtext_field"}))
+    content = forms.CharField(widget=CKEditor5Widget(config_name='default'))
 
     class Meta:
         model = Blog
@@ -124,7 +125,7 @@ admin.site.register(Blog, BlogAdmin)
 
 
 class AboutMeAdminForm(forms.ModelForm):
-    bio = forms.CharField(widget=forms.Textarea(attrs={'id': "richtext_field"}))
+    bio = forms.CharField(widget=CKEditor5Widget(config_name='default'))
 
     class Meta:
         model = AboutMe

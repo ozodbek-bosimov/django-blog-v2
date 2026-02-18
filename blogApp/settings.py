@@ -58,7 +58,7 @@ CSRF_TRUSTED_ORIGINS = [
 INSTALLED_APPS = [
     'tailwind',
     'theme',
-    'tinymce',
+    'django_ckeditor_5',
     'home.apps.HomeConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -216,3 +216,75 @@ SESSION_SAVE_EVERY_REQUEST = True
 # 5 MB per request / file – adjust if you need more or less
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+
+# CKEditor 5 configuration
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': [
+            'heading', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '-',
+            'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code', 'removeFormat', '-',
+            'link', 'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent', 'alignment', '-',
+            'imageUpload', 'insertTable', 'mediaEmbed', 'blockQuote', 'codeBlock', 'horizontalLine', 'specialCharacters', '-',
+            'sourceEditing', '|', 'undo', 'redo'
+        ],
+        'list': {
+            'properties': {
+                'styles': True,
+                'startIndex': True,
+                'reversed': True,
+            }
+        },
+        'heading': {
+            'options': [
+                {'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph'},
+                {'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1'},
+                {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
+                {'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3'},
+                {'model': 'heading4', 'view': 'h4', 'title': 'Heading 4', 'class': 'ck-heading_heading4'},
+            ]
+        },
+        'height': '400px',
+        'width': '100%',
+        'placeholder': 'Kontentni shu yerga yozing...',
+        'image': {
+            'toolbar': [
+                'imageTextAlternative',
+                'imageStyle:alignLeft',
+                'imageStyle:alignCenter',
+                'imageStyle:alignRight',
+                'toggleImageCaption',
+                'linkImage',
+            ],
+        },
+        'table': {
+            'contentToolbar': [
+                'tableColumn', 'tableRow', 'mergeTableCells',
+                'tableProperties', 'tableCellProperties'
+            ]
+        },
+        'htmlSupport': {
+            'allow': [
+                {
+                    'name': '/.*/',
+                    'attributes': True,
+                    'classes': True,
+                    'styles': True,
+                }
+            ]
+        },
+        'mediaEmbed': {
+            'previewsInData': True,
+        },
+        'link': {
+            'addTargetToExternalLinks': True,
+            'defaultProtocol': 'https://',
+        },
+        'removePlugins': ['Markdown', 'Style'],
+    },
+}
+
+CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp', 'svg']
+CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
+
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'staff'
+
