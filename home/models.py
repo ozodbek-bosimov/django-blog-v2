@@ -1,3 +1,8 @@
+import re
+from urllib.parse import urlparse
+
+from django.conf import settings
+from django.core.files.storage import default_storage
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -98,6 +103,56 @@ from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 
 
+def _extract_media_paths_from_html(html_content):
+    if not html_content:
+        return set()
+
+    media_url = settings.MEDIA_URL or '/media/'
+    if not media_url.endswith('/'):
+        media_url = f"{media_url}/"
+
+    paths = set()
+    for raw_url in re.findall(r'(?:src|href)=["\']([^"\']+)["\']', html_content):
+        parsed_path = urlparse(raw_url).path
+        if parsed_path.startswith(media_url):
+            relative_path = parsed_path[len(media_url):].lstrip('/')
+            if relative_path:
+                paths.add(relative_path)
+    return paths
+
+
+def _is_media_still_referenced(relative_path, exclude_aboutme_pk=None, exclude_blog_pk=None):
+    media_url = settings.MEDIA_URL or '/media/'
+    if not media_url.endswith('/'):
+        media_url = f"{media_url}/"
+    absolute_media_url = f"{media_url}{relative_path}"
+
+    aboutme_qs = AboutMe.objects.all()
+    if exclude_aboutme_pk:
+        aboutme_qs = aboutme_qs.exclude(pk=exclude_aboutme_pk)
+
+    blog_qs = Blog.objects.all()
+    if exclude_blog_pk:
+        blog_qs = blog_qs.exclude(pk=exclude_blog_pk)
+
+    return (
+        aboutme_qs.filter(bio__icontains=absolute_media_url).exists()
+        or blog_qs.filter(content__icontains=absolute_media_url).exists()
+    )
+
+
+def _delete_media_paths_if_unused(media_paths, exclude_aboutme_pk=None, exclude_blog_pk=None):
+    for path in media_paths:
+        if _is_media_still_referenced(
+            path,
+            exclude_aboutme_pk=exclude_aboutme_pk,
+            exclude_blog_pk=exclude_blog_pk,
+        ):
+            continue
+        if default_storage.exists(path):
+            default_storage.delete(path)
+
+
 @receiver(post_delete, sender=Blog)
 def delete_thumbnail_on_delete(sender, instance, **kwargs):
     """Remove file from filesystem when Blog object is deleted."""
@@ -116,3 +171,53 @@ def delete_old_thumbnail_on_change(sender, instance, **kwargs):
         return
     if old.thumbnail_img and old.thumbnail_img != instance.thumbnail_img:
         old.thumbnail_img.delete(save=False)
+
+
+@receiver(pre_save, sender=Blog)
+def delete_removed_blog_content_media(sender, instance, **kwargs):
+    """Delete media files removed from Blog.content when they are no longer used."""
+    if not instance.pk:
+        return
+
+    try:
+        old_instance = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+
+    old_media = _extract_media_paths_from_html(old_instance.content)
+    new_media = _extract_media_paths_from_html(instance.content)
+    removed_media = old_media - new_media
+
+    _delete_media_paths_if_unused(removed_media, exclude_blog_pk=instance.pk)
+
+
+@receiver(post_delete, sender=Blog)
+def delete_blog_content_media_on_delete(sender, instance, **kwargs):
+    """Delete media files from Blog.content on object delete when no longer used."""
+    removed_media = _extract_media_paths_from_html(instance.content)
+    _delete_media_paths_if_unused(removed_media)
+
+
+@receiver(pre_save, sender=AboutMe)
+def delete_removed_aboutme_bio_media(sender, instance, **kwargs):
+    """Delete media files removed from AboutMe.bio when they are no longer used."""
+    if not instance.pk:
+        return
+
+    try:
+        old_instance = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+
+    old_media = _extract_media_paths_from_html(old_instance.bio)
+    new_media = _extract_media_paths_from_html(instance.bio)
+    removed_media = old_media - new_media
+
+    _delete_media_paths_if_unused(removed_media, exclude_aboutme_pk=instance.pk)
+
+
+@receiver(post_delete, sender=AboutMe)
+def delete_aboutme_bio_media_on_delete(sender, instance, **kwargs):
+    """Delete media files from AboutMe.bio on object delete when no longer used."""
+    removed_media = _extract_media_paths_from_html(instance.bio)
+    _delete_media_paths_if_unused(removed_media)
