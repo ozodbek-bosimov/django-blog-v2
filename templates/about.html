@@ -75,8 +75,10 @@
             </div>
             
             <!-- Bio with Rich Text Content -->
-            <div class='mt-6 prose prose-invert max-w-none'>
-                {{ about_me.bio|safe }}
+            <div class='mt-8 text-gray-300 leading-relaxed'>
+                <div class='prose prose-invert max-w-none ck-content'>
+                    {{ about_me.bio|safe }}
+                </div>
             </div>
         {% else %}
             <p class='text-center text-gray-400 py-10'>No about information available yet.</p>

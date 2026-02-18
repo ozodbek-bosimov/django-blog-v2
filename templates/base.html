@@ -17,6 +17,55 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/ozodbek-bosimov/host@latest/static/index.css">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <!-- CKEditor styling for rich text content -->
+    <style>
+        .ck-content {
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .ck-content h1, .ck-content h2, .ck-content h3, .ck-content h4, .ck-content h5, .ck-content h6 {
+            font-weight: 600;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        .ck-content p {
+            margin-bottom: 0.8em;
+        }
+        .ck-content ul, .ck-content ol {
+            margin-left: 2em;
+            margin-bottom: 1em;
+        }
+        .ck-content li {
+            margin-bottom: 0.3em;
+        }
+        .ck-content a {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+        .ck-content a:hover {
+            color: #60a5fa;
+        }
+        .ck-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 1em 0;
+        }
+        .ck-content blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1em;
+            margin: 1em 0;
+            font-style: italic;
+            color: #9ca3af;
+        }
+        .ck-content code {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 0.2em 0.4em;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
     <title>{% block title %}{% endblock title %} - Ozodbek Bosimov</title>
     {% tailwind_css %}
 </head>
@@ -276,5 +325,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
 </html>
