@@ -294,7 +294,9 @@ CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'staff'
 # Basic file logging to capture production errors.
 LOG_DIR = os.path.join(BASE_DIR, "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
-if _get_bool_env("DJANGO_FILE_LOGGING", False):
+_file_logging_enabled = _get_bool_env("DJANGO_FILE_LOGGING", False)
+_log_dir_writable = os.access(LOG_DIR, os.W_OK)
+if _file_logging_enabled and _log_dir_writable:
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
