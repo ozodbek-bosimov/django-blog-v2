@@ -1,110 +1,90 @@
 # Django Blog (O'zbekcha)
 
-## Loyihaning qisqacha tavsifi
-Bu loyiha Django asosida yozilgan shaxsiy blog saytidir. Saytda postlar, kategoriyalar, qidiruv, hamda admin panel orqali kontent boshqaruvi mavjud. Statik fayllar va media fayllar bilan ishlash sozlangan.
+Shaxsiy blog va portfolio sayti. Django + Tailwind + CKEditor 5 asosida yozilgan.
+
+## Asosiy imkoniyatlar
+- Blog postlar, kategoriya va qidiruv
+- Admin panel orqali kontent boshqaruvi
+- Rich text editor (CKEditor 5)
+- Static/media servis (WhiteNoise + Nginx)
 
 ## Texnologiyalar
-- Django
-- SQLite (lokal)
-- Whitenoise (static serve)
-- Tailwind (django-tailwind)
-- TinyMCE (tahrirlash)
+- Django 5.x
+- SQLite (hozirgi konfiguratsiya)
+- Gunicorn + Nginx
+- WhiteNoise
+- django-tailwind
+- django-ckeditor-5
+
+---
 
 ## Lokal ishga tushirish
-1. Virtual environment yarating va yoqing.
-2. Kutubxonalarni o'rnating:
 
+### 1) Muhit va paketlar
 ```bash
-pip install -r requirements.txt
-```
-
-3. .env faylni tekshiring (lokal uchun):
-
-```env
-DJANGO_SECRET_KEY=...
-DJANGO_DEBUG=true
-DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
-```
-
-4. Migratsiyalarni ishga tushiring:
-
-```bash
-python manage.py migrate
-```
-
-5. Admin uchun superuser yarating:
-
-```bash
-python manage.py createsuperuser
-```
-
-6. Serverni ishga tushiring:
-
-```bash
-python manage.py runserver
-```
-
-## Muhim sozlamalar (.env)
-- DJANGO_SECRET_KEY: xavfsizlik uchun maxfiy kalit.
-- DJANGO_DEBUG: lokalda true, serverda false.
-- DJANGO_ALLOWED_HOSTS: domenlar ro'yxati (vergul bilan).
-- DJANGO_CSRF_TRUSTED_ORIGINS: https bilan to'liq domenlar.
-- ADMIN_SESSION_TIMEOUT: admin sessiya muddati (sekund).
-
-## Static va Media
-- Static fayllar productionda collectstatic orqali yig'iladi.
-- Media fayllar (rasmlar) MEDIA_ROOT ichida saqlanadi.
-
-## Deploy (Production)
-
-### 1. Server tayyorlash
-```bash
-# Loyihani clone qiling
-git clone --depth 1 git@github.com:ozodbek-bosimov/django-blog.git
-cd django-blog
-
-# Virtual environment yarating
 python3 -m venv env
 source env/bin/activate
-
-# Paketlarni o'rnating
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. Production .env yarating
-`.env.example` dan nusxa olib, production qiymatlarini yozing:
-```bash
-cp .env.example .env
-nano .env
-```
-
-**Production `.env` misoli:**
+### 2) `.env` yarating
 ```env
-DJANGO_SECRET_KEY=your-real-long-random-secret-key-here-64-chars
-DJANGO_DEBUG=false
-DJANGO_ALLOWED_HOSTS=your-domain.com,www.your-domain.com
-DJANGO_CSRF_TRUSTED_ORIGINS=https://your-domain.com,https://www.your-domain.com
+DJANGO_SECRET_KEY=your-local-secret
+DJANGO_DEBUG=true
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+DJANGO_CSRF_TRUSTED_ORIGINS=
 ADMIN_SESSION_TIMEOUT=1800
-DJANGO_SESSION_COOKIE_SECURE=true
-DJANGO_CSRF_COOKIE_SECURE=true
-DJANGO_SECURE_SSL_REDIRECT=true
+DJANGO_FILE_LOGGING=false
 ```
 
-**Secret key generatsiya:**
-```bash
-python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-```
-
-### 3. Database migratsiyalar
+### 3) Migratsiya va run
 ```bash
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py collectstatic --noinput
+python manage.py runserver
 ```
 
-### 4. Gunicorn service (systemd)
-`/etc/systemd/system/gunicorn.service` yarating:
+---
+
+## Production `.env` namunasi
+```env
+DJANGO_SECRET_KEY=your-long-random-secret
+DJANGO_DEBUG=false
+DJANGO_ALLOWED_HOSTS=ozodbek.me,www.ozodbek.me
+DJANGO_CSRF_TRUSTED_ORIGINS=https://ozodbek.me,https://www.ozodbek.me
+
+ADMIN_SESSION_TIMEOUT=1800
+
+DJANGO_SESSION_COOKIE_SECURE=true
+DJANGO_CSRF_COOKIE_SECURE=true
+DJANGO_SECURE_SSL_REDIRECT=true
+
+DJANGO_FILE_LOGGING=false
+```
+
+> Eslatma: `DJANGO_FILE_LOGGING=true` qilsangiz, `logs/` papkasiga yozish ruxsati bo‘lishi shart.
+
+---
+
+## Muhim sozlamalar (hozirgi holat)
+
+### Static (Django 5 mos)
+Loyihada production uchun `STORAGES` ishlatiladi:
+- `default` -> `django.core.files.storage.FileSystemStorage`
+- `staticfiles` -> `whitenoise.storage.CompressedManifestStaticFilesStorage`
+
+Bu `STATICFILES_STORAGE` o‘rniga Django 5 uchun to‘g‘ri yo‘l.
+
+### Logging fallback
+`DJANGO_FILE_LOGGING=true` bo‘lsa ham, `logs/` yoziladigan bo‘lmasa servis yiqilib ketmasligi uchun himoya qo‘shilgan.
+
+---
+
+## Gunicorn (systemd) tavsiya qilingan servis
+
+`/etc/systemd/system/gunicorn.service`
+
 ```ini
 [Unit]
 Description=gunicorn daemon for django-blog
@@ -125,23 +105,27 @@ RestartSec=3
 WantedBy=multi-user.target
 ```
 
-Faollashtiring:
+Faollashtirish:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable gunicorn
 sudo systemctl start gunicorn
-sudo systemctl status gunicorn
+sudo systemctl status gunicorn --no-pager -l
 ```
 
-### 5. Nginx konfiguratsiya
-`/etc/nginx/sites-available/django-blog` yarating:
+---
+
+## Nginx konfiguratsiya (asosiy)
+
+`/etc/nginx/sites-available/django-blog`
+
 ```nginx
 upstream gunicorn {
     server unix:/run/gunicorn/gunicorn.sock fail_timeout=0;
 }
 
 server {
-    server_name your-domain.com www.your-domain.com;
+    server_name ozodbek.me www.ozodbek.me;
 
     location /static/ {
         alias /var/www/django-blog/staticfiles/;
@@ -164,56 +148,141 @@ server {
     }
 
     listen 443 ssl http2;
-    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    # ssl_certificate ...
+    # ssl_certificate_key ...
 }
 
 server {
     listen 80;
-    server_name your-domain.com www.your-domain.com;
+    server_name ozodbek.me www.ozodbek.me;
     return 301 https://$host$request_uri;
 }
 ```
 
-Faollashtiring:
+Tekshiruv:
 ```bash
-sudo ln -s /etc/nginx/sites-available/django-blog /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-### 6. SSL (Let's Encrypt)
+---
+
+## Deploy checklist (copy-paste)
+
 ```bash
-sudo apt install certbot python3-certbot-nginx -y
-sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+cd /var/www/django-blog && \
+git pull && \
+source env/bin/activate && \
+pip install -r requirements.txt && \
+python manage.py migrate && \
+python manage.py collectstatic --clear --noinput && \
+sudo systemctl restart gunicorn && \
+sudo systemctl reload nginx
 ```
 
-### 7. Update qilish
+Deploydan keyin health-check:
 ```bash
-cd /var/www/django-blog
-git pull
-source env/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py collectstatic --noinput
+curl -I https://ozodbek.me/
+curl -I https://ozodbek.me/admin/login/
+curl -I https://ozodbek.me/static/favicon/favicon.ico
+```
+
+---
+
+## Holatlar (Status Playbook)
+
+### 1) `Healthy`
+Belgilar:
+- `curl -I https://ozodbek.me/` -> `200`
+- `curl -I https://ozodbek.me/admin/login/` -> `200`
+- `gunicorn` active
+
+Tekshiruv:
+```bash
+sudo systemctl status gunicorn --no-pager -l
+sudo nginx -t
+```
+
+### 2) `Degraded`
+Belgilar:
+- Ba’zan `500`, ba’zan normal ishlash
+- Restart paytida qisqa uzilishlar
+
+Diagnostika:
+```bash
+sudo journalctl -u gunicorn -f --no-pager
+sudo tail -f /var/log/nginx/error.log
+```
+
+### 3) `Down` (502)
+Belgilar:
+- `HTTP/1.1 502 Bad Gateway`
+
+Tezkor tiklash:
+```bash
+sudo systemctl stop gunicorn
+sudo rm -f /run/gunicorn/gunicorn.sock
+sudo systemctl start gunicorn
+sudo systemctl restart nginx
+```
+
+---
+
+## Ko‘p uchraydigan xatolar va yechimlar
+
+### A) Favicon chiqmayapti
+Sabablar:
+- `collectstatic` qilinmagan
+- `/static/favicon/*` hali eski cache
+
+Yechim:
+```bash
+python manage.py collectstatic --clear --noinput
+curl -I https://ozodbek.me/static/favicon/favicon.ico
+```
+
+### B) Admin login POST’da 500
+Sabablar:
+- DB yoki papkalarga yozish ruxsati yo‘q
+
+Yechim:
+```bash
+sudo chown www-data:www-data /var/www/django-blog/db.sqlite3
+sudo chmod 664 /var/www/django-blog/db.sqlite3
+sudo chown -R www-data:www-data /var/www/django-blog/logs /var/www/django-blog/media
+sudo chmod -R u+rwX,g+rwX /var/www/django-blog/logs /var/www/django-blog/media
 sudo systemctl restart gunicorn
 ```
 
-## Muhim eslatmalar
-- Production da `DJANGO_DEBUG=false` bo'lishi SHART
-- `.env` faylni hech qachon Git ga push qilmang
-- `db.sqlite3` production uchun yaxshi emas — PostgreSQL/MySQL ishlatish tavsiya
-- Static fayllar `collectstatic` orqali yig'ilishi kerak
+### C) `Unable to configure handler 'file'`
+Sabab:
+- `DJANGO_FILE_LOGGING=true` + `logs/` yozilmaydi
 
-## Admin sessiya timeout
-Admin panelda ishlaganda sessiya vaqtini ADMIN_SESSION_TIMEOUT orqali boshqarasiz (sekund). Har bir admin so'rovda sessiya yangilanadi.
+Yechim:
+```bash
+# variant 1
+DJANGO_FILE_LOGGING=false
+
+# variant 2
+sudo mkdir -p /var/www/django-blog/logs
+sudo chown -R www-data:www-data /var/www/django-blog/logs
+```
+
+---
 
 ## Foydali buyruqlar
 ```bash
-python manage.py makemigrations
+python manage.py check
 python manage.py migrate
-python manage.py createsuperuser
-python manage.py collectstatic
+python manage.py collectstatic --noinput
+sudo systemctl status gunicorn --no-pager -l
+sudo journalctl -u gunicorn -n 120 --no-pager
+sudo tail -n 120 /var/log/nginx/error.log
 ```
+
+---
+
+## Xavfsizlik eslatmasi
+- `DJANGO_DEBUG=false` productionda majburiy
+- `.env` ni gitga push qilmang
+- SQLite production uchun cheklangan; katta trafikda PostgreSQL tavsiya qilinadi
