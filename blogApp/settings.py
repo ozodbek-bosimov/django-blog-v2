@@ -290,22 +290,27 @@ CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'staff'
 
 # Basic file logging to capture production errors.
 LOG_DIR = os.path.join(BASE_DIR, "logs")
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "file": {
-            "level": "ERROR",
-            "class": "logging.FileHandler",
-            "filename": os.path.join(LOG_DIR, "django.log"),
+os.makedirs(LOG_DIR, exist_ok=True)
+if _get_bool_env("DJANGO_FILE_LOGGING", False):
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "file": {
+                "level": "ERROR",
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": os.path.join(LOG_DIR, "django.log"),
+                "maxBytes": 10 * 1024 * 1024,
+                "backupCount": 5,
+                "encoding": "utf-8",
+            },
         },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["file"],
-            "level": "ERROR",
-            "propagate": True,
+        "loggers": {
+            "django": {
+                "handlers": ["file"],
+                "level": "ERROR",
+                "propagate": True,
+            },
         },
-    },
-}
+    }
 
