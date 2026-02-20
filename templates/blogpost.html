@@ -11,7 +11,7 @@
     {% if blog.effective_thumbnail %}
     <img class='rounded-lg my-6 max-w-4xl mx-auto w-full object-contain' style="max-height: 600px;" src="{{ blog.effective_thumbnail }}" alt="image">
     {% endif %}
-    <div class='blog-content'>{{blog.content|safe}}</div>
+    <div class='blog-content ck-content'>{{blog.content|safe}}</div>
 </div>
 <style> 
     h1,
@@ -23,21 +23,37 @@
         font-size: revert;
         font-weight: revert;
     }
-  
-    p a {
-        color: #67e8f9;
-        background: 
-          linear-gradient(to right, rgba(103,232,249, 1), rgba(59, 130, 246, 1)),
-          linear-gradient(to right, rgba(34,211,238, 1), rgba(59, 130, 246, 1), rgba(29, 78, 216, 1));
-        background-size: 100% 0.1em, 0 0.1em;
-        background-position: 100% 100%, 0 100%;
-        background-repeat: no-repeat;
-        transition: background-size 400ms;
+
+    .blog-content .text-tiny {
+        font-size: 0.7em;
     }
-      
-    p a:hover,
-    p a:focus {
-        background-size: 0 0.1em, 100% 0.1em;
+
+    .blog-content .text-small {
+        font-size: 0.85em;
+    }
+
+    .blog-content .text-big {
+        font-size: 1.4em;
+    }
+
+    .blog-content .text-huge {
+        font-size: 1.8em;
+    }
+  
+    .blog-content a {
+        color: #67e8f9;
+        text-decoration: none !important;
+        background-image: linear-gradient(currentColor, currentColor);
+        background-repeat: no-repeat;
+        background-size: 0 2px;
+        background-position: 0 100%;
+        transition: color 220ms ease, background-size 220ms ease;
+    }
+
+    .blog-content a:hover,
+    .blog-content a:focus {
+        color: #a5f3fc;
+        background-size: 100% 2px;
     }
     p img {
         border-radius: 8px;
@@ -75,10 +91,34 @@
     /* Code blocks - Prism.js bilan */
     pre[class*="language-"] {
         margin: 1rem 0 !important;
-        border-radius: 10px !important;
-        background: linear-gradient(135deg, #0f172a, #0b2236) !important;
+        border-radius: 12px !important;
+        background: #0d1b2a !important;
         border: 1px solid rgba(103, 232, 249, 0.15) !important;
         box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
+        position: relative;
+        padding-top: 2rem !important;
+        overflow: auto;
+    }
+
+    pre[class*="language-"]::before {
+        content: attr(data-language);
+        position: absolute;
+        top: 0.55rem;
+        right: 0.75rem;
+        font-size: 0.68rem;
+        line-height: 1;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: #cbd5e1;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        padding: 0.2rem 0.45rem;
+        border-radius: 9999px;
+    }
+
+    pre[class*="language-"] code {
+        font-size: 0.92rem;
+        background: transparent !important;
     }
 
     /* Inline code uchun */
@@ -95,19 +135,38 @@
 </style>
 
 <script>
-// TinyMCE dan kelgan code bloklarni Prism.js bilan ranglash
+// CKEditor dan kelgan code bloklarni Prism.js bilan ranglash
 document.addEventListener('DOMContentLoaded', function() {
+    const toPrettyLanguage = (lang) => {
+        if (!lang) {
+            return 'Python';
+        }
+        const normalized = lang.toLowerCase();
+        if (normalized === 'cpp') return 'C++';
+        if (normalized === 'cs') return 'C#';
+        return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+    };
+
     // Barcha <pre> taglarni topish
     const preElements = document.querySelectorAll('pre');
     
     preElements.forEach(pre => {
         const code = pre.querySelector('code');
+        if (!code) {
+            return;
+        }
+
+        const languageClass = [...code.classList, ...pre.classList]
+            .find(cls => cls.startsWith('language-'));
+        const language = languageClass ? languageClass.replace('language-', '') : 'python';
         
-        if (code && !code.classList.contains('language-')) {
+        if (!languageClass) {
             // Agar class yo'q bo'lsa, default Python qilamiz
             pre.classList.add('language-python');
             code.classList.add('language-python');
         }
+
+        pre.setAttribute('data-language', toPrettyLanguage(language));
     });
     
     // Prism.js ni qayta run qilish
