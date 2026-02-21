@@ -4,8 +4,8 @@ venv/
 .venv/
 
 #  Django
-# db.sqlite3
-# media/
+db.sqlite3
+media/
 staticfiles/
 .env
 
