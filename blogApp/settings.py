@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'theme',
     'django_ckeditor_5',
     'home.apps.HomeConfig',
+    'django.contrib.sitemaps',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
