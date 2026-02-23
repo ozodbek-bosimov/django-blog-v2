@@ -158,6 +158,15 @@ class AboutMeAdmin(admin.ModelAdmin):
 
 class SkillAdmin(admin.ModelAdmin):
     """Admin for Skill model"""
+    class SkillAdminForm(forms.ModelForm):
+        class Meta:
+            model = Skill
+            fields = "__all__"
+            help_texts = {
+                'percentage': '0-19% → Familiar, 20-39% → Basic, 40-69% → Working Knowledge, 70-89% → Advanced, 90-100% → Expert',
+            }
+
+    form = SkillAdminForm
     list_display = ['name', 'percentage', 'order']
     list_editable = ['order']
     list_filter = ['percentage']
