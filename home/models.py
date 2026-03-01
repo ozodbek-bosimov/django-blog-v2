@@ -15,7 +15,7 @@ class Blog(models.Model):
     thumbnail_img = models.ImageField(null=True, blank=True, upload_to="images/")
     thumbnail_url = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=255, default="uncategorized")
-    slug = models.CharField(max_length=100)
+    slug = models.CharField(max_length=100, unique=True)
     time = models.DateField(auto_now_add=True)
 
     def __str__(self):
