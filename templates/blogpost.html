@@ -3,17 +3,26 @@
 {% block title %}{{blog.title}}{% endblock title %}
 
 {% block content %}
-<div class='bg-gray-800 text-white p-8 pt-12 flex flex-col md:px-20 lg:px-36 xl:px-60 2xl:px-80'>
-    <span class='text-center text-3xl md:text-4xl font-bold text-cyan-200 hover:text-cyan-300 transition duration-300'>
+<div class='bg-gray-800 text-white p-6 md:p-8 pt-12 flex flex-col max-w-5xl mx-auto w-full'>
+    <span class='text-center text-3xl md:text-5xl font-bold text-cyan-200 hover:text-cyan-300 transition duration-300'>
         <a href='/blogpost/{{blog.slug}}'>{{blog.title}}</a>
     </span>
-    <span class='text-center mt-2 text-gray-400'>by <a href='/about'><i class="bi bi-person"></i> <span class='group'><span class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>Ozodbek</span></span></a> <i class="bi bi-dot"></i> <span><i class="bi bi-calendar4-event"></i> {{blog.time}}</span> <i class="bi bi-dot"></i> <i class="bi bi-tag"></i> <a href='/category/{{blog.category}}'><span class='group'><span class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>{{blog.category}}</span></span></a></span>
+    <span class='text-center mt-3 text-gray-400'>by <a href='/about'><i class="bi bi-person"></i> <span
+                class='group'><span
+                    class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>Ozodbek</span></span></a>
+        <i class="bi bi-dot mx-1"></i> <span><i class="bi bi-calendar4-event"></i> {{blog.time}}</span> <i
+            class="bi bi-dot mx-1"></i> <i class="bi bi-tag"></i> <a href='/category/{{blog.category}}'><span
+                class='group'><span
+                    class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>{{blog.category}}</span></span></a></span>
+
     {% if blog.effective_thumbnail %}
-    <img class='rounded-lg my-6 max-w-4xl mx-auto w-full object-contain' style="max-height: 600px;" src="{{ blog.effective_thumbnail }}" alt="image">
+    <img class='rounded-lg my-6 max-w-3xl mx-auto w-full object-contain' style="max-height: 450px;"
+        src="{{ blog.effective_thumbnail }}" alt="image">
     {% endif %}
-    <div class='blog-content ck-content'>{{blog.content|safe}}</div>
+
+    <div class='blog-content ck-content leading-relaxed mt-2'>{{blog.content|safe}}</div>
 </div>
-<style> 
+<style>
     h1,
     h2,
     h3,
@@ -39,7 +48,7 @@
     .blog-content .text-huge {
         font-size: 1.8em;
     }
-  
+
     .blog-content a {
         color: #67e8f9;
         text-decoration: none !important;
@@ -55,17 +64,65 @@
         color: #a5f3fc;
         background-size: 100% 2px;
     }
-    p img {
+
+    /* Rasmlar va iframelar (Youtube, vs) */
+    .blog-content img,
+    .blog-content figure img,
+    p iframe {
         border-radius: 8px;
     }
 
+    /* Asosiy va figuralar markazlanishi va cheklovi */
+    .blog-content img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Rasmlar tegida chiqadigan yozuvni (caption) chiroyli ulash */
+    .blog-content figure.image {
+        display: table;
+        /* Table qilinganda rasm markazga keladi */
+        background: rgba(15, 23, 42, 0.4);
+        border-radius: 8px;
+        /* 4 taraf egovlandi */
+        margin: 1.5rem auto;
+        overflow: hidden;
+        /* maska qism uchun */
+        max-width: 100%;
+    }
+
+    .blog-content figure.image img {
+        margin: 0 auto;
+        border-radius: 8px;
+        /* Pastkini ham egovlaymiz */
+        display: block;
+    }
+
+    .blog-content figure.image figcaption {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        font-size: 0.9em;
+        color: #94a3b8;
+        background: rgba(15, 23, 42, 0.6);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: block;
+        /* Matn elementini majburiy block qilish */
+        word-wrap: break-word;
+        white-space: normal;
+        /* Vertikal xato oldini olish */
+        max-width: 100%;
+        /* O'zidan oshmasin */
+        box-sizing: border-box;
+    }
+
     /* YouTube iframe uchun */
-    p iframe {
+    .blog-content iframe {
         max-width: 100%;
         height: auto;
         aspect-ratio: 16/9;
-        border-radius: 8px;
         margin: 1rem 0;
+        border-radius: 8px;
+        /* Added rounded corners for videos too */
     }
 
     /* Video wrapper uchun */
@@ -91,7 +148,8 @@
     /* Code blocks - Prism.js bilan */
     pre[class*="language-"] {
         margin: 1rem 0 !important;
-        border-radius: 12px !important;
+        border-radius: 8px !important;
+        /* Standartlashtirildi (oldingi 12px edi) */
         background: #0d1b2a !important;
         border: 1px solid rgba(103, 232, 249, 0.15) !important;
         box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
@@ -163,83 +221,86 @@
         word-break: break-word !important;
     }
 
-    /* Inline code uchun */
-    :not(pre) > code {
-        background-color: rgba(14, 116, 144, 0.35);
-        color: #a5f3fc;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 0.9em;
-        font-family: 'Courier New', Courier, monospace;
-        border: 1px solid rgba(34, 211, 238, 0.25);
+    /* Inline code uchun (gap orasidagi qisqa kod qatorlar) */
+    .blog-content code:not(pre code) {
+        background-color: rgba(71, 85, 105, 0.2) !important;
+        /* slate-600 juda shaffof, deyarli fon so'nib ketgan */
+        color: #cbd5e1 !important;
+        /* slate-300 matn */
+        padding: 0.2em 0.4em !important;
+        border-radius: 4px !important;
+        font-size: 0.9em !important;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+        border: 1px solid rgba(148, 163, 184, 0.15) !important;
+        /* slate-400 juda yengil rom */
+        word-break: break-word !important;
     }
-
 </style>
 
 <script>
-// CKEditor dan kelgan code bloklarni Prism.js bilan ranglash
-document.addEventListener('DOMContentLoaded', function() {
-    const toPrettyLanguage = (lang) => {
-        if (!lang) {
-            return 'Python';
-        }
-        const normalized = lang.toLowerCase();
-        if (normalized === 'cpp') return 'C++';
-        if (normalized === 'cs') return 'C#';
-        return normalized.charAt(0).toUpperCase() + normalized.slice(1);
-    };
+    // CKEditor dan kelgan code bloklarni Prism.js bilan ranglash
+    document.addEventListener('DOMContentLoaded', function () {
+        const toPrettyLanguage = (lang) => {
+            if (!lang) {
+                return 'Python';
+            }
+            const normalized = lang.toLowerCase();
+            if (normalized === 'cpp') return 'C++';
+            if (normalized === 'cs') return 'C#';
+            return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+        };
 
-    // Barcha <pre> taglarni topish
-    const preElements = document.querySelectorAll('pre');
-    
-    preElements.forEach(pre => {
-        const code = pre.querySelector('code');
-        if (!code) {
-            return;
-        }
+        // Barcha <pre> taglarni topish
+        const preElements = document.querySelectorAll('pre');
 
-        const languageClass = [...code.classList, ...pre.classList]
-            .find(cls => cls.startsWith('language-'));
-        const language = languageClass ? languageClass.replace('language-', '') : 'python';
-        
-        if (!languageClass) {
-            pre.classList.add('language-python');
-            code.classList.add('language-python');
-        }
+        preElements.forEach(pre => {
+            const code = pre.querySelector('code');
+            if (!code) {
+                return;
+            }
 
-        // Header yaratish (til nomi chap, copy o'ng)
-        const header = document.createElement('div');
-        header.className = 'code-header';
-        
-        const langLabel = document.createElement('span');
-        langLabel.className = 'code-lang';
-        langLabel.textContent = toPrettyLanguage(language);
-        
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-btn';
-        copyBtn.type = 'button';
-        copyBtn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
-        
-        copyBtn.addEventListener('click', function() {
-            navigator.clipboard.writeText(code.innerText).then(() => {
-                copyBtn.classList.add('copied');
-                copyBtn.innerHTML = '<i class="bi bi-check2"></i> Copied!';
-                setTimeout(() => {
-                    copyBtn.classList.remove('copied');
-                    copyBtn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
-                }, 2000);
+            const languageClass = [...code.classList, ...pre.classList]
+                .find(cls => cls.startsWith('language-'));
+            const language = languageClass ? languageClass.replace('language-', '') : 'python';
+
+            if (!languageClass) {
+                pre.classList.add('language-python');
+                code.classList.add('language-python');
+            }
+
+            // Header yaratish (til nomi chap, copy o'ng)
+            const header = document.createElement('div');
+            header.className = 'code-header';
+
+            const langLabel = document.createElement('span');
+            langLabel.className = 'code-lang';
+            langLabel.textContent = toPrettyLanguage(language);
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.type = 'button';
+            copyBtn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
+
+            copyBtn.addEventListener('click', function () {
+                navigator.clipboard.writeText(code.innerText).then(() => {
+                    copyBtn.classList.add('copied');
+                    copyBtn.innerHTML = '<i class="bi bi-check2"></i> Copied!';
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copyBtn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
+                    }, 2000);
+                });
             });
+
+            header.appendChild(langLabel);
+            header.appendChild(copyBtn);
+            pre.insertBefore(header, pre.firstChild);
         });
-        
-        header.appendChild(langLabel);
-        header.appendChild(copyBtn);
-        pre.insertBefore(header, pre.firstChild);
+
+        // Prism.js ni qayta run qilish
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
     });
-    
-    // Prism.js ni qayta run qilish
-    if (typeof Prism !== 'undefined') {
-        Prism.highlightAll();
-    }
-});
 </script>
 {% endblock %}

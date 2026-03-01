@@ -60,14 +60,16 @@ def categories(request):
 
 def search(request):
     query = (request.GET.get('q') or '').strip()
-    results = Blog.objects.none()
 
     if query:
+        import operator
+        from functools import reduce
         query_list = query.split()
-        for word in query_list:
-            results = results | Blog.objects.filter(
-                Q(title__icontains=word) | Q(content__icontains=word)
-            ).order_by('-time')
+        q_objects = [Q(title__icontains=word) | Q(content__icontains=word) for word in query_list]
+        combined_q = reduce(operator.and_, q_objects)
+        results = Blog.objects.filter(combined_q).distinct().order_by('-time')
+    else:
+        results = Blog.objects.none()
 
     paginator = Paginator(results, 3)
     page = request.GET.get('page')
