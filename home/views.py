@@ -10,9 +10,7 @@ import re
 
 
 def index(request):
-    blogs = list(Blog.objects.all())
-    sample_size = min(3, len(blogs))
-    random_blogs = random.sample(blogs, sample_size) if sample_size > 0 else []
+    random_blogs = Blog.objects.order_by('-time')[:3]
     context = {'random_blogs': random_blogs}
     return render(request, 'index.html', context)
 
