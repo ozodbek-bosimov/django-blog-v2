@@ -1,4 +1,3 @@
-{% load tailwind_tags %}
 {% load static %}
 
 <!DOCTYPE html>
@@ -11,19 +10,116 @@
   <link rel="icon" href="{% static 'favicon/favicon.ico' %}?v=20260219" sizes="any">
   <link rel="shortcut icon" href="{% static 'favicon/favicon.ico' %}?v=20260219" type="image/x-icon">
   <link rel="icon" href="{% static 'favicon/favicon.svg' %}?v=20260219" type="image/svg+xml">
-  <!-- ESKI TAILWIND O'RNIGA YANGISI (JIT SUPPORT UCHUN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-    xintegrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" type="text/css"
-    href="https://cdn.jsdelivr.net/gh/ozodbek-bosimov/host@latest/static/index.css">
   <!-- Prism.js for syntax highlighting -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-  <!-- CKEditor styling for rich text content -->
   <style>
+    @font-face {
+      font-family: 'Poppins';
+      src: url('{% static "fonts/Poppins-Light.ttf" %}') format('truetype');
+      font-weight: 300;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Poppins';
+      src: url('{% static "fonts/Poppins-Regular.ttf" %}') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Poppins';
+      src: url('{% static "fonts/Poppins-Medium.ttf" %}') format('truetype');
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Poppins';
+      src: url('{% static "fonts/Poppins-SemiBold.ttf" %}') format('truetype');
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Poppins';
+      src: url('{% static "fonts/Poppins-Bold.ttf" %}') format('truetype');
+      font-weight: 700;
+      font-display: swap;
+    }
+
+    body {
+      font-family: Poppins, sans-serif;
+      transition: 0.3s ease-in-out;
+    }
+
+    .wave {
+      animation-name: wave-animation;
+      animation-duration: 2.5s;
+      animation-iteration-count: infinite;
+      transform-origin: 70% 70%;
+      display: inline-block;
+    }
+
+    @keyframes wave-animation {
+      0% { transform: rotate(0.0deg) }
+      10% { transform: rotate(14.0deg) }
+      20% { transform: rotate(-8.0deg) }
+      30% { transform: rotate(14.0deg) }
+      40% { transform: rotate(-4.0deg) }
+      50% { transform: rotate(10.0deg) }
+      60% { transform: rotate(0.0deg) }
+      100% { transform: rotate(0.0deg) }
+    }
+
+    .updn {
+      animation-name: up-down;
+      animation-duration: 5s;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes up-down {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+
+    .searchModal {
+      display: none;
+    }
+
+    .animate-reveal {
+      animation: reveal 0.3s ease-out;
+    }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(100%); }
+      to { opacity: 1; transform: translateY(0%); }
+    }
+
+    @keyframes shake {
+      from, to { transform: translate3d(0, 0, 0); }
+      10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
+      20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); }
+    }
+
+    .shake {
+      animation: shake 0.5s;
+    }
+
+    /* CKEditor styling for rich text content */
     .ck-content {
       font-family: inherit;
       font-size: 1rem;
@@ -131,13 +227,12 @@
     }
   </style>
   <title>{% block title %}{% endblock title %} - Ozodbek Bosimov</title>
-  {% tailwind_css %}
 </head>
 
 <body class="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
   <nav
     class="nav sticky top-0 z-40 backdrop-blur-lg bg-gray-900/80 border-b border-gray-800 text-white flex justify-between items-center py-4 px-8 md:px-20">
-    <a href="/"
+    <a href="{% url 'home' %}"
       class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent hover:from-blue-300 hover:to-purple-400 transition-all">Ozodbek
       Bosimov</a>
     <div class='flex space-x-4 text-xl'>
@@ -145,12 +240,13 @@
       <i class="nav-btn bi bi-list cursor-pointer md:hidden"></i>
     </div>
     <div class="hidden items-center gap-2 md:flex">
-      <a href="/" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Home</a>
-      <a href="/about"
+      <a href="{% url 'home' %}"
+        class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Home</a>
+      <a href="{% url 'about' %}"
         class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">About</a>
-      <a href="/blog"
+      <a href="{% url 'blog' %}"
         class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Blog</a>
-      <a href="/projects"
+      <a href="{% url 'projects' %}"
         class="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">Projects</a>
       <button
         class="searchBtn1 p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer">
@@ -163,12 +259,13 @@
   <div
     class="mob-nav fixed top-16 right-4 w-40 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-lg z-50 transform translate-x-full opacity-0 transition-all duration-200 ease-in-out md:hidden">
     <div class="flex flex-col py-3">
-      <a href="/" class="py-2 px-4 text-gray-300 hover:text-white hover:bg-white/10 text-center transition-all">Home</a>
-      <a href="/about"
+      <a href="{% url 'home' %}"
+        class="py-2 px-4 text-gray-300 hover:text-white hover:bg-white/10 text-center transition-all">Home</a>
+      <a href="{% url 'about' %}"
         class="py-2 px-4 text-gray-300 hover:text-white hover:bg-white/10 text-center transition-all">About</a>
-      <a href="/blog"
+      <a href="{% url 'blog' %}"
         class="py-2 px-4 text-gray-300 hover:text-white hover:bg-white/10 text-center transition-all">Blog</a>
-      <a href="/projects"
+      <a href="{% url 'projects' %}"
         class="py-2 px-4 text-gray-300 hover:text-white hover:bg-white/10 text-center transition-all">Projects</a>
     </div>
   </div>
@@ -209,14 +306,13 @@
     </div>
   </footer>
 
-  <div
-    class="searchModal text-white z-50 fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+  <div class="searchModal text-white z-50 fixed inset-0 px-4 pb-4" style="display:none">
     <div class="fixed inset-0 transition-opacity">
       <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
     </div>
     <div class='modal animate-reveal flex items-center justify-center h-screen'>
       <div class="bg-gray-900 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-sm sm:w-full">
-        <form class="px-10 py-10" method="get" action="/search/">
+        <form class="px-10 py-10" method="get" action="{% url 'search' %}">
           <div class="text-xl text-center font-extrabold mb-4">Search</div>
 
           <!-- Search Input -->
@@ -236,7 +332,7 @@
         <div class='mx-3'>
           <div class="mt-6 p-4 flex flex-wrap gap-2 justify-start">
             {% for tag in used_tags %}
-            <a href="/category/{{ tag }}"
+            <a href="{% url 'category' tag %}"
               class="no-underline px-3 py-1 rounded-md bg-gray-800 hover:bg-blue-600 border border-gray-700 text-sm">
               {{ tag }}
             </a>
@@ -249,238 +345,118 @@
     </div>
   </div>
 
-</body>
+  <script>
+    // Mobile Menu Elements
+    const toggleButton = document.querySelector('.nav-btn');
+    const navbarContent = document.querySelector('.mob-nav');
 
-<style>
-  body {
-    font-family: Poppins;
-    transition: 0.3s ease-in-out;
-  }
-
-  .wave {
-    animation-name: wave-animation;
-    animation-duration: 2.5s;
-    animation-iteration-count: infinite;
-    transform-origin: 70% 70%;
-    display: inline-block;
-  }
-
-  @keyframes wave-animation {
-    0% {
-      transform: rotate(0.0deg)
-    }
-
-    10% {
-      transform: rotate(14.0deg)
-    }
-
-    20% {
-      transform: rotate(-8.0deg)
-    }
-
-    30% {
-      transform: rotate(14.0deg)
-    }
-
-    40% {
-      transform: rotate(-4.0deg)
-    }
-
-    50% {
-      transform: rotate(10.0deg)
-    }
-
-    60% {
-      transform: rotate(0.0deg)
-    }
-
-    100% {
-      transform: rotate(0.0deg)
-    }
-  }
-
-  .updn {
-    animation-name: up-down;
-    animation-duration: 5s;
-    animation-iteration-count: infinite;
-  }
-
-  @keyframes up-down {
-    0% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-10px);
-    }
-
-    100% {
-      transform: translateY(0);
-    }
-  }
-
-  .searchModal {
-    display: none;
-  }
-
-  .animate-reveal {
-    animation: reveal 0.3s ease-out;
-  }
-
-  @keyframes reveal {
-    from {
-      opacity: 0;
-      transform: translateY(100%);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0%);
-    }
-  }
-
-  @keyframes shake {
-
-    from,
-    to {
-      transform: translate3d(0, 0, 0);
-    }
-
-    10%,
-    30%,
-    50%,
-    70%,
-    90% {
-      transform: translate3d(-10px, 0, 0);
-    }
-
-    20%,
-    40%,
-    60%,
-    80% {
-      transform: translate3d(10px, 0, 0);
-    }
-  }
-
-  .shake {
-    animation: shake 0.5s;
-  }
-</style>
-
-<script>
-  // Mobile Menu Elements
-  const toggleButton = document.querySelector('.nav-btn');
-  const navbarContent = document.querySelector('.mob-nav');
-
-  // Toggle Mobile Menu
-  function toggleMobileMenu() {
-    if (navbarContent.classList.contains('translate-x-full')) {
-      navbarContent.classList.remove('translate-x-full', 'opacity-0');
-    } else {
-      navbarContent.classList.add('translate-x-full', 'opacity-0');
-    }
-  }
-
-  // Event Listeners
-  toggleButton.addEventListener('click', toggleMobileMenu);
-
-  // Close menu when clicking on navigation links
-  const mobileNavLinks = document.querySelectorAll('.mob-nav a');
-  mobileNavLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      navbarContent.classList.add('translate-x-full', 'opacity-0');
-    });
-  });
-
-  // Close menu when clicking outside
-  document.addEventListener('click', (event) => {
-    if (!navbarContent.contains(event.target) && !toggleButton.contains(event.target)) {
-      navbarContent.classList.add('translate-x-full', 'opacity-0');
-    }
-  });
-
-  // Close menu when scrolling
-  window.addEventListener('scroll', () => {
-    navbarContent.classList.add('translate-x-full', 'opacity-0');
-  });
-
-  // Store DOM elements in variables
-  const searchBtns = document.querySelectorAll(".searchBtn, .searchBtn1");
-  const searchModal = document.querySelector(".searchModal");
-  const searchCloseBtn = document.querySelector(".searchCloseBtn");
-  const searchSubmitBtn = document.querySelector(".searchSubmitBtn");
-  const searchInput = document.querySelector(".searchInput");
-
-  // Show Search Modal function
-  function showSearchModal() {
-    searchModal.style.display = "block";
-    // Optional focus after small delay for animation
-    setTimeout(() => { searchInput.focus(); }, 50);
-  }
-
-  // Hide Search Modal function
-  function hideSearchModal() {
-    searchModal.style.display = "none";
-  }
-
-  // Submit Search Form function
-  function submitSearchForm(event) {
-    const searchQuery = searchInput.value.trim();
-    if (!searchQuery) {
-      event.preventDefault();
-      searchInput.classList.add('shake');
-      setTimeout(function () {
-        searchInput.classList.remove('shake');
-      }, 500);
-      return;
-    }
-  }
-
-  // Add event listeners
-  searchBtns.forEach(btn => {
-    btn.addEventListener("click", showSearchModal);
-  });
-
-  if (searchCloseBtn) {
-    searchCloseBtn.addEventListener("click", hideSearchModal);
-  }
-
-  if (searchSubmitBtn) {
-    searchSubmitBtn.addEventListener("click", submitSearchForm);
-  }
-
-  // Close when clicking outside of modal content
-  window.addEventListener("click", (event) => {
-    // We check if the target is the modal container itself (the dark overlay area)
-    // The searchModal has fixed inset-0 which covers the whole screen
-    if (event.target === searchModal) {
-      hideSearchModal();
-    } else {
-      // Also check if they clicked the overlay div specifically
-      const overlayDiv = searchModal.querySelector('.absolute.inset-0.bg-gray-800.opacity-75');
-      const modalContainer = searchModal.querySelector('.fixed.inset-0.transition-opacity');
-      if (event.target === overlayDiv || event.target === modalContainer) {
-        hideSearchModal();
+    // Toggle Mobile Menu
+    function toggleMobileMenu() {
+      if (navbarContent.classList.contains('translate-x-full')) {
+        navbarContent.classList.remove('translate-x-full', 'opacity-0');
+      } else {
+        navbarContent.classList.add('translate-x-full', 'opacity-0');
       }
     }
-  });
 
-  // Close when pressing Escape key
-  window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && searchModal.style.display === "block") {
-      hideSearchModal();
+    // Event Listeners
+    toggleButton.addEventListener('click', toggleMobileMenu);
+
+    // Close menu when clicking on navigation links
+    const mobileNavLinks = document.querySelectorAll('.mob-nav a');
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navbarContent.classList.add('translate-x-full', 'opacity-0');
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (event) => {
+      if (!navbarContent.contains(event.target) && !toggleButton.contains(event.target)) {
+        navbarContent.classList.add('translate-x-full', 'opacity-0');
+      }
+    });
+
+    // Close menu when scrolling
+    window.addEventListener('scroll', () => {
+      navbarContent.classList.add('translate-x-full', 'opacity-0');
+    });
+
+    // Store DOM elements in variables
+    const searchBtns = document.querySelectorAll(".searchBtn, .searchBtn1");
+    const searchModal = document.querySelector(".searchModal");
+    const searchCloseBtn = document.querySelector(".searchCloseBtn");
+    const searchInput = document.querySelector(".searchInput");
+
+    // Show Search Modal function
+    function showSearchModal() {
+      searchModal.style.display = "block";
+      setTimeout(() => { searchInput.focus(); }, 50);
     }
-  });
-</script>
 
-<!-- Prism.js for syntax highlighting -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+    // Hide Search Modal function
+    function hideSearchModal() {
+      searchModal.style.display = "none";
+    }
+
+    // Submit Search Form function
+    function submitSearchForm(event) {
+      const searchQuery = searchInput.value.trim();
+      if (!searchQuery) {
+        event.preventDefault();
+        searchInput.classList.add('shake');
+        setTimeout(function () {
+          searchInput.classList.remove('shake');
+        }, 500);
+        return;
+      }
+    }
+
+    // Add event listeners
+    searchBtns.forEach(btn => {
+      btn.addEventListener("click", showSearchModal);
+    });
+
+    if (searchCloseBtn) {
+      searchCloseBtn.addEventListener("click", hideSearchModal);
+    }
+
+    const searchForm = searchModal.querySelector('form');
+    if (searchForm) {
+      searchForm.addEventListener("submit", submitSearchForm);
+    }
+
+    // Close when clicking outside of modal content
+    window.addEventListener("click", (event) => {
+      if (event.target === searchModal) {
+        hideSearchModal();
+      } else {
+        const overlayDiv = searchModal.querySelector('.absolute.inset-0.bg-gray-800.opacity-75');
+        const modalContainer = searchModal.querySelector('.fixed.inset-0.transition-opacity');
+        if (event.target === overlayDiv || event.target === modalContainer) {
+          hideSearchModal();
+        }
+      }
+    });
+
+    // Close when pressing Escape key
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && searchModal.style.display === "block") {
+        hideSearchModal();
+      }
+    });
+  </script>
+
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+
+</body>
 
 </html>

@@ -1,12 +1,15 @@
-from django.conf import settings
+import operator
+from functools import reduce
+
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
 
 from home.models import Blog, AboutMe, Skill, Project
 
-import random
-import re
+
+def custom_404(request, exception=None):
+    return render(request, '404.html', status=404)
 
 
 def index(request):
@@ -62,8 +65,6 @@ def search(request):
     query = (request.GET.get('q') or '').strip()
 
     if query:
-        import operator
-        from functools import reduce
         query_list = query.split()
         q_objects = [Q(title__icontains=word) | Q(content__icontains=word) for word in query_list]
         combined_q = reduce(operator.and_, q_objects)
@@ -80,13 +81,10 @@ def search(request):
     else:
         message = ""
 
-    # collect distinct used categories to show as tags in search UI
-    used_tags = Blog.objects.values_list('category', flat=True).distinct().order_by('category')
-
     return render(
         request,
         'search.html',
-        {'results': results_page, 'query': query, 'message': message, 'used_tags': used_tags},
+        {'results': results_page, 'query': query, 'message': message},
     )
 
 
@@ -98,8 +96,3 @@ def blogpost(request, slug):
     except Blog.DoesNotExist:
         context = {'message': 'Blog post not found'}
         return render(request, '404.html', context, status=404)
-
-# def blogpost (request, slug):
-#     blog = Blog.objects.filter(slug=slug).first()
-#     context = {'blog': blog}
-#     return render(request, 'blogpost.html', context)

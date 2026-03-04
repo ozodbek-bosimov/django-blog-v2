@@ -7,7 +7,7 @@
 <div class='bg-gray-800 text-white p-3 md:px-10 lg:px-20 xl:px-40 2xl:px-72'>
     <div class='m-6'>
         {% if about_me %}
-            <p style="font-family: Poppins-Bold" class='text-4xl font-extrabold py-5 text-center md:text-start'>About Me</p>
+            <p  class='text-4xl font-extrabold py-5 text-center md:text-start'>About Me</p>
             
             <!-- Profile Section with Image and Info Side by Side -->
             <div class='flex flex-col md:flex-row gap-6 md:gap-8 my-6'>
@@ -20,7 +20,7 @@
                 <div class='flex-1'>
                     <!-- Personal Info -->
                     <div class='mb-4'>
-                        <h2 style="font-family: Poppins-Bold" class='text-2xl md:text-3xl font-bold text-cyan-200'>{{ about_me.name }}</h2>
+                        <h2  class='text-2xl md:text-3xl font-bold text-cyan-200'>{{ about_me.name }}</h2>
                         <p class='text-lg md:text-xl text-gray-300 mb-3'>{{ about_me.profession }}</p>
                         {% if about_me.email %}
                             <p class='text-md text-gray-400 mb-1'>
@@ -86,7 +86,7 @@
         
         <!-- Skills Section -->
         <div class='my-10'>
-            <p style="font-family: Poppins-Bold" class='text-4xl font-extrabold py-5 text-center md:text-start'>Skills</p>
+            <p  class='text-4xl font-extrabold py-5 text-center md:text-start'>Skills</p>
             {% if skills %}
                 <div class='grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10'>
                     {% for skill in skills %}

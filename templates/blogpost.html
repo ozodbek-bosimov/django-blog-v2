@@ -2,16 +2,26 @@
 
 {% block title %}{{blog.title}}{% endblock title %}
 
+{% block meta %}
+<meta name="description" content="{{ blog.meta|truncatewords:25 }}">
+<meta property="og:title" content="{{ blog.title }}">
+<meta property="og:description" content="{{ blog.meta|truncatewords:25 }}">
+<meta property="og:type" content="article">
+{% if blog.effective_thumbnail %}
+<meta property="og:image" content="{{ blog.effective_thumbnail }}">
+{% endif %}
+{% endblock meta %}
+
 {% block content %}
 <div class='bg-gray-800 text-white p-6 md:p-8 pt-12 flex flex-col max-w-5xl mx-auto w-full'>
     <span class='text-center text-3xl md:text-5xl font-bold text-cyan-200 hover:text-cyan-300 transition duration-300'>
-        <a href='/blogpost/{{blog.slug}}'>{{blog.title}}</a>
+        <a href='{% url "blogpost" blog.slug %}'>{{blog.title}}</a>
     </span>
-    <span class='text-center mt-3 text-gray-400'>by <a href='/about'><i class="bi bi-person"></i> <span
+    <span class='text-center mt-3 text-gray-400'>by <a href='{% url "about" %}'><i class="bi bi-person"></i> <span
                 class='group'><span
                     class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>Ozodbek</span></span></a>
         <i class="bi bi-dot mx-1"></i> <span><i class="bi bi-calendar4-event"></i> {{blog.time}}</span> <i
-            class="bi bi-dot mx-1"></i> <i class="bi bi-tag"></i> <a href='/category/{{blog.category}}'><span
+            class="bi bi-dot mx-1"></i> <i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'><span
                 class='group'><span
                     class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>{{blog.category}}</span></span></a></span>
 

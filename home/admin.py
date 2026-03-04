@@ -1,3 +1,5 @@
+import re
+
 from django.contrib import admin
 from django import forms
 from home.models import Blog, AboutMe, Skill, Project
@@ -16,8 +18,6 @@ class BlogAdminForm(forms.ModelForm):
         """Convert YouTube watch URLs to embed URLs and ensure proper iframe format"""
         content = self.cleaned_data.get('content', '')
         if content:
-            import re
-
             def time_to_seconds(time_str):
                 if not time_str:
                     return None
