@@ -5,59 +5,63 @@
 
 {% block content %}
 <div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
-  <p  class='text-4xl font-extrabold py-5 text-center md:text-start'>Projects Completed</p>
-  
+  <p class='text-4xl font-extrabold py-5 text-center md:text-start'>Projects Completed</p>
+
   {% if projects %}
-    {% for project in projects %}
-      <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);" class='flex flex-col md:flex-row gap-6 md:gap-8 bg-gray-900 p-6 mb-6 rounded-lg overflow-hidden'>
-          <!-- Thumbnail -->
-          <div class='shrink-0'>
-            <img class="rounded-lg object-cover" width='320px' height='200px' src="{{ project.thumbnail_url }}" alt="{{ project.title }}">
-          </div>
-          
-          <!-- Content -->
-          <div class='flex-1 overflow-hidden'>
-            <p  class="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-blue-600 mb-3">{{ project.title }}</p>
-            
-            <!-- Description -->
-            <p class='text-gray-300 leading-relaxed mb-4 break-words'>{{ project.description }}</p>
-            
-            <!-- Technologies -->
-            {% if project.technologies %}
-              <div class='mb-4'>
-                <span class='text-sm font-bold text-gray-400 block mb-2'>Technologies used</span>
-                <div class='flex flex-wrap gap-2'>
-                  {% for tech in project.get_technologies_list %}
-                    <span class='text-xs bg-gradient-to-r from-cyan-500 to-blue-500 py-1 px-3 rounded-full'>{{ tech }}</span>
-                  {% endfor %}
-                </div>
-              </div>
-            {% endif %}
-            
-            <!-- Links -->
-            {% if project.github_link or project.demo_link %}
-              <div class='flex flex-wrap gap-3 mt-4'>
-                {% if project.github_link %}
-                  <a href='{{ project.github_link }}' target='_blank'>
-                    <button class='bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-slate-700 border border-gray-700 hover:border-gray-600 transition delay-75 ease-in-out'>
-                      <i class="bi bi-github"></i> Github
-                    </button>
-                  </a>
-                {% endif %}
-                {% if project.demo_link %}
-                  <a href='{{ project.demo_link }}' target='_blank'>
-                    <button class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-blue-700 transition delay-75 ease-in-out'>
-                      Demo <i class="bi bi-box-arrow-up-right"></i>
-                    </button>
-                  </a>
-                {% endif %}
-              </div>
-            {% endif %}
-          </div>
+  {% for project in projects %}
+  <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);"
+    class='flex flex-col md:flex-row gap-6 md:gap-8 bg-gray-900 p-6 mb-6 rounded-lg overflow-hidden'>
+    <!-- Thumbnail -->
+    <div class='shrink-0'>
+      <img class="rounded-lg object-cover" width='320px' height='200px' src="{{ project.thumbnail_url }}"
+        alt="{{ project.title }}">
+    </div>
+
+    <!-- Content -->
+    <div class='flex-1 overflow-hidden'>
+      <p class="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500 mb-3">{{
+        project.title }}</p>
+
+      <!-- Description -->
+      <p class='text-gray-300 leading-relaxed mb-4 break-words'>{{ project.description }}</p>
+
+      <!-- Technologies -->
+      {% if project.technologies %}
+      <div class='mb-4'>
+        <span class='text-sm font-bold text-gray-400 block mb-2'>Technologies used</span>
+        <div class='flex flex-wrap gap-2'>
+          {% for tech in project.get_technologies_list %}
+          <span class='text-xs bg-gradient-to-r from-cyan-500 to-blue-500 py-1 px-3 rounded-full'>{{ tech }}</span>
+          {% endfor %}
+        </div>
       </div>
-    {% endfor %}
+      {% endif %}
+
+      <!-- Links -->
+      {% if project.github_link or project.demo_link %}
+      <div class='flex flex-wrap gap-3 mt-4'>
+        {% if project.github_link %}
+        <a href='{{ project.github_link }}' target='_blank'>
+          <button
+            class='bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition delay-75 ease-in-out'>
+            <i class="bi bi-github"></i> Github
+          </button>
+        </a>
+        {% endif %}
+        {% if project.demo_link %}
+        <a href='{{ project.demo_link }}' target='_blank'>
+          <button class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-blue-700 transition delay-75 ease-in-out'>
+            Demo <i class="bi bi-box-arrow-up-right"></i>
+          </button>
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
   {% else %}
-    <p class='text-center text-gray-400 py-10'>No projects available yet.</p>
+  <p class='text-center text-gray-400 py-10'>No projects available yet.</p>
   {% endif %}
 </div>
 {% endblock %}
