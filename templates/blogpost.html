@@ -10,6 +10,8 @@
 <meta property="og:type" content="article">
 {% if blog.effective_thumbnail %}
 <meta property="og:image" content="{{ blog.effective_thumbnail }}">
+{% else %}
+<meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
 {% endif %}
 {% endblock meta %}
 
