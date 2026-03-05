@@ -355,11 +355,9 @@
     </div>
   </footer>
 
-  <div class="searchModal text-white z-50 fixed inset-0 px-4 pb-4" style="display:none">
-    <div class="fixed inset-0 transition-opacity">
-      <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
-    </div>
-    <div class='modal animate-reveal flex items-center justify-center h-screen'>
+  <div class="searchModal text-white z-50 fixed inset-0" style="display:none">
+    <div class="absolute inset-0 bg-gray-900/80"></div>
+    <div class='modal relative z-10 animate-reveal flex items-center justify-center h-full'>
       <div class="bg-gray-900 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-sm sm:w-full">
         <form class="px-10 py-10" method="get" action="{% url 'search' %}">
           <div class="text-xl text-center font-extrabold mb-4">Search</div>
