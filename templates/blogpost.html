@@ -15,7 +15,7 @@
 
 {% block content %}
 <div class='bg-gray-800 text-white p-6 md:p-8 pt-12 flex flex-col max-w-5xl mx-auto w-full'>
-    <span class='text-center text-3xl md:text-5xl font-bold text-cyan-200 hover:text-cyan-300 transition duration-300'>
+    <span class='text-center text-2xl md:text-4xl font-bold text-cyan-200 hover:text-cyan-300 transition duration-300'>
         <a href='{% url "blogpost" blog.slug %}'>{{blog.title}}</a>
     </span>
     <span class='text-center mt-3 text-gray-400'>by <a href='{% url "about" %}'><i class="bi bi-person"></i> <span
@@ -89,41 +89,28 @@
         height: auto;
     }
 
-    /* Rasmlar tegida chiqadigan yozuvni (caption) chiroyli ulash */
     .blog-content figure.image {
-        display: table;
-        /* Table qilinganda rasm markazga keladi */
-        background: rgba(15, 23, 42, 0.4);
-        border-radius: 8px;
-        /* 4 taraf egovlandi */
+        display: flex;
+        flex-direction: column;
+        width: fit-content;
         margin: 1.5rem auto;
-        overflow: hidden;
-        /* maska qism uchun */
         max-width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
     }
 
     .blog-content figure.image img {
-        margin: 0 auto;
-        border-radius: 8px;
-        /* Pastkini ham egovlaymiz */
+        margin: 0;
         display: block;
+        border-radius: 0 !important;
     }
 
     .blog-content figure.image figcaption {
-        padding: 0.75rem 1rem;
+        padding: 0.3rem 0.75rem;
         text-align: center;
-        font-size: 0.9em;
-        color: #94a3b8;
-        background: rgba(15, 23, 42, 0.6);
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        display: block;
-        /* Matn elementini majburiy block qilish */
-        word-wrap: break-word;
-        white-space: normal;
-        /* Vertikal xato oldini olish */
-        max-width: 100%;
-        /* O'zidan oshmasin */
-        box-sizing: border-box;
+        font-size: 0.85em;
+        color: #e2e8f0;
+        background: rgba(10, 18, 35, 0.85);
     }
 
     /* YouTube iframe uchun */

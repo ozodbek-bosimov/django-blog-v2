@@ -9,6 +9,11 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 # Register your models here.
 class BlogAdminForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditor5Widget(config_name='default'))
+    meta = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3, 'style': 'width:100%; resize:vertical;'}),
+        max_length=300,
+        help_text='Max 300 characters. This text appears in search results and social media previews.',
+    )
 
     class Meta:
         model = Blog

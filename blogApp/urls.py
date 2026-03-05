@@ -26,7 +26,4 @@ urlpatterns = [
     ), name='robots'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG:
-    urlpatterns.append(path("__reload__/", include("django_browser_reload.urls")))
-
 handler404 = 'home.views.custom_404'

@@ -3,7 +3,5 @@ gunicorn>=21.0
 Pillow>=10.0
 whitenoise>=6.0
 python-dotenv>=1.0.1
-django-tailwind>=3.8
-django-browser-reload>=1.12
 django-ckeditor-5>=0.2
 
