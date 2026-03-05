@@ -40,7 +40,7 @@
                     </div>
                     <button
                         class='relative bg-gray-800 px-7 py-2 text-white rounded-md group-hover:text-gray-50 transition duration-200'><i
-                            class="bi bi-download font-extrabold"></i> Download CV</button>
+                            class="bi bi-download font-bold"></i> Download CV</button>
                 </div>
             </a>
             <a href='{% url "about" %}'>
@@ -74,7 +74,7 @@
             </a>
             <a class='text-blue-100 hover:text-blue-300 transition duration-300'
                 href='{% url "blogpost" blog.slug %}'><span
-                    class='text-xl font-extrabold'>{{blog.title|slice:80}}</span></a><br>
+                    class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
             <p class='my-3 break-words'>{{blog.meta|slice:180|safe}}</p>
             <p class='mt-2 mb-4 text-gray-400'>by <i class="bi bi-person"></i> <a href='{% url "about" %}'
                     class='group transition-all duration-500 ease-out'><span
@@ -86,7 +86,7 @@
             </p>
             <a href='{% url "blogpost" blog.slug %}'><button
                     class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Read
-                    more <i class="bi bi-arrow-right font-extrabold"></i></button></a>
+                    more <i class="bi bi-arrow-right font-bold"></i></button></a>
         </div>
         <br>
         {% endfor %}
@@ -94,7 +94,7 @@
     <div class='flex justify-center'>
         <a href='{% url "blog" %}' class=''><button
                 class='bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-blue-600 outline hover:outline-none outline-blue-600 transition delay-75 ease-in-out my-3'>Load
-                more <i class="bi bi-arrow-clockwise font-extrabold"></i></button></a>
+                more <i class="bi bi-arrow-clockwise font-bold"></i></button></a>
     </div>
 </div>
 

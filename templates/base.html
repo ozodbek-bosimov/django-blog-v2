@@ -358,17 +358,18 @@
   <div class="searchModal text-white z-50 fixed inset-0" style="display:none">
     <div class="absolute inset-0 bg-gray-900/80"></div>
     <div class='modal relative z-10 animate-reveal flex items-center justify-center h-full'>
-      <div class="relative bg-gray-900 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-sm sm:w-full">
+      <div
+        class="relative bg-gray-900 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-sm sm:w-full">
         <form class="px-10 py-10" method="get" action="{% url 'search' %}">
-          <div class="text-xl text-center font-extrabold mb-4">Search</div>
+          <div class="text-xl text-center font-bold mb-4">Search</div>
 
           <!-- Search Input -->
           <div class="mb-4 flex space-x-2">
             <input name="q" type="text"
-              class="searchInput w-full bg-gray-800 border border-slate-700 rounded-lg py-2 px-4 outline outline-transparent"
+              class="searchInput w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 outline outline-transparent"
               placeholder="Enter your search query...">
             <button type="submit"
-              class="searchSubmitBtn bg-slate-700 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"><i
+              class="searchSubmitBtn bg-gray-700 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"><i
                 class="bi bi-search"></i></button>
           </div>
         </form>

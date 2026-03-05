@@ -18,7 +18,7 @@
     {% endif %}
     <div class="min-w-0">
       <a class='text-blue-100 hover:text-blue-300 transition duration-300' href='{% url "blogpost" blog.slug %}'><span
-          class='text-xl font-extrabold'>{{blog.title|slice:80}}</span></a><br>
+          class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
       <p class='my-3 break-words'>{{blog.meta|slice:180|safe}}</p>
       <p class='mt-2 mb-4 text-gray-400'>by <i class="bi bi-person"></i> <a href='{% url "about" %}'
           class='group transition-all duration-500 ease-out'><span
@@ -30,7 +30,7 @@
       </p>
       <a href='{% url "blogpost" blog.slug %}'><button
           class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Read
-          more <i class="bi bi-arrow-right font-extrabold"></i></button></a>
+          more <i class="bi bi-arrow-right font-bold"></i></button></a>
     </div>
   </div>
   {% endfor %}
@@ -39,7 +39,7 @@
       {% if blogs.has_previous %}
       <div class='float-left'>
         <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'
-          href="?page={{ blogs.previous_page_number }}"><i class="bi bi-arrow-left font-extrabold"></i> Previous</a>
+          href="?page={{ blogs.previous_page_number }}"><i class="bi bi-arrow-left font-bold"></i> Previous</a>
       </div>
       {% endif %}
 
@@ -50,7 +50,7 @@
       {% if blogs.has_next %}
       <div class='float-right'>
         <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'
-          href="?page={{ blogs.next_page_number }}">Next <i class="bi bi-arrow-right font-extrabold"></i></a>
+          href="?page={{ blogs.next_page_number }}">Next <i class="bi bi-arrow-right font-bold"></i></a>
       </div>
       {% endif %}
     </span>
