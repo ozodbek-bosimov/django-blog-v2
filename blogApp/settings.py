@@ -56,8 +56,6 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'tailwind',
-    'theme',
     'django_ckeditor_5',
     'home.apps.HomeConfig',
     'django.contrib.sitemaps',
@@ -69,17 +67,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-if DEBUG:
-    INSTALLED_APPS.append('django_browser_reload')
-
-TAILWIND_APP_NAME = 'theme'
-
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-
-# Let django-tailwind find npm from PATH (cross-platform friendly).
-NPM_BIN_PATH = "npm"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,9 +82,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-if DEBUG:
-    MIDDLEWARE.insert(0, "django_browser_reload.middleware.BrowserReloadMiddleware")
 
 ROOT_URLCONF = 'blogApp.urls'
 
