@@ -4,7 +4,9 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.db import models
+from django.db.models.signals import post_delete, pre_save
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.dispatch import receiver
 
 # Create your models here.
 class Blog(models.Model):
@@ -99,8 +101,7 @@ class Project(models.Model):
 
 
 # signals for cleaning up image files when a Blog is changed or removed
-from django.db.models.signals import post_delete, pre_save
-from django.dispatch import receiver
+
 
 
 def _extract_media_paths_from_html(html_content):
