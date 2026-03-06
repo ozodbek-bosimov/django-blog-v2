@@ -19,6 +19,16 @@ class BlogAdminForm(forms.ModelForm):
         model = Blog
         fields = "__all__"
     
+    def clean_thumbnail_img(self):
+        img = self.cleaned_data.get('thumbnail_img')
+        if img and hasattr(img, 'size') and img.size > 2 * 1024 * 1024:
+            size_mb = img.size / (1024 * 1024)
+            raise forms.ValidationError(
+                f'Image size is {size_mb:.1f} MB — maximum allowed size is 2 MB. '
+                'Please compress the image or choose a smaller file.'
+            )
+        return img
+
     def clean_content(self):
         """Convert YouTube watch URLs to embed URLs and ensure proper iframe format"""
         content = self.cleaned_data.get('content', '')
@@ -110,6 +120,9 @@ class BlogAdminForm(forms.ModelForm):
 
 class BlogAdmin(admin.ModelAdmin):
     form = BlogAdminForm
+
+    class Media:
+        js = ('js/admin_thumbnail.js',)
     list_display = ['title', 'category', 'created_at_display', 'slug']
     list_filter = ['category']
     search_fields = ['title', 'category', 'slug']
