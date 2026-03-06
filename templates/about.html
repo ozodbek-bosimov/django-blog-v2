@@ -31,12 +31,14 @@
                     <p class='text-lg md:text-xl text-gray-300 mb-3'>{{ about_me.profession }}</p>
                     {% if about_me.email %}
                     <p class='text-md text-gray-400 mb-1'>
-                        <i class="bi bi-envelope"></i> {{ about_me.email }}
+                        <i class="bi bi-envelope"></i> <a href="mailto:{{ about_me.email }}"
+                            class="hover:text-cyan-300 hover:underline transition-colors">{{ about_me.email }}</a>
                     </p>
                     {% endif %}
                     {% if about_me.phone %}
                     <p class='text-md text-gray-400'>
-                        <i class="bi bi-telephone"></i> {{ about_me.phone }}
+                        <i class="bi bi-telephone"></i> <a href="tel:{{ about_me.phone }}"
+                            class="hover:text-cyan-300 hover:underline transition-colors">{{ about_me.phone }}</a>
                     </p>
                     {% endif %}
                 </div>
