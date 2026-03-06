@@ -2,11 +2,13 @@ import re
 from urllib.parse import urlparse
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db import models
 from django.db.models.signals import post_delete, pre_save
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.dispatch import receiver
+from django.utils import timezone
 
 # Create your models here.
 class Blog(models.Model):
@@ -18,7 +20,7 @@ class Blog(models.Model):
     thumbnail_url = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=255, default="uncategorized")
     slug = models.CharField(max_length=100, unique=True)
-    time = models.DateField(auto_now_add=True)
+    time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.title
@@ -27,6 +29,7 @@ class Blog(models.Model):
         if self.category:
             self.category = self.category.strip().lower()
         super().save(*args, **kwargs)
+        cache.delete('used_tags')
 
     @property
     def effective_thumbnail(self):
@@ -164,6 +167,7 @@ def delete_thumbnail_on_delete(sender, instance, **kwargs):
     """Remove file from filesystem when Blog object is deleted."""
     if instance.thumbnail_img:
         instance.thumbnail_img.delete(save=False)
+    cache.delete('used_tags')
 
 
 @receiver(pre_save, sender=Blog)
