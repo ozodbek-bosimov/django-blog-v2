@@ -1,6 +1,6 @@
-Django>=5.0,<6.0
-gunicorn>=21.0
-Pillow>=10.0
-whitenoise>=6.0
-python-dotenv>=1.0.1
-django-ckeditor-5>=0.2
+Django==6.0.2
+gunicorn==25.1.0
+Pillow==12.1.1
+whitenoise==6.11.0
+python-dotenv==1.2.1
+django-ckeditor-5==0.2.19

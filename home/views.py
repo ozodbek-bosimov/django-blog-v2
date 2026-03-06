@@ -1,6 +1,7 @@
 import operator
 from functools import reduce
 
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
@@ -62,6 +63,22 @@ def categories(request):
 
 
 def search(request):
+    # Rate limit: 20 requests per minute per IP
+    ip = (
+        request.META.get('HTTP_X_FORWARDED_FOR', '')
+        or request.META.get('REMOTE_ADDR', '')
+    ).split(',')[0].strip()
+    if ip:
+        rl_key = f"search_rl_{ip}"
+        req_count = cache.get(rl_key, 0)
+        if req_count >= 20:
+            return render(request, 'search.html', {
+                'results': [],
+                'query': '',
+                'message': 'Too many requests. Please wait a moment and try again.',
+            })
+        cache.set(rl_key, req_count + 1, 60)
+
     query = (request.GET.get('q') or '').strip()
 
     if query:

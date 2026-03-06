@@ -23,6 +23,11 @@ class Blog(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        if self.category:
+            self.category = self.category.strip().lower()
+        super().save(*args, **kwargs)
+
     @property
     def effective_thumbnail(self):
         """Return the URL to use for the thumbnail, preferring the uploaded image."""
