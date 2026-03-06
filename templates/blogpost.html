@@ -31,8 +31,10 @@
                     class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>{{ blog.category }}</span></span></a></span>
 
     {% if blog.effective_thumbnail %}
-    <img class='rounded-lg my-6 max-w-3xl mx-auto w-full object-contain' style="max-height: 450px;"
-        src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
+    <div style="margin: 1.5rem auto; max-width: 48rem; width: 100%; display: flex; justify-content: center;">
+        <img style="max-width: 100%; max-height: 450px; width: auto; height: auto; display: block; border-radius: 8px;"
+            src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
+    </div>
     {% endif %}
 
     <div class='blog-content ck-content leading-relaxed mt-2'>{{ blog.content|safe }}</div>
