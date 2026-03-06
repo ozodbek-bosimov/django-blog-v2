@@ -39,16 +39,6 @@
     </a>
   </div>
 
-  <div class="mt-6 p-4 flex flex-wrap gap-2 justify-start">
-    {% for tag in used_tags %}
-    <a href="{% url 'search' %}?q={{ tag }}"
-      class="no-underline px-3 py-1 rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700 text-sm">
-      {{ tag }}
-    </a>
-    {% empty %}
-    <p class="text-gray-400">No tags available</p>
-    {% endfor %}
-  </div>
   {% endif %}
 
   {% for blog in results %}
