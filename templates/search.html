@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ query }}{% endblock title %}
+{% block title %}{% if query %}Search: {{ query }}{% else %}Search{% endif %}{% endblock title %}
 
 {% block content %}
 
 <div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
-  <p class='text-4xl font-extrabold py-5 text-center md:text-start'>Results for {{ query }}</p>
+  <p class='text-4xl font-extrabold py-5 text-center md:text-start'>{% if query %}Results for "{{ query }}"{% else %}Search{% endif %}</p>
   {% if message %}
   <div class='p-5 grid place-items-center mt-10 mb-40 text-center'>
     <p class='my-4 text-5xl font-extrabold md:text-8xl'>404</p>
