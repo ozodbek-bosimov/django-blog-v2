@@ -14,7 +14,7 @@
     <p class='mt-2 mb-4 text-gray-400'>by <i class="bi bi-person"></i> <a href='{% url "about" %}'
         class='group transition-all duration-500 ease-out'><span
           class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>Ozodbek</span></a>
-      <i class="bi bi-dot"></i> <span><i class="bi bi-calendar4-event"></i> {{ blog.time }}</span> <i
+      <i class="bi bi-dot"></i> <span><i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}</span> <i
         class="bi bi-dot"></i><i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'
         class='group transition-all duration-500 ease-out'><span
           class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>{{ blog.category }}</span></a>

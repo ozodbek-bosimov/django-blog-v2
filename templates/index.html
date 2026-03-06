@@ -32,15 +32,16 @@
         </div>
     </div>
     <div class='hero-btn my-3 md:mt-2 font-bold text-sm md:text-[16px] md:leading-6'>
-        <ul class='flex flex-row gap-4 md:space-x-2'>
+        <div class='flex flex-row gap-4 md:space-x-2'>
             <a href='https://cdn.jsdelivr.net/gh/ozodbek-bosimov/host@latest/static/ozodbek-bosimov.pdf' download>
                 <div class='relative group'>
                     <div
                         class='bg-gradient-to-r from-cyan-300 to-blue-600 px-6 py-2 text-white rounded-md -inset-0.5 absolute blur-sm opacity-75 group-hover:-inset-1 transition group-hover:duration-400 group-hover:opacity-90 duration-1000'>
                     </div>
-                    <button
-                        class='relative bg-gray-800 px-7 py-2 text-white rounded-md group-hover:text-gray-50 transition duration-200'><i
-                            class="bi bi-download font-bold"></i> Download CV</button>
+                    <span
+                        class='relative block bg-gray-800 px-7 py-2 text-white rounded-md group-hover:text-gray-50 transition duration-200'>
+                        <i class="bi bi-download font-bold"></i> Download CV
+                    </span>
                 </div>
             </a>
             <a href='{% url "about" %}'>
@@ -48,12 +49,13 @@
                     <div
                         class='bg-gradient-to-r from-cyan-300 to-blue-600 px-6 py-2 text-white rounded-md -inset-0.5 absolute blur-sm opacity-75 group-hover:-inset-1 transition group-hover:duration-400 group-hover:opacity-90 duration-1000'>
                     </div>
-                    <button
-                        class='relative bg-gray-800 px-7 py-2 text-white rounded-md group-hover:text-gray-50 transition duration-200'><i
-                            class="bi bi-person"></i> About me</button>
+                    <span
+                        class='relative block bg-gray-800 px-7 py-2 text-white rounded-md group-hover:text-gray-50 transition duration-200'>
+                        <i class="bi bi-person"></i> About me
+                    </span>
                 </div>
             </a>
-        </ul>
+        </div>
     </div>
 </div>
 
@@ -66,33 +68,33 @@
             <a href='{% url "blogpost" blog.slug %}'>
                 {% if blog.effective_thumbnail %}
                 <div class="w-full overflow-hidden rounded-lg mb-4" style="aspect-ratio: 16/9;">
-                    <img class='w-full h-full object-cover' src="{{ blog.effective_thumbnail }}" alt="image">
+                    <img class='w-full h-full object-cover' src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
                 </div>
                 {% endif %}
             </a>
             <a class='text-blue-100 hover:text-blue-300 transition duration-300'
                 href='{% url "blogpost" blog.slug %}'><span
                     class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
-            <p class='my-3 break-words'>{{blog.meta|slice:180|safe}}</p>
+            <p class='my-3 break-words'>{{blog.meta|slice:180}}</p>
             <p class='mt-2 mb-4 text-gray-400'>by <i class="bi bi-person"></i> <a href='{% url "about" %}'
                     class='group transition-all duration-500 ease-out'><span
                         class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>Ozodbek</span></a>
-                <i class="bi bi-dot"></i> <span><i class="bi bi-calendar4-event"></i> {{blog.time}}</span> <i
+                <i class="bi bi-dot"></i> <span><i class="bi bi-calendar4-event"></i> {{blog.time|date:"M j, Y"}}</span> <i
                     class="bi bi-dot"></i><i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'
                     class='group transition-all duration-500 ease-out'><span
                         class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>{{blog.category}}</span></a>
             </p>
-            <a href='{% url "blogpost" blog.slug %}'><button
-                    class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Read
-                    more <i class="bi bi-arrow-right font-bold"></i></button></a>
+            <a href='{% url "blogpost" blog.slug %}'
+                    class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Read
+                    more <i class="bi bi-arrow-right font-bold"></i></a>
         </div>
         <br>
         {% endfor %}
     </div>
     <div class='flex justify-center'>
-        <a href='{% url "blog" %}' class=''><button
-                class='bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-blue-600 outline hover:outline-none outline-blue-600 transition delay-75 ease-in-out my-3'>Load
-                more <i class="bi bi-arrow-clockwise font-bold"></i></button></a>
+        <a href='{% url "blog" %}'
+                class='inline-block bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-blue-600 outline hover:outline-none outline-blue-600 transition delay-75 ease-in-out my-3'>Load
+                more <i class="bi bi-arrow-clockwise font-bold"></i></a>
     </div>
 </div>
 

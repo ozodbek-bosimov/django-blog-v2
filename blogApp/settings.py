@@ -38,7 +38,7 @@ def _get_bool_env(name, default=False):
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = _get_bool_env("DJANGO_DEBUG", True)
+DEBUG = _get_bool_env("DJANGO_DEBUG", False)
 
 _allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "*")
 ALLOWED_HOSTS = [host.strip() for host in _allowed_hosts.split(",") if host.strip()]
