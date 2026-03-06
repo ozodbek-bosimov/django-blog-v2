@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{blog.title}}{% endblock title %}
+{% block title %}{{ blog.title }}{% endblock title %}
 
 {% block meta %}
 <meta name="description" content="{{ blog.meta|truncatewords:25 }}">
@@ -13,294 +13,29 @@
 {% else %}
 <meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
 {% endif %}
+<link rel="stylesheet" href="{% static 'css/blogpost.css' %}">
 {% endblock meta %}
 
 {% block content %}
 <div class='bg-gray-800 text-white p-6 md:p-8 pt-12 flex flex-col max-w-5xl mx-auto w-full'>
     <span class='text-center text-2xl md:text-4xl font-bold text-cyan-200'>
-        {{blog.title}}
+        {{ blog.title }}
     </span>
     <span class='text-center mt-3 text-gray-400'>by <a href='{% url "about" %}'><i class="bi bi-person"></i> <span
                 class='group'><span
                     class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>Ozodbek</span></span></a>
-        <i class="bi bi-dot mx-1"></i> <span><i class="bi bi-calendar4-event"></i> {{blog.time}}</span> <i
+        <i class="bi bi-dot mx-1"></i> <span><i class="bi bi-calendar4-event"></i> {{ blog.time }}</span> <i
             class="bi bi-dot mx-1"></i> <i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'><span
                 class='group'><span
-                    class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>{{blog.category}}</span></span></a></span>
+                    class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>{{
+                    blog.category }}</span></span></a></span>
 
     {% if blog.effective_thumbnail %}
     <img class='rounded-lg my-6 max-w-3xl mx-auto w-full object-contain' style="max-height: 450px;"
-        src="{{ blog.effective_thumbnail }}" alt="image">
+        src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
     {% endif %}
 
-    <div class='blog-content ck-content leading-relaxed mt-2'>{{blog.content|safe}}</div>
+    <div class='blog-content ck-content leading-relaxed mt-2'>{{ blog.content|safe }}</div>
 </div>
-<style>
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-size: revert;
-        font-weight: revert;
-    }
-
-    .blog-content .text-tiny {
-        font-size: 0.7em;
-    }
-
-    .blog-content .text-small {
-        font-size: 0.85em;
-    }
-
-    .blog-content .text-big {
-        font-size: 1.4em;
-    }
-
-    .blog-content .text-huge {
-        font-size: 1.8em;
-    }
-
-    .blog-content a {
-        color: #67e8f9;
-        text-decoration: none !important;
-        background-image: linear-gradient(currentColor, currentColor);
-        background-repeat: no-repeat;
-        background-size: 0 2px;
-        background-position: 0 100%;
-        transition: color 220ms ease, background-size 220ms ease;
-    }
-
-    .blog-content a:hover,
-    .blog-content a:focus {
-        color: #a5f3fc;
-        background-size: 100% 2px;
-    }
-
-    /* Rasmlar va iframelar (Youtube, vs) */
-    .blog-content img,
-    .blog-content figure img,
-    p iframe {
-        border-radius: 8px;
-    }
-
-    /* Asosiy va figuralar markazlanishi va cheklovi */
-    .blog-content img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .blog-content figure.image {
-        display: flex;
-        flex-direction: column;
-        width: fit-content;
-        margin: 1.5rem auto;
-        max-width: 100%;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .blog-content figure.image img {
-        margin: 0;
-        display: block;
-        border-radius: 0 !important;
-    }
-
-    .blog-content figure.image figcaption {
-        padding: 0.3rem 0.75rem;
-        text-align: center;
-        font-size: 0.85em;
-        color: #e2e8f0;
-        background: rgba(10, 18, 35, 0.85);
-    }
-
-    /* YouTube iframe uchun */
-    .blog-content iframe {
-        max-width: 100%;
-        height: auto;
-        aspect-ratio: 16/9;
-        margin: 1rem 0;
-        border-radius: 8px;
-        /* Added rounded corners for videos too */
-    }
-
-    /* Video wrapper uchun */
-    .video-wrapper {
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%;
-        height: 0;
-        overflow: hidden;
-        margin: 1rem 0;
-    }
-
-    .video-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: none;
-        border-radius: 8px;
-    }
-
-    /* Code blocks - Prism.js bilan */
-    pre[class*="language-"] {
-        margin: 1rem 0 !important;
-        border-radius: 8px !important;
-        /* Standartlashtirildi (oldingi 12px edi) */
-        background: #0d1b2a !important;
-        border: 1px solid rgba(103, 232, 249, 0.15) !important;
-        box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
-        position: relative;
-        padding-top: 2.5rem !important;
-        overflow: hidden;
-        white-space: pre-wrap !important;
-        word-wrap: break-word !important;
-        word-break: break-word !important;
-    }
-
-    /* Til nomi va copy tugmasi uchun header */
-    .code-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        padding: 0.4rem 0.75rem;
-        z-index: 10;
-    }
-
-    .code-lang {
-        font-size: 0.68rem;
-        line-height: 1;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-        color: #cbd5e1;
-        background: rgba(15, 23, 42, 0.85);
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        padding: 0.2rem 0.45rem;
-        border-radius: 9999px;
-    }
-
-    .copy-btn {
-        font-size: 0.68rem;
-        line-height: 1;
-        color: #cbd5e1;
-        background: rgba(15, 23, 42, 0.85);
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        padding: 0.2rem 0.45rem;
-        border-radius: 9999px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .copy-btn:hover {
-        color: #67e8f9;
-        border-color: rgba(103, 232, 249, 0.5);
-    }
-
-    .copy-btn.copied {
-        color: #4ade80;
-        border-color: rgba(74, 222, 128, 0.5);
-    }
-
-    /* ::before ni o'chiramiz chunki header bilan almashtirildi */
-    pre[class*="language-"]::before {
-        display: none !important;
-    }
-
-    pre[class*="language-"] code {
-        font-size: 0.92rem;
-        background: transparent !important;
-        white-space: pre-wrap !important;
-        word-wrap: break-word !important;
-        word-break: break-word !important;
-    }
-
-    /* Inline code uchun (gap orasidagi qisqa kod qatorlar) */
-    .blog-content code:not(pre code) {
-        background-color: rgba(71, 85, 105, 0.2) !important;
-        /* slate-600 juda shaffof, deyarli fon so'nib ketgan */
-        color: #cbd5e1 !important;
-        /* slate-300 matn */
-        padding: 0.2em 0.4em !important;
-        border-radius: 4px !important;
-        font-size: 0.9em !important;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
-        border: 1px solid rgba(148, 163, 184, 0.15) !important;
-        /* slate-400 juda yengil rom */
-        word-break: break-word !important;
-    }
-</style>
-
-<script>
-    // CKEditor dan kelgan code bloklarni Prism.js bilan ranglash
-    document.addEventListener('DOMContentLoaded', function () {
-        const toPrettyLanguage = (lang) => {
-            if (!lang) {
-                return 'Python';
-            }
-            const normalized = lang.toLowerCase();
-            if (normalized === 'cpp') return 'C++';
-            if (normalized === 'cs') return 'C#';
-            return normalized.charAt(0).toUpperCase() + normalized.slice(1);
-        };
-
-        // Barcha <pre> taglarni topish
-        const preElements = document.querySelectorAll('pre');
-
-        preElements.forEach(pre => {
-            const code = pre.querySelector('code');
-            if (!code) {
-                return;
-            }
-
-            const languageClass = [...code.classList, ...pre.classList]
-                .find(cls => cls.startsWith('language-'));
-            const language = languageClass ? languageClass.replace('language-', '') : 'python';
-
-            if (!languageClass) {
-                pre.classList.add('language-python');
-                code.classList.add('language-python');
-            }
-
-            // Header yaratish (til nomi chap, copy o'ng)
-            const header = document.createElement('div');
-            header.className = 'code-header';
-
-            const langLabel = document.createElement('span');
-            langLabel.className = 'code-lang';
-            langLabel.textContent = toPrettyLanguage(language);
-
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn';
-            copyBtn.type = 'button';
-            copyBtn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
-
-            copyBtn.addEventListener('click', function () {
-                navigator.clipboard.writeText(code.innerText).then(() => {
-                    copyBtn.classList.add('copied');
-                    copyBtn.innerHTML = '<i class="bi bi-check2"></i> Copied!';
-                    setTimeout(() => {
-                        copyBtn.classList.remove('copied');
-                        copyBtn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
-                    }, 2000);
-                });
-            });
-
-            header.appendChild(langLabel);
-            header.appendChild(copyBtn);
-            pre.insertBefore(header, pre.firstChild);
-        });
-
-        // Prism.js ni qayta run qilish
-        if (typeof Prism !== 'undefined') {
-            Prism.highlightAll();
-        }
-    });
-</script>
+<script src="{% static 'js/blogpost.js' %}"></script>
 {% endblock %}

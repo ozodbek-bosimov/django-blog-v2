@@ -3,6 +3,14 @@
 
 {% block title %}Projects{% endblock title %}
 
+{% block meta %}
+<meta name="description" content="Projects completed by Ozodbek Bosimov — backend developer.">
+<meta property="og:title" content="Projects — Ozodbek Bosimov">
+<meta property="og:description" content="Projects completed by Ozodbek Bosimov — backend developer.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
+{% endblock meta %}
+
 {% block content %}
 <div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
   <p class='text-4xl font-extrabold py-5 text-center md:text-start'>Projects Completed</p>
@@ -11,20 +19,16 @@
   {% for project in projects %}
   <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);"
     class='flex flex-col md:flex-row gap-6 md:gap-8 bg-gray-900 p-6 mb-6 rounded-lg overflow-hidden'>
-    <!-- Thumbnail -->
     <div class='shrink-0'>
-      <img class="rounded-lg object-cover" width='320px' height='200px' src="{{ project.thumbnail_url }}"
+      <img class="rounded-lg object-cover" width='320' height='200' src="{{ project.thumbnail_url }}"
         alt="{{ project.title }}">
     </div>
 
-    <!-- Content -->
     <div class='flex-1 overflow-hidden'>
       <p class="font-bold text-2xl text-cyan-300 mb-3">{{ project.title }}</p>
 
-      <!-- Description -->
       <p class='text-gray-300 leading-relaxed mb-4 break-words'>{{ project.description }}</p>
 
-      <!-- Technologies -->
       {% if project.technologies %}
       <div class='mb-4'>
         <span class='text-sm font-bold text-gray-400 block mb-2'>Technologies used</span>
@@ -36,22 +40,18 @@
       </div>
       {% endif %}
 
-      <!-- Links -->
       {% if project.github_link or project.demo_link %}
       <div class='flex flex-wrap gap-3 mt-4'>
         {% if project.github_link %}
-        <a href='{{ project.github_link }}' target='_blank'>
-          <button
-            class='bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition delay-75 ease-in-out'>
-            <i class="bi bi-github"></i> Github
-          </button>
+        <a href='{{ project.github_link }}' target='_blank'
+          class='inline-block bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition delay-75 ease-in-out'>
+          <i class="bi bi-github"></i> Github
         </a>
         {% endif %}
         {% if project.demo_link %}
-        <a href='{{ project.demo_link }}' target='_blank'>
-          <button class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-blue-700 transition delay-75 ease-in-out'>
-            Demo <i class="bi bi-box-arrow-up-right"></i>
-          </button>
+        <a href='{{ project.demo_link }}' target='_blank'
+          class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-blue-700 transition delay-75 ease-in-out'>
+          Demo <i class="bi bi-box-arrow-up-right"></i>
         </a>
         {% endif %}
       </div>
