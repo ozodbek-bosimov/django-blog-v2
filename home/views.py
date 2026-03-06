@@ -14,7 +14,7 @@ def custom_404(request, exception=None):
 
 
 def index(request):
-    random_blogs = Blog.objects.order_by('-time')[:3]
+    random_blogs = Blog.objects.order_by('-time', '-sno')[:3]
     context = {'random_blogs': random_blogs}
     return render(request, 'index.html', context)
 
@@ -33,7 +33,7 @@ def projects(request):
 
 
 def blog(request):
-    blogs_qs = Blog.objects.all().order_by('-time')
+    blogs_qs = Blog.objects.all().order_by('-time', '-sno')
     paginator = Paginator(blogs_qs, 3)
     page = request.GET.get('page')
     blogs = paginator.get_page(page)
@@ -42,7 +42,7 @@ def blog(request):
 
 
 def category(request, category):
-    category_qs = Blog.objects.filter(category=category).order_by('-time')
+    category_qs = Blog.objects.filter(category=category).order_by('-time', '-sno')
     if not category_qs.exists():
         message = f"No posts found in category: '{category}'"
         return render(request, "category.html", {"message": message, "category": category})
@@ -85,7 +85,7 @@ def search(request):
         query_list = query.split()
         q_objects = [Q(title__icontains=word) | Q(content__icontains=word) for word in query_list]
         combined_q = reduce(operator.and_, q_objects)
-        results = Blog.objects.filter(combined_q).distinct().order_by('-time')
+        results = Blog.objects.filter(combined_q).distinct().order_by('-time', '-sno')
     else:
         results = Blog.objects.none()
 

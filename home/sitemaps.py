@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
@@ -11,8 +13,8 @@ class StaticViewSitemap(Sitemap):
     def items(self):
         return ['home', 'about', 'blog', 'projects', 'categories']
 
-    def location(self, item: str) -> str:
-        return reverse(item)
+    def location(self, obj: Any) -> str:
+        return reverse(obj)
 
 
 class BlogPostSitemap(Sitemap):
@@ -22,10 +24,10 @@ class BlogPostSitemap(Sitemap):
     def items(self):
         return Blog.objects.all().order_by('-time')
 
-    def lastmod(self, obj: Blog):
+    def lastmod(self, obj: Any):
         return obj.time
 
-    def location(self, obj: Blog) -> str:
+    def location(self, obj: Any) -> str:
         return reverse('blogpost', args=[obj.slug])
 
 
@@ -42,5 +44,5 @@ class CategorySitemap(Sitemap):
             .order_by('category')
         )
 
-    def location(self, item: str) -> str:
-        return reverse('category', args=[item])
+    def location(self, obj: Any) -> str:
+        return reverse('category', args=[obj])
