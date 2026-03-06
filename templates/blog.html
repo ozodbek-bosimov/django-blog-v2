@@ -3,57 +3,33 @@
 
 {% block title %}Blog{% endblock title %}
 
+{% block meta %}
+<meta name="description" content="Ozodbek Bosimov's blog — backend development, Python, Django and more.">
+<meta property="og:title" content="Blog — Ozodbek Bosimov">
+<meta property="og:description" content="Ozodbek Bosimov's blog — backend development, Python, Django and more.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
+{% endblock meta %}
+
 {% block content %}
 
 <div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
-  <p  class='text-4xl font-extrabold py-5 text-center md:text-start'>Blog</p>
+  <p class='text-4xl font-extrabold py-5 text-center md:text-start'>Blog</p>
   {% for blog in blogs %}
-  <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);"
-    class='flex flex-col md:flex-row gap-4 md:gap-x-8 bg-gray-900 p-5 mb-4 rounded-lg'>
-    {% if blog.effective_thumbnail %}
-    <div class="w-full md:w-[350px] md:flex-shrink-0 h-[180px] overflow-hidden rounded-lg">
-      <img class="w-full h-full object-cover"
-        src="{{ blog.effective_thumbnail }}" alt="image">
-    </div>
-    {% endif %}
-    <div class="min-w-0">
-      <a class='text-blue-100 hover:text-blue-300 transition duration-300' href='{% url "blogpost" blog.slug %}'><span
-          class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
-      <p class='my-3 break-words'>{{blog.meta|slice:180|safe}}</p>
-      <p class='mt-2 mb-4 text-gray-400'>by <i class="bi bi-person"></i> <a href='{% url "about" %}'
-          class='group transition-all duration-500 ease-out'><span
-            class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>Ozodbek</span></a>
-        <i class="bi bi-dot"></i> <span><i class="bi bi-calendar4-event"></i> {{blog.time}}</span> <i
-          class="bi bi-dot"></i><i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'
-          class='group transition-all duration-500 ease-out'><span
-            class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>{{blog.category}}</span></a>
-      </p>
-      <a href='{% url "blogpost" blog.slug %}'><button
-          class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Read
-          more <i class="bi bi-arrow-right font-bold"></i></button></a>
-    </div>
-  </div>
+  {% include 'partials/_blog_list_card.html' %}
   {% endfor %}
-  <div class="pagination py-8">
-    <span class="page-links">
-      {% if blogs.has_previous %}
-      <div class='float-left'>
-        <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'
-          href="?page={{ blogs.previous_page_number }}"><i class="bi bi-arrow-left font-bold"></i> Previous</a>
-      </div>
-      {% endif %}
+  <div class="pagination py-8 flex justify-between items-center">
+    {% if blogs.has_previous %}
+    <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out'
+      href="?page={{ blogs.previous_page_number }}"><i class="bi bi-arrow-left font-bold"></i> Previous</a>
+    {% else %}
+    <span></span>
+    {% endif %}
 
-      {% comment %} <span class="page-current">
-        Page {{ blogs.number }} of {{ blogs.paginator.num_pages }}
-      </span> {% endcomment %}
-
-      {% if blogs.has_next %}
-      <div class='float-right'>
-        <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'
-          href="?page={{ blogs.next_page_number }}">Next <i class="bi bi-arrow-right font-bold"></i></a>
-      </div>
-      {% endif %}
-    </span>
+    {% if blogs.has_next %}
+    <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out'
+      href="?page={{ blogs.next_page_number }}">Next <i class="bi bi-arrow-right font-bold"></i></a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

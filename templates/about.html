@@ -1,251 +1,122 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}About{% endblock title %}
+
+{% block meta %}
+<meta name="description" content="About Ozodbek Bosimov — backend developer, Python and Django engineer.">
+<meta property="og:title" content="About — Ozodbek Bosimov">
+<meta property="og:description" content="About Ozodbek Bosimov — backend developer, Python and Django engineer.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock meta %}
 
 {% block content %}
 
 <div class='bg-gray-800 text-white p-3 md:px-10 lg:px-20 xl:px-40 2xl:px-72'>
     <div class='m-6'>
         {% if about_me %}
-            <p  class='text-4xl font-extrabold py-5 text-center md:text-start'>About Me</p>
-            
-            <!-- Profile Section with Image and Info Side by Side -->
-            <div class='flex flex-col md:flex-row gap-6 md:gap-8 my-6'>
-                <!-- Profile Image -->
-                <div class='flex justify-center md:justify-start shrink-0'>
-                    <img src="{{ about_me.profile_image_url }}" alt="{{ about_me.name }}" class='w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg'>
+        <p class='text-4xl font-extrabold py-5 text-center md:text-start'>About Me</p>
+
+        <div class='flex flex-col md:flex-row gap-6 md:gap-8 my-6'>
+            <div class='flex justify-center md:justify-start shrink-0'>
+                <img src="{{ about_me.profile_image_url }}" alt="{{ about_me.name }}"
+                    class='w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg'>
+            </div>
+
+            <div class='flex-1'>
+                <div class='mb-4'>
+                    <h2 class='text-2xl md:text-3xl font-bold text-cyan-200'>{{ about_me.name }}</h2>
+                    <p class='text-lg md:text-xl text-gray-300 mb-3'>{{ about_me.profession }}</p>
+                    {% if about_me.email %}
+                    <p class='text-md text-gray-400 mb-1'>
+                        <i class="bi bi-envelope"></i> {{ about_me.email }}
+                    </p>
+                    {% endif %}
+                    {% if about_me.phone %}
+                    <p class='text-md text-gray-400'>
+                        <i class="bi bi-telephone"></i> {{ about_me.phone }}
+                    </p>
+                    {% endif %}
                 </div>
-                
-                <!-- Personal Info and Social Links -->
-                <div class='flex-1'>
-                    <!-- Personal Info -->
-                    <div class='mb-4'>
-                        <h2  class='text-2xl md:text-3xl font-bold text-cyan-200'>{{ about_me.name }}</h2>
-                        <p class='text-lg md:text-xl text-gray-300 mb-3'>{{ about_me.profession }}</p>
-                        {% if about_me.email %}
-                            <p class='text-md text-gray-400 mb-1'>
-                                <i class="bi bi-envelope"></i> {{ about_me.email }}
-                            </p>
-                        {% endif %}
-                        {% if about_me.phone %}
-                            <p class='text-md text-gray-400'>
-                                <i class="bi bi-telephone"></i> {{ about_me.phone }}
-                            </p>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Social Links -->
-                    <div class='flex gap-3'>
-                        {% if about_me.github_url %}
-                            <a href="{{ about_me.github_url }}" target="_blank" 
-                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-300 hover:scale-110">
-                               <i class="bi bi-github text-xl"></i>
-                            </a>
-                        {% endif %}
-                        {% if about_me.linkedin_url %}
-                            <a href="{{ about_me.linkedin_url }}" target="_blank" 
-                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white transition-all duration-300 hover:scale-110">
-                               <i class="bi bi-linkedin text-xl"></i>
-                            </a>
-                        {% endif %}
-                        {% if about_me.telegram_url %}
-                            <a href="{{ about_me.telegram_url }}" target="_blank" 
-                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white transition-all duration-300 hover:scale-110">
-                               <i class="bi bi-telegram text-xl"></i>
-                            </a>
-                        {% endif %}
-                        {% if about_me.x_url %}
-                            <a href="{{ about_me.x_url }}" target="_blank" 
-                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-black hover:border-black transition-all duration-300 hover:scale-110 group">
-                               <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" 
-                                    alt="X" 
-                                    class="w-5 h-5 filter brightness-0 invert transition-all">
-                            </a>
-                        {% endif %}
-                        {% if about_me.leetcode_url %}
-                            <a href="{{ about_me.leetcode_url }}" target="_blank" 
-                               class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#FFA116] hover:border-[#FFA116] transition-all duration-300 hover:scale-110 group">
-                               <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/leetcode.svg" 
-                                    alt="LeetCode" 
-                                    class="w-5 h-5 filter invert group-hover:invert-0 transition-all">
-                            </a>
-                        {% endif %}
-                    </div>
+
+                <div class='flex gap-3'>
+                    {% if about_me.github_url %}
+                    <a href="{{ about_me.github_url }}" target="_blank"
+                        class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-300 hover:scale-110">
+                        <i class="bi bi-github text-xl"></i>
+                    </a>
+                    {% endif %}
+                    {% if about_me.linkedin_url %}
+                    <a href="{{ about_me.linkedin_url }}" target="_blank"
+                        class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white transition-all duration-300 hover:scale-110">
+                        <i class="bi bi-linkedin text-xl"></i>
+                    </a>
+                    {% endif %}
+                    {% if about_me.telegram_url %}
+                    <a href="{{ about_me.telegram_url }}" target="_blank"
+                        class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white transition-all duration-300 hover:scale-110">
+                        <i class="bi bi-telegram text-xl"></i>
+                    </a>
+                    {% endif %}
+                    {% if about_me.x_url %}
+                    <a href="{{ about_me.x_url }}" target="_blank"
+                        class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-black hover:border-black transition-all duration-300 hover:scale-110 group">
+                        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" alt="X"
+                            class="w-5 h-5 filter brightness-0 invert transition-all">
+                    </a>
+                    {% endif %}
+                    {% if about_me.leetcode_url %}
+                    <a href="{{ about_me.leetcode_url }}" target="_blank"
+                        class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#FFA116] hover:border-[#FFA116] transition-all duration-300 hover:scale-110 group">
+                        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/leetcode.svg" alt="LeetCode"
+                            class="w-5 h-5 filter invert group-hover:invert-0 transition-all">
+                    </a>
+                    {% endif %}
                 </div>
             </div>
-            
-            <!-- Bio with Rich Text Content -->
-            <div class='mt-8 text-gray-300 leading-relaxed'>
-                <div class='blog-content ck-content leading-relaxed'>
-                    {{ about_me.bio|safe }}
-                </div>
+        </div>
+
+        <div class='mt-8 text-gray-300 leading-relaxed'>
+            <div class='blog-content ck-content leading-relaxed'>
+                {{ about_me.bio|safe }}
             </div>
+        </div>
         {% else %}
-            <p class='text-center text-gray-400 py-10'>No about information available yet.</p>
+        <p class='text-center text-gray-400 py-10'>No about information available yet.</p>
         {% endif %}
-        
-        <!-- Skills Section -->
+
         <div class='my-10'>
-            <p  class='text-4xl font-extrabold py-5 text-center md:text-start'>Skills</p>
+            <p class='text-4xl font-extrabold py-5 text-center md:text-start'>Skills</p>
             {% if skills %}
-                <div class='grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10'>
-                    {% for skill in skills %}
-                        <div class='my-3'>
-                            <div class='flex justify-between items-center mb-2'>
-                                <p class="text-base font-medium">{{ skill.name }}</p>
-                                <span class="text-sm text-cyan-300">
-                                    {% if skill.percentage <= 19 %}
-                                        Familiar
-                                    {% elif skill.percentage <= 39 %}
-                                        Basic
-                                    {% elif skill.percentage <= 69 %}
-                                        Working knowledge
-                                    {% elif skill.percentage <= 89 %}
-                                        Advanced
-                                    {% else %}
-                                        Expert
-                                    {% endif %}
-                                </span>
-                            </div>
-                            <div class="w-full bg-gray-700 rounded-full h-2.5">
-                                <div class="skill-bar bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full" data-percentage="{{ skill.percentage }}" style="width: 0%"></div>
-                            </div>  
-                        </div>
-                    {% endfor %}
+            <div class='grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10'>
+                {% for skill in skills %}
+                <div class='my-3'>
+                    <div class='flex justify-between items-center mb-2'>
+                        <p class="text-base font-medium">{{ skill.name }}</p>
+                        <span class="text-sm text-cyan-300">
+                            {% if skill.percentage <= 19 %}Familiar
+                            {% elif skill.percentage <= 39 %}Basic
+                            {% elif skill.percentage <= 69 %}Working knowledge
+                            {% elif skill.percentage <= 89 %}Advanced
+                            {% else %}Expert
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div class="skill-bar bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full"
+                            data-percentage="{{ skill.percentage }}" style="width: 0%"></div>
+                    </div>
                 </div>
+                {% endfor %}
+            </div>
             {% else %}
-                <p class='text-center text-gray-400'>No skills added yet.</p>
+            <p class='text-center text-gray-400'>No skills added yet.</p>
             {% endif %}
         </div>
     </div>
-
-    <style>
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-size: revert;
-        font-weight: revert;
-    }
-
-    .blog-content .text-tiny {
-        font-size: 0.7em;
-    }
-
-    .blog-content .text-small {
-        font-size: 0.85em;
-    }
-
-    .blog-content .text-big {
-        font-size: 1.4em;
-    }
-
-    .blog-content .text-huge {
-        font-size: 1.8em;
-    }
-
-    .blog-content a {
-        color: #67e8f9;
-        text-decoration: none !important;
-        background-image: linear-gradient(currentColor, currentColor);
-        background-repeat: no-repeat;
-        background-size: 0 2px;
-        background-position: 0 100%;
-        transition: color 220ms ease, background-size 220ms ease;
-    }
-
-    .blog-content a:hover,
-    .blog-content a:focus {
-        color: #a5f3fc;
-        background-size: 100% 2px;
-    }
-
-    .blog-content img,
-    .blog-content figure img,
-    p iframe {
-        border-radius: 8px;
-    }
-
-    .blog-content img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .blog-content figure.image {
-        display: flex;
-        flex-direction: column;
-        width: fit-content;
-        margin: 1.5rem auto;
-        max-width: 100%;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .blog-content figure.image img {
-        margin: 0;
-        display: block;
-        border-radius: 0 !important;
-    }
-
-    .blog-content figure.image figcaption {
-        padding: 0.3rem 0.75rem;
-        text-align: center;
-        font-size: 0.85em;
-        color: #e2e8f0;
-        background: rgba(10, 18, 35, 0.85);
-    }
-
-    .blog-content iframe {
-        max-width: 100%;
-        height: auto;
-        aspect-ratio: 16/9;
-        margin: 1rem 0;
-        border-radius: 8px;
-    }
-
-    .video-wrapper {
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%;
-        height: 0;
-        overflow: hidden;
-        margin: 1rem 0;
-    }
-
-    .video-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: none;
-        border-radius: 8px;
-    }
-
-        .skill-bar {
-            animation: skill-animation 2s ease-out forwards;
-        }
-        @keyframes skill-animation {
-            0%   { width: 0%; }
-            100% { width: var(--target-width); }
-        }
-    </style>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function(){
-            // Animate skill bars on page load
-            const skillBars = document.querySelectorAll('.skill-bar');
-            skillBars.forEach(bar => {
-                const percentage = bar.getAttribute('data-percentage');
-                bar.style.setProperty('--target-width', percentage + '%');
-                setTimeout(() => {
-                    bar.style.width = percentage + '%';
-                }, 100);
-            });
-        });
-    </script>
 </div>
+<script src="{% static 'js/about.js' %}"></script>
 
 {% endblock %}

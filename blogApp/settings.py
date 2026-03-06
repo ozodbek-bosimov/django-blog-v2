@@ -231,7 +231,7 @@ CKEDITOR_5_CONFIGS = {
         },
         'height': '400px',
         'width': '100%',
-        'placeholder': 'Kontentni shu yerga yozing...',
+        'placeholder': 'Write your content here...',
         'image': {
             'toolbar': [
                 'imageTextAlternative',
