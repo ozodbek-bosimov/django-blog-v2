@@ -8,3 +8,71 @@
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+#session-warning-banner {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: #ba2121;
+    color: #fff;
+    padding: 12px 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+#session-warning-banner a {
+    color: #fff;
+    text-decoration: underline;
+    margin-left: 16px;
+    cursor: pointer;
+}
+</style>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<div id="session-warning-banner">
+    Sessiya muddati tugagan bo'lishi mumkin. Sahifani yangilashdan oldin ma'lumotlaringizni saqlang.
+    <a href="javascript:location.reload()">Sahifani yangilash</a>
+    <a onclick="document.getElementById('session-warning-banner').style.display='none'">Yopish</a>
+</div>
+<script>
+(function () {
+    // Ping interval: every 5 minutes (well within 30-minute session timeout)
+    var PING_INTERVAL = 5 * 60 * 1000;
+    // Warn if tab was hidden longer than 29 minutes
+    var WARN_AFTER = 29 * 60 * 1000;
+
+    var hiddenAt = null;
+
+    function ping() {
+        fetch('/admin/keepalive/', { credentials: 'same-origin' }).catch(function () {});
+    }
+
+    // Keep session alive with periodic pings
+    setInterval(ping, PING_INTERVAL);
+
+    // Detect computer sleep / tab switch
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            hiddenAt = Date.now();
+        } else {
+            if (hiddenAt !== null && (Date.now() - hiddenAt) > WARN_AFTER) {
+                document.getElementById('session-warning-banner').style.display = 'block';
+            } else {
+                // Tab came back quickly — refresh session
+                ping();
+            }
+            hiddenAt = null;
+        }
+    });
+}());
+</script>
+{% endblock %}
