@@ -13,7 +13,7 @@
 <meta property="og:description" content="Ozodbek Bosimov's blog. A collection of articles covering technical tutorials, problem-solving, books, and thoughts on personal growth.">
 <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'blog' %}">
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Blog — Ozodbek Bosimov">
 <meta name="twitter:description" content="Ozodbek Bosimov's blog. A collection of articles covering technical tutorials, problem-solving, books, and thoughts on personal growth.">
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
@@ -22,7 +22,7 @@
 {% block content %}
 
 <div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
-  <p class='text-4xl font-extrabold py-5 text-center md:text-start'>Blog</p>
+  <p class='text-2xl md:text-4xl font-extrabold py-5 text-center md:text-start'>Blog</p>
   {% for blog in blogs %}
   {% include 'partials/_blog_list_card.html' %}
   {% endfor %}
