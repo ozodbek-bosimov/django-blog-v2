@@ -4,11 +4,19 @@
 {% block title %}Projects{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="Projects completed by Ozodbek Bosimov — backend developer.">
-<meta property="og:title" content="Projects — Ozodbek Bosimov">
-<meta property="og:description" content="Projects completed by Ozodbek Bosimov — backend developer.">
+<meta name="description" content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments.">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}">
 <meta property="og:type" content="website">
-<meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
+<meta property="og:site_name" content="Ozodbek Bosimov">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Projects — Ozodbek Bosimov">
+<meta property="og:description" content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments.">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Projects — Ozodbek Bosimov">
+<meta name="twitter:description" content="Projects completed by Ozodbek Bosimov — backend developer specializing in Python and Django.">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 {% endblock meta %}
 
 {% block content %}

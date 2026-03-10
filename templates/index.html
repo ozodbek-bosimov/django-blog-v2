@@ -3,14 +3,29 @@
 
 {% block title %}Home{% endblock title %}
 
+{% block meta %}
+<meta name="description" content="Personal website of Ozodbek Bosimov — software developer sharing projects, technical articles, and ideas about building software and learning new things.">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ozodbek Bosimov">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Ozodbek Bosimov — Software Engineer & Personal Blog">
+<meta property="og:description" content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ozodbek Bosimov — Software Engineer & Personal Blog">
+<meta name="twitter:description" content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
+{% endblock meta %}
+
 {% block content %}
 <div
     class='hero-section bg-gray-800 text-white text-center flex flex-col justify-start items-center h-[550px] md:h-[580px] lg:h-[600px] pt-8 md:pt-12 lg:pt-16'>
     <!-- <span class='font-mono my-2'><span class='wave'>&#128075;</span>Ozodbek Bosimov</span> -->
     <span
         class='text-3xl font-extrabold md:text-4xl lg:text-5xl px-[20px] md:px-[140px] lg:px-[170px] xl:px-[200px] 2xl:px-[360px]'>
-        I'm a <span class='bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 text-transparent'>Backend</span>
-        developer. This is my portfolio & Blog.
+        I'm a <span class='bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 text-transparent'>Software Engineer</span>. This is my portfolio & blog.
     </span>
     <div class='updn hero-img my-4'>
         <img src="{% static 'images/h.png' %}" class='h-auto w-52 md:w-56 lg:w-60 xl:w-64'>
