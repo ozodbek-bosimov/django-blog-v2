@@ -46,7 +46,8 @@ class AboutMe(models.Model):
     bio = models.TextField()
     email = models.EmailField()
     phone = models.CharField(max_length=20, blank=True)
-    profile_image_url = models.URLField(help_text="CDN URL for profile image")
+    profile_img = models.ImageField(null=True, blank=True, upload_to="profile/")
+    profile_image_url = models.URLField(blank=True, help_text="CDN URL for profile image (used if no image is uploaded)")
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
     telegram_url = models.URLField(blank=True)
@@ -62,6 +63,13 @@ class AboutMe(models.Model):
             # Delete all existing instances
             AboutMe.objects.all().delete()
         super().save(*args, **kwargs)
+
+    @property
+    def effective_profile_image(self):
+        """Return the URL to use for the profile image, preferring the uploaded image."""
+        if self.profile_img and hasattr(self.profile_img, 'url'):
+            return self.profile_img.url
+        return self.profile_image_url or ''
 
     class Meta:
         verbose_name = "About Me"
@@ -231,3 +239,18 @@ def delete_aboutme_bio_media_on_delete(sender, instance, **kwargs):
     """Delete media files from AboutMe.bio on object delete when no longer used."""
     removed_media = _extract_media_paths_from_html(instance.bio)
     _delete_media_paths_if_unused(removed_media)
+    if instance.profile_img:
+        instance.profile_img.delete(save=False)
+
+
+@receiver(pre_save, sender=AboutMe)
+def delete_old_profile_img_on_change(sender, instance, **kwargs):
+    """Delete old profile image file when replacing it with a new one."""
+    if not instance.pk:
+        return
+    try:
+        old = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+    if old.profile_img and old.profile_img != instance.profile_img:
+        old.profile_img.delete(save=False)

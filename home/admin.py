@@ -156,6 +156,16 @@ class AboutMeAdminForm(forms.ModelForm):
         model = AboutMe
         fields = "__all__"
 
+    def clean_profile_img(self):
+        img = self.cleaned_data.get('profile_img')
+        if img and hasattr(img, 'size') and img.size > 2 * 1024 * 1024:
+            size_mb = img.size / (1024 * 1024)
+            raise forms.ValidationError(
+                f'Image size is {size_mb:.1f} MB — maximum allowed size is 2 MB. '
+                'Please compress the image or choose a smaller file.'
+            )
+        return img
+
 
 class AboutMeAdmin(admin.ModelAdmin):
     """Admin for singleton AboutMe model"""
@@ -164,7 +174,7 @@ class AboutMeAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Personal Info', {'fields': ('name', 'profession', 'email', 'phone')}),
         ('About', {'fields': ('bio',)}),
-        ('Profile Image', {'fields': ('profile_image_url', 'profile_image_preview')}),
+        ('Profile Image', {'fields': ('profile_img', 'profile_image_url', 'profile_image_preview')}),
         ('Social Links', {'fields': ('linkedin_url', 'github_url', 'telegram_url', 'x_url', 'leetcode_url')}),
     )
 
@@ -176,8 +186,10 @@ class AboutMeAdmin(admin.ModelAdmin):
 
     @admin.display(description='Profile Image Preview')
     def profile_image_preview(self, obj):
-        if obj and obj.profile_image_url:
-            return format_html('<img src="{}" style="max-width: 200px; height: auto; border-radius: 50%;" />', obj.profile_image_url)
+        if obj:
+            url = obj.effective_profile_image
+            if url:
+                return format_html('<img src="{}" style="max-width: 200px; height: auto; border-radius: 50%;" />', url)
         return '(No image)'
 
 

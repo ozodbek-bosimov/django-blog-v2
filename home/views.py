@@ -22,7 +22,14 @@ def index(request):
 def about(request):
     about_me = AboutMe.objects.first()
     skills = Skill.objects.all()
-    context = {'about_me': about_me, 'skills': skills}
+    abs_profile_image = ''
+    if about_me:
+        img = about_me.effective_profile_image
+        if img and not img.startswith(('http://', 'https://')):
+            abs_profile_image = f"{request.scheme}://{request.get_host()}{img}"
+        else:
+            abs_profile_image = img
+    context = {'about_me': about_me, 'skills': skills, 'abs_profile_image': abs_profile_image}
     return render(request, 'about.html', context)
 
 

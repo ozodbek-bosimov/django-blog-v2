@@ -13,7 +13,7 @@
 <meta property="og:description" content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
 <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}">
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ozodbek Bosimov — Software Engineer & Personal Blog">
 <meta name="twitter:description" content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
@@ -75,7 +75,7 @@
 </div>
 
 <div class='blog-section bg-gray-900 p-4 text-white'>
-    <p class='text-4xl font-extrabold py-5 px-2 md:pl-36 text-center md:text-start'>Checkout my latest posts</p>
+    <p class='text-2xl md:text-4xl font-extrabold py-5 px-2 md:pl-36 text-center md:text-start'>Checkout my latest posts</p>
     <div class='blogs my-5 grid justify-center md:flex md:space-x-6'>
         {% for blog in random_blogs %}
         <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);"
