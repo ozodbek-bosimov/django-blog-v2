@@ -108,7 +108,10 @@ def search(request):
 def blogpost(request, slug):
     try:
         blog = Blog.objects.get(slug=slug)
-        context = {'blog': blog}
+        thumb = blog.effective_thumbnail
+        if thumb and not thumb.startswith(('http://', 'https://')):
+            thumb = f"{request.scheme}://{request.get_host()}{thumb}"
+        context = {'blog': blog, 'abs_thumbnail': thumb}
         return render(request, 'blogpost.html', context)
     except Blog.DoesNotExist:
         context = {'message': 'Blog post not found'}

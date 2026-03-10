@@ -4,11 +4,19 @@
 {% block title %}About{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="About Ozodbek Bosimov — backend developer, Python and Django engineer.">
-<meta property="og:title" content="About — Ozodbek Bosimov">
-<meta property="og:description" content="About Ozodbek Bosimov — backend developer, Python and Django engineer.">
+<meta name="description" content="About Ozodbek Bosimov — software engineer sharing projects, technical articles, and ideas about building software.">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'about' %}">
 <meta property="og:type" content="website">
-<meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
+<meta property="og:site_name" content="Ozodbek Bosimov">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="About — Ozodbek Bosimov">
+<meta property="og:description" content="About Ozodbek Bosimov. I am a software engineer writing about backend development, building systems, and other personal interests I explore along the way.">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'about' %}">
+<meta property="og:image" content="{% if about_me and about_me.profile_image_url %}{{ about_me.profile_image_url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About — Ozodbek Bosimov">
+<meta name="twitter:description" content="About Ozodbek Bosimov. I am a software engineer writing about backend development, building systems, and other personal interests I explore along the way.">
+<meta name="twitter:image" content="{% if about_me and about_me.profile_image_url %}{{ about_me.profile_image_url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
 <link rel="stylesheet" href="{% static 'css/about.css' %}?v=3">
 {% endblock meta %}
 

@@ -5,14 +5,21 @@
 
 {% block meta %}
 <meta name="description" content="{{ blog.meta|truncatewords:25 }}">
-<meta property="og:title" content="{{ blog.title }}">
-<meta property="og:description" content="{{ blog.meta|truncatewords:25 }}">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'blogpost' blog.slug %}">
 <meta property="og:type" content="article">
-{% if blog.effective_thumbnail %}
-<meta property="og:image" content="{{ blog.effective_thumbnail }}">
-{% else %}
-<meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
-{% endif %}
+<meta property="og:site_name" content="Ozodbek Bosimov">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="{{ blog.title }} — Ozodbek Bosimov">
+<meta property="og:description" content="{{ blog.meta|truncatewords:25 }}">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'blogpost' blog.slug %}">
+<meta property="og:image" content="{% if abs_thumbnail %}{{ abs_thumbnail }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
+<meta property="og:image:alt" content="{{ blog.title }}">
+<meta property="article:published_time" content="{{ blog.time|date:'c' }}">
+<meta property="article:author" content="Ozodbek Bosimov">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ blog.title }} — Ozodbek Bosimov">
+<meta name="twitter:description" content="{{ blog.meta|truncatewords:25 }}">
+<meta name="twitter:image" content="{% if abs_thumbnail %}{{ abs_thumbnail }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
 <link rel="stylesheet" href="{% static 'css/blogpost.css' %}?v=3">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 {% endblock meta %}

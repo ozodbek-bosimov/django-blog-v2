@@ -4,11 +4,19 @@
 {% block title %}Blog{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="Ozodbek Bosimov's blog — backend development, Python, Django and more.">
-<meta property="og:title" content="Blog — Ozodbek Bosimov">
-<meta property="og:description" content="Ozodbek Bosimov's blog — backend development, Python, Django and more.">
+<meta name="description" content="Ozodbek Bosimov's blog. A collection of articles covering technical tutorials, problem-solving, books, and thoughts on personal growth.">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'blog' %}">
 <meta property="og:type" content="website">
-<meta property="og:image" content="{% static 'favicon/favicon.svg' %}">
+<meta property="og:site_name" content="Ozodbek Bosimov">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Blog — Ozodbek Bosimov">
+<meta property="og:description" content="Ozodbek Bosimov's blog. A collection of articles covering technical tutorials, problem-solving, books, and thoughts on personal growth.">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'blog' %}">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog — Ozodbek Bosimov">
+<meta name="twitter:description" content="Ozodbek Bosimov's blog. A collection of articles covering technical tutorials, problem-solving, books, and thoughts on personal growth.">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 {% endblock meta %}
 
 {% block content %}
