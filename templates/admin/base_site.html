@@ -39,9 +39,9 @@
 {% block footer %}
 {{ block.super }}
 <div id="session-warning-banner">
-    Sessiya muddati tugagan bo'lishi mumkin. Sahifani yangilashdan oldin ma'lumotlaringizni saqlang.
-    <a href="javascript:location.reload()">Sahifani yangilash</a>
-    <a onclick="document.getElementById('session-warning-banner').style.display='none'">Yopish</a>
+    Your session may have expired. Please save your data before refreshing the page.
+    <a href="javascript:location.reload()">Refresh page</a>
+    <a onclick="document.getElementById('session-warning-banner').style.display='none'">Close</a>
 </div>
 <script>
 (function () {

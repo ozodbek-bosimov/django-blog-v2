@@ -118,7 +118,11 @@ def blogpost(request, slug):
         thumb = blog.effective_thumbnail
         if thumb and not thumb.startswith(('http://', 'https://')):
             thumb = f"{request.scheme}://{request.get_host()}{thumb}"
-        context = {'blog': blog, 'abs_thumbnail': thumb}
+
+        # Build full blog URL for sharing
+        blog_url = f"{request.scheme}://{request.get_host()}{request.path}"
+
+        context = {'blog': blog, 'abs_thumbnail': thumb, 'blog_url': blog_url}
         return render(request, 'blogpost.html', context)
     except Blog.DoesNotExist:
         context = {'message': 'Blog post not found'}
