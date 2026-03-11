@@ -4,48 +4,167 @@
 {% block title %}{{ blog.title }}{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="{{ blog.meta|truncatewords:25 }}">
-<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'blogpost' blog.slug %}">
-<meta property="og:type" content="article">
-<meta property="og:site_name" content="Ozodbek Bosimov">
-<meta property="og:locale" content="en_US">
-<meta property="og:title" content="{{ blog.title }} — Ozodbek Bosimov">
-<meta property="og:description" content="{{ blog.meta|truncatewords:25 }}">
-<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'blogpost' blog.slug %}">
-<meta property="og:image" content="{% if abs_thumbnail %}{{ abs_thumbnail }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
-<meta property="og:image:alt" content="{{ blog.title }}">
-<meta property="article:published_time" content="{{ blog.time|date:'c' }}">
-<meta property="article:author" content="Ozodbek Bosimov">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{{ blog.title }} — Ozodbek Bosimov">
-<meta name="twitter:description" content="{{ blog.meta|truncatewords:25 }}">
-<meta name="twitter:image" content="{% if abs_thumbnail %}{{ abs_thumbnail }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
-<link rel="stylesheet" href="{% static 'css/blogpost.css' %}?v=3">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-{% endblock meta %}
+<meta name="description" content="{{ blog.meta|truncatewords:25 }}" />
+<link
+    rel="canonical"
+    href="{{ request.scheme }}://{{ request.get_host }}{% url 'blogpost' blog.slug %}"
+/>
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Ozodbek Bosimov" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content="{{ blog.title }} — Ozodbek Bosimov" />
+<meta property="og:description" content="{{ blog.meta|truncatewords:25 }}" />
+<meta
+    property="og:url"
+    content="{{ request.scheme }}://{{ request.get_host }}{% url 'blogpost' blog.slug %}"
+/>
+<meta
+    property="og:image"
+    content="{% if abs_thumbnail %}{{ abs_thumbnail }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}"
+/>
+<meta property="og:image:alt" content="{{ blog.title }}" />
+<meta property="article:published_time" content="{{ blog.time|date:'c' }}" />
+<meta property="article:author" content="Ozodbek Bosimov" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{ blog.title }} — Ozodbek Bosimov" />
+<meta name="twitter:description" content="{{ blog.meta|truncatewords:25 }}" />
+<meta
+    name="twitter:image"
+    content="{% if abs_thumbnail %}{{ abs_thumbnail }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}"
+/>
+<link rel="stylesheet" href="{% static 'css/blogpost.css' %}?v=4" />
+<link
+    href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    rel="stylesheet"
+/>
+{% endblock meta %} {% block content %}
 
-{% block content %}
-<div class='bg-gray-800 text-white p-6 md:p-8 pt-12 flex flex-col max-w-5xl mx-auto w-full'>
-    <span class='text-center text-2xl md:text-4xl font-bold text-cyan-200'>
+<!-- Reading Progress Bar -->
+<div id="reading-progress-bar"></div>
+
+<div
+    class="bg-gray-800 text-white p-6 md:p-8 pt-12 flex flex-col max-w-5xl mx-auto w-full"
+>
+    <!-- Title -->
+    <h1 class="text-center text-2xl md:text-4xl font-bold text-cyan-200">
         {{ blog.title }}
-    </span>
-    <span class='text-center mt-3 text-gray-400'>by <a href='{% url "about" %}'><i class="bi bi-person"></i> <span
-                class='group'><span
-                    class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>Ozodbek</span></span></a>
-        <i class="bi bi-dot mx-1"></i> <span><i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}</span> <i
-            class="bi bi-dot mx-1"></i> <i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'><span
-                class='group'><span
-                    class='group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out'>{{ blog.category }}</span></span></a></span>
+    </h1>
 
+    <!-- Meta info -->
+    <p class="text-center mt-3 text-gray-400">
+        by
+        <a href="{% url 'about' %}">
+            <i class="bi bi-person"></i>
+            <span class="group">
+                <span
+                    class="group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out"
+                    >Ozodbek</span
+                >
+            </span>
+        </a>
+        <i class="bi bi-dot mx-1"></i>
+        <span
+            ><i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}</span
+        >
+        <i class="bi bi-dot mx-1"></i>
+        <i class="bi bi-tag"></i>
+        <a href="{% url 'category' blog.category %}">
+            <span class="group">
+                <span
+                    class="group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out"
+                    >{{ blog.category }}</span
+                >
+            </span>
+        </a>
+    </p>
+
+    <!-- Thumbnail -->
     {% if blog.effective_thumbnail %}
-    <div style="margin: 1.5rem auto; max-width: 48rem; width: 100%; display: flex; justify-content: center;">
-        <img style="max-width: 100%; max-height: 450px; width: auto; height: auto; display: block; border-radius: 8px;"
-            src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
+    <div
+        style="
+            margin: 1.5rem auto;
+            max-width: 48rem;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        "
+    >
+        <img
+            style="
+                max-width: 100%;
+                max-height: 450px;
+                width: auto;
+                height: auto;
+                display: block;
+                border-radius: 8px;
+            "
+            src="{{ blog.effective_thumbnail }}"
+            alt="{{ blog.title }}"
+        />
     </div>
     {% endif %}
 
-    <div class='blog-content ck-content leading-relaxed mt-2'>{{ blog.content|safe }}</div>
+    <!-- Blog Content -->
+    <div class="blog-content ck-content leading-relaxed mt-2">
+        {{ blog.content|safe }}
+    </div>
+
+    <!-- Social Share Buttons -->
+    <div class="share-section mt-10 pt-6 border-t border-gray-700">
+        <p
+            class="text-sm text-gray-400 mb-3 font-medium uppercase tracking-widest"
+        >
+            Share this post
+        </p>
+        <div class="flex flex-wrap gap-3">
+            <!-- Twitter / X -->
+            <a
+                href="https://twitter.com/intent/tweet?text={{ blog.title|urlencode }}&url={{ blog_url|urlencode }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-black hover:border-black transition-all duration-300 hover:scale-110 group"
+                title="Share on Twitter / X"
+            >
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" alt="X"
+                    class="w-5 h-5 filter brightness-0 invert transition-all">
+            </a>
+
+            <!-- LinkedIn -->
+            <a
+                href="https://www.linkedin.com/sharing/share-offsite/?url={{ blog_url|urlencode }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white transition-all duration-300 hover:scale-110"
+                title="Share on LinkedIn"
+            >
+                <i class="bi bi-linkedin text-xl"></i>
+            </a>
+
+            <!-- Telegram -->
+            <a
+                href="https://t.me/share/url?url={{ blog_url|urlencode }}&text={{ blog.title|urlencode }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white transition-all duration-300 hover:scale-110"
+                title="Share on Telegram"
+            >
+                <i class="bi bi-telegram text-xl"></i>
+            </a>
+
+            <!-- Copy Link -->
+            <button
+                id="copy-link-btn"
+                type="button"
+                class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-gray-700 hover:border-gray-600 hover:text-white transition-all duration-300 hover:scale-110"
+                data-url="{{ blog_url }}"
+                title="Copy link to clipboard"
+            >
+                <i class="bi bi-link-45deg text-2xl"></i>
+            </button>
+        </div>
+    </div>
 </div>
+
 <script src="{% static 'js/blogpost.js' %}"></script>
 {% endblock %}
 
