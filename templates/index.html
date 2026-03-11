@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load blog_extras %}
 
 {% block title %}Home{% endblock title %}
 
@@ -76,10 +77,14 @@
 
 <div class='blog-section bg-gray-900 p-4 text-white'>
     <p class='text-2xl md:text-4xl font-extrabold py-5 px-2 md:pl-36 text-center md:text-start'>Checkout my latest posts</p>
-    <div class='blogs my-5 grid justify-center md:flex md:space-x-6'>
+<style>
+    .blog-cards-grid { max-width: 365px; margin-left: auto; margin-right: auto; }
+    @media (min-width: 768px) { .blog-cards-grid { max-width: 1250px; } }
+</style>
+    <div class='blogs blog-cards-grid my-5 grid gap-6 px-4 md:grid-cols-3'>
         {% for blog in random_blogs %}
         <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);"
-            class='hover:scale-105 hover:transform bg-gray-800 p-5 rounded-lg max-w-sm h-auto shadow-2xl transition-all duration-300'>
+            class='hover:scale-105 hover:transform bg-gray-800 p-5 rounded-lg h-auto shadow-2xl transition-all duration-300'>
             <a href='{% url "blogpost" blog.slug %}'>
                 {% if blog.effective_thumbnail %}
                 <div class="w-full overflow-hidden rounded-lg mb-4" style="aspect-ratio: 16/9;">
@@ -91,25 +96,21 @@
                 href='{% url "blogpost" blog.slug %}'><span
                     class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
             <p class='my-3 break-words'>{{blog.meta|slice:180}}</p>
-            <p class='mt-2 mb-4 text-gray-400'>by <i class="bi bi-person"></i> <a href='{% url "about" %}'
-                    class='group transition-all duration-500 ease-out'><span
-                        class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>Ozodbek</span></a>
-                <i class="bi bi-dot"></i> <span><i class="bi bi-calendar4-event"></i> {{blog.time|date:"M j, Y"}}</span> <i
-                    class="bi bi-dot"></i><i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'
-                    class='group transition-all duration-500 ease-out'><span
-                        class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>{{blog.category}}</span></a>
+            <p class='mt-2 mb-4 text-gray-400'>
+                <span><i class="bi bi-calendar4-event"></i> {{blog.time|date:"M j, Y"}}</span>
+                <i class="bi bi-dot"></i>
+                <span class='text-gray-500'><i class="bi bi-clock"></i> {{ blog.content|reading_time }} min read</span>
             </p>
             <a href='{% url "blogpost" blog.slug %}'
                     class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Read
                     more <i class="bi bi-arrow-right font-bold"></i></a>
         </div>
-        <br>
         {% endfor %}
     </div>
     <div class='flex justify-center'>
         <a href='{% url "blog" %}'
-                class='inline-block bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-blue-600 outline hover:outline-none outline-blue-600 transition delay-75 ease-in-out my-3'>Load
-                more <i class="bi bi-arrow-clockwise font-bold"></i></a>
+                class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Load
+                more <i class="bi bi-arrow-right font-bold"></i></a>
     </div>
 </div>
 

@@ -4,11 +4,12 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.storage import default_storage
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import post_delete, pre_save
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.dispatch import receiver
 from django.utils import timezone
+
 
 # Create your models here.
 class Blog(models.Model):
@@ -29,25 +30,29 @@ class Blog(models.Model):
         if self.category:
             self.category = self.category.strip().lower()
         super().save(*args, **kwargs)
-        cache.delete('used_tags')
+        cache.delete("used_tags")
+        cache.delete(f"blogpost_{self.slug}")
 
     @property
     def effective_thumbnail(self):
         """Return the URL to use for the thumbnail, preferring the uploaded image."""
-        if self.thumbnail_img and hasattr(self.thumbnail_img, 'url'):
+        if self.thumbnail_img and hasattr(self.thumbnail_img, "url"):
             return self.thumbnail_img.url
-        return self.thumbnail_url or ''
+        return self.thumbnail_url or ""
 
 
 class AboutMe(models.Model):
     """Singleton model for About Me section"""
+
     name = models.CharField(max_length=100)
     profession = models.CharField(max_length=150)
     bio = models.TextField()
     email = models.EmailField()
     phone = models.CharField(max_length=20, blank=True)
     profile_img = models.ImageField(null=True, blank=True, upload_to="profile/")
-    profile_image_url = models.URLField(blank=True, help_text="CDN URL for profile image (used if no image is uploaded)")
+    profile_image_url = models.URLField(
+        blank=True, help_text="CDN URL for profile image (used if no image is uploaded)"
+    )
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
     telegram_url = models.URLField(blank=True)
@@ -67,9 +72,9 @@ class AboutMe(models.Model):
     @property
     def effective_profile_image(self):
         """Return the URL to use for the profile image, preferring the uploaded image."""
-        if self.profile_img and hasattr(self.profile_img, 'url'):
+        if self.profile_img and hasattr(self.profile_img, "url"):
             return self.profile_img.url
-        return self.profile_image_url or ''
+        return self.profile_image_url or ""
 
     class Meta:
         verbose_name = "About Me"
@@ -78,29 +83,37 @@ class AboutMe(models.Model):
 
 class Skill(models.Model):
     """Skills with percentage proficiency"""
+
     name = models.CharField(max_length=100)
     percentage = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(100)],
-        help_text="Skill proficiency (0-100)"
+        help_text="Skill proficiency (0-100)",
     )
-    order = models.IntegerField(default=0, help_text="Display order (lower numbers first)")
+    order = models.IntegerField(
+        default=0, help_text="Display order (lower numbers first)"
+    )
 
     def __str__(self):
         return f"{self.name} - {self.percentage}%"
 
     class Meta:
-        ordering = ['order', 'name']
+        ordering = ["order", "name"]
 
 
 class Project(models.Model):
     """Portfolio projects"""
+
     title = models.CharField(max_length=200)
     description = models.TextField()
     thumbnail_url = models.URLField(help_text="CDN URL for project thumbnail")
     github_link = models.URLField(blank=True)
     demo_link = models.URLField(blank=True)
-    technologies = models.CharField(max_length=500, help_text="Comma-separated technologies")
-    order = models.IntegerField(default=0, help_text="Display order (lower numbers first)")
+    technologies = models.CharField(
+        max_length=500, help_text="Comma-separated technologies"
+    )
+    order = models.IntegerField(
+        default=0, help_text="Display order (lower numbers first)"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -109,38 +122,41 @@ class Project(models.Model):
     def get_technologies_list(self):
         """Return technologies as a list"""
         if self.technologies:
-            return [tech.strip() for tech in self.technologies.split(',') if tech.strip()]
+            return [
+                tech.strip() for tech in self.technologies.split(",") if tech.strip()
+            ]
         return []
 
     class Meta:
-        ordering = ['order', '-created_at']
+        ordering = ["order", "-created_at"]
 
 
 # signals for cleaning up image files when a Blog is changed or removed
-
 
 
 def _extract_media_paths_from_html(html_content):
     if not html_content:
         return set()
 
-    media_url = settings.MEDIA_URL or '/media/'
-    if not media_url.endswith('/'):
+    media_url = settings.MEDIA_URL or "/media/"
+    if not media_url.endswith("/"):
         media_url = f"{media_url}/"
 
     paths = set()
     for raw_url in re.findall(r'(?:src|href)=["\']([^"\']+)["\']', html_content):
         parsed_path = urlparse(raw_url).path
         if parsed_path.startswith(media_url):
-            relative_path = parsed_path[len(media_url):].lstrip('/')
+            relative_path = parsed_path[len(media_url) :].lstrip("/")
             if relative_path:
                 paths.add(relative_path)
     return paths
 
 
-def _is_media_still_referenced(relative_path, exclude_aboutme_pk=None, exclude_blog_pk=None):
-    media_url = settings.MEDIA_URL or '/media/'
-    if not media_url.endswith('/'):
+def _is_media_still_referenced(
+    relative_path, exclude_aboutme_pk=None, exclude_blog_pk=None
+):
+    media_url = settings.MEDIA_URL or "/media/"
+    if not media_url.endswith("/"):
         media_url = f"{media_url}/"
     absolute_media_url = f"{media_url}{relative_path}"
 
@@ -158,7 +174,9 @@ def _is_media_still_referenced(relative_path, exclude_aboutme_pk=None, exclude_b
     )
 
 
-def _delete_media_paths_if_unused(media_paths, exclude_aboutme_pk=None, exclude_blog_pk=None):
+def _delete_media_paths_if_unused(
+    media_paths, exclude_aboutme_pk=None, exclude_blog_pk=None
+):
     for path in media_paths:
         if _is_media_still_referenced(
             path,
@@ -175,7 +193,8 @@ def delete_thumbnail_on_delete(sender, instance, **kwargs):
     """Remove file from filesystem when Blog object is deleted."""
     if instance.thumbnail_img:
         instance.thumbnail_img.delete(save=False)
-    cache.delete('used_tags')
+    cache.delete("used_tags")
+    cache.delete(f"blogpost_{instance.slug}")
 
 
 @receiver(pre_save, sender=Blog)

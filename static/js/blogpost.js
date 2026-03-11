@@ -52,11 +52,9 @@ document.addEventListener("DOMContentLoaded", function () {
             document.execCommand("copy");
             copyLinkBtn.classList.add("copied");
             if (icon) icon.className = "bi bi-check2";
-            if (label) label.textContent = "Copied!";
             setTimeout(function () {
               copyLinkBtn.classList.remove("copied");
               if (icon) icon.className = "bi bi-link-45deg";
-              if (label) label.textContent = "Copy Link";
             }, 2000);
           } catch (err) {
             console.error("Failed to copy link:", err);
