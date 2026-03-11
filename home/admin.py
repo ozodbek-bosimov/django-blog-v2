@@ -32,6 +32,17 @@ class BlogAdminForm(forms.ModelForm):
     def clean_content(self):
         """Convert YouTube watch URLs to embed URLs and ensure proper iframe format"""
         content = self.cleaned_data.get('content', '')
+
+        # Check content size - 5MB limit
+        content_size_bytes = len(content.encode('utf-8'))
+        max_size_bytes = 5 * 1024 * 1024  # 5MB
+        if content_size_bytes > max_size_bytes:
+            size_mb = content_size_bytes / (1024 * 1024)
+            raise forms.ValidationError(
+                f'Blog post content is too large ({size_mb:.1f} MB). '
+                'Maximum allowed size is 5 MB. Please reduce the content size.'
+            )
+
         if content:
             def time_to_seconds(time_str):
                 if not time_str:
@@ -155,6 +166,19 @@ class AboutMeAdminForm(forms.ModelForm):
     class Meta:
         model = AboutMe
         fields = "__all__"
+
+    def clean_bio(self):
+        """Check bio content size limit"""
+        bio = self.cleaned_data.get('bio', '')
+        bio_size_bytes = len(bio.encode('utf-8'))
+        max_size_bytes = 5 * 1024 * 1024  # 5MB
+        if bio_size_bytes > max_size_bytes:
+            size_mb = bio_size_bytes / (1024 * 1024)
+            raise forms.ValidationError(
+                f'Bio content is too large ({size_mb:.1f} MB). '
+                'Maximum allowed size is 5 MB. Please reduce the content size.'
+            )
+        return bio
 
     def clean_profile_img(self):
         img = self.cleaned_data.get('profile_img')

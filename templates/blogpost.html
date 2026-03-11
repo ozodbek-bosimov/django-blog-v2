@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load blog_extras %}
 
 {% block title %}{{ blog.title }}{% endblock title %}
 
@@ -63,10 +64,6 @@
             </span>
         </a>
         <i class="bi bi-dot mx-1"></i>
-        <span
-            ><i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}</span
-        >
-        <i class="bi bi-dot mx-1"></i>
         <i class="bi bi-tag"></i>
         <a href="{% url 'category' blog.category %}">
             <span class="group">
@@ -76,6 +73,14 @@
                 >
             </span>
         </a>
+        <i class="bi bi-dot mx-1"></i>
+        <span
+            ><i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}</span
+        >
+        <i class="bi bi-dot mx-1"></i>
+        <span class="text-gray-500">
+            <i class="bi bi-clock"></i> {{ blog.content|reading_time }} min read
+        </span>
     </p>
 
     <!-- Thumbnail -->
