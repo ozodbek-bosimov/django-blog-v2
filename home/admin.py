@@ -1,7 +1,14 @@
 import re
+from datetime import timedelta
 
 from django.contrib import admin
+from django.contrib import messages
+from django.contrib.admin.models import LogEntry
 from django import forms
+from django.conf import settings
+from django.shortcuts import redirect
+from django.urls import path, reverse
+from django.utils import timezone
 from home.models import Blog, AboutMe, Skill, Project
 from django.utils.html import format_html, escape
 from django_ckeditor_5.widgets import CKEditor5Widget
@@ -255,6 +262,79 @@ class ProjectAdmin(admin.ModelAdmin):
         return '(No image)'
 
 
+class LogEntryAdmin(admin.ModelAdmin):
+    change_list_template = "admin/logentry_change_list.html"
+    date_hierarchy = "action_time"
+    list_display = ["action_time", "user", "content_type", "object_repr", "action_flag"]
+    list_filter = ["action_flag", "user", "content_type"]
+    search_fields = ["object_repr", "change_message", "user__username"]
+    ordering = ["-action_time"]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "prune/",
+                self.admin_site.admin_view(self.prune_old_logs_view),
+                name="admin_logentry_prune",
+            ),
+        ]
+        return custom_urls + urls
+
+    def _changelist_url(self):
+        opts = self.model._meta
+        return reverse(f"admin:{opts.app_label}_{opts.model_name}_changelist")
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["prune_url"] = reverse("admin:admin_logentry_prune")
+        extra_context["retention_days"] = str(
+            max(
+                int(getattr(settings, "ADMIN_LOG_RETENTION_DAYS", 90)),
+                1,
+            )
+        )
+        return super().changelist_view(request, extra_context=extra_context)
+
+    def prune_old_logs_view(self, request):
+        if request.method != "POST":
+            return redirect(self._changelist_url())
+
+        retention_days_raw = request.POST.get("days")
+        if retention_days_raw:
+            try:
+                retention_days = max(int(retention_days_raw), 1)
+            except (TypeError, ValueError):
+                self.message_user(
+                    request,
+                    "Days must be a whole number greater than or equal to 1.",
+                    level=messages.ERROR,
+                )
+                return redirect(self._changelist_url())
+        else:
+            retention_days = max(int(getattr(settings, "ADMIN_LOG_RETENTION_DAYS", 90)), 1)
+
+        cutoff = timezone.now() - timedelta(days=retention_days)
+        deleted_count, _ = LogEntry.objects.filter(action_time__lt=cutoff).delete()
+
+        self.message_user(
+            request,
+            f"Deleted {deleted_count} admin history rows older than {retention_days} days.",
+            level=messages.SUCCESS,
+        )
+        return redirect(self._changelist_url())
+
+
 admin.site.register(AboutMe, AboutMeAdmin)
 admin.site.register(Skill, SkillAdmin)
 admin.site.register(Project, ProjectAdmin)
+admin.site.register(LogEntry, LogEntryAdmin)
