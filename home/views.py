@@ -1,4 +1,5 @@
 import operator
+import re
 from functools import reduce
 
 from django.core.cache import cache
@@ -7,6 +8,22 @@ from django.db.models import Q
 from django.shortcuts import render
 
 from home.models import Blog, AboutMe, Skill, Project
+
+
+def _is_valid_ip(ip):
+    """Validate if string is a valid IPv4 or IPv6 address."""
+    if not ip:
+        return False
+    # Basic IPv4 validation
+    ipv4_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
+    if re.match(ipv4_pattern, ip):
+        try:
+            parts = [int(p) for p in ip.split('.')]
+            return all(0 <= p <= 255 for p in parts)
+        except ValueError:
+            return False
+    # IPv6 can have `:`
+    return ':' in ip and not any(c in ip for c in [';', '"', "'"])
 
 
 def custom_404(request, exception=None):
@@ -75,16 +92,23 @@ def search(request):
         request.META.get('HTTP_X_FORWARDED_FOR', '')
         or request.META.get('REMOTE_ADDR', '')
     ).split(',')[0].strip()
-    if ip:
+
+    if ip and _is_valid_ip(ip):
         rl_key = f"search_rl_{ip}"
-        req_count = cache.get(rl_key, 0)
-        if req_count >= 20:
+        try:
+            req_count = cache.incr(rl_key)
+        except ValueError:
+            # Key doesn't exist, set it to 1
+            cache.set(rl_key, 1, 60)
+            req_count = 1
+
+        if req_count > 20:
             return render(request, 'search.html', {
                 'results': [],
                 'query': '',
                 'message': 'Too many requests. Please wait a moment and try again.',
-            })
-        cache.set(rl_key, req_count + 1, 60)
+                'rate_limited': True,
+            }, status=429)
 
     query = (request.GET.get('q') or '').strip()
 
@@ -102,13 +126,15 @@ def search(request):
 
     if len(results_page) == 0:
         message = "Sorry, no results found for your search query." if query else "Please enter a search query."
+        rate_limited = False
     else:
         message = ""
+        rate_limited = False
 
     return render(
         request,
         'search.html',
-        {'results': results_page, 'query': query, 'message': message},
+        {'results': results_page, 'query': query, 'message': message, 'rate_limited': rate_limited},
     )
 
 
