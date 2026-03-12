@@ -198,6 +198,11 @@ SECURE_HSTS_PRELOAD = not DEBUG
 ADMIN_SESSION_TIMEOUT = int(os.getenv("ADMIN_SESSION_TIMEOUT", "1800"))
 SESSION_SAVE_EVERY_REQUEST = True
 
+# Admin history (django_admin_log) retention.
+# Keep only the most recent N days to prevent unbounded growth.
+ADMIN_LOG_RETENTION_ENABLED = _get_bool_env("ADMIN_LOG_RETENTION_ENABLED", True)
+ADMIN_LOG_RETENTION_DAYS = int(os.getenv("ADMIN_LOG_RETENTION_DAYS", "90"))
+
 # Upload limits (increase max request / file size for admin uploads)
 # 5 MB per request / file – adjust if you need more or less
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024

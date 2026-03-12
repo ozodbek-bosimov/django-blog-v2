@@ -1,0 +1,30 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+  <li>
+    <form action="{{ prune_url }}" method="post" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="button" style="cursor:pointer;">
+        Prune logs older than {{ retention_days }} days
+      </button>
+    </form>
+  </li>
+  <li>
+    <form action="{{ prune_url }}" method="post" style="display:flex; gap:8px; align-items:center;">
+      {% csrf_token %}
+      <input
+        type="number"
+        name="days"
+        min="1"
+        step="1"
+        value="30"
+        aria-label="Number of days to keep"
+        style="width:88px; padding:6px 8px;"
+      >
+      <button type="submit" class="button" style="cursor:pointer;">
+        Prune custom days
+      </button>
+    </form>
+  </li>
+  {{ block.super }}
+{% endblock %}
