@@ -3,7 +3,7 @@ import re
 from django.contrib import admin
 from django import forms
 from home.models import Blog, AboutMe, Skill, Project
-from django.utils.html import format_html
+from django.utils.html import format_html, escape
 from django_ckeditor_5.widgets import CKEditor5Widget
 
 # Register your models here.
@@ -152,9 +152,9 @@ class BlogAdmin(admin.ModelAdmin):
     @admin.display(description='Current thumbnail')
     def thumbnail_preview(self, obj):
         if obj.thumbnail_img:
-            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', obj.thumbnail_img.url)
+            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', escape(obj.thumbnail_img.url))
         elif obj.thumbnail_url:
-            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', obj.thumbnail_url)
+            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', escape(obj.thumbnail_url))
         return '(No image)'
 
 admin.site.register(Blog, BlogAdmin)
@@ -213,7 +213,7 @@ class AboutMeAdmin(admin.ModelAdmin):
         if obj:
             url = obj.effective_profile_image
             if url:
-                return format_html('<img src="{}" style="max-width: 200px; height: auto; border-radius: 50%;" />', url)
+                return format_html('<img src="{}" style="max-width: 200px; height: auto; border-radius: 50%;" />', escape(url))
         return '(No image)'
 
 
@@ -251,7 +251,7 @@ class ProjectAdmin(admin.ModelAdmin):
     @admin.display(description='Thumbnail Preview')
     def thumbnail_preview(self, obj):
         if obj and obj.thumbnail_url:
-            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', obj.thumbnail_url)
+            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', escape(obj.thumbnail_url))
         return '(No image)'
 
 

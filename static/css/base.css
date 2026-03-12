@@ -1,14 +1,3 @@
-/* ── Blog Cards Grid ────────────────────────────────────────────── */
-.blog-cards-grid {
-    max-width: 320px;
-}
-
-@media (min-width: 768px) {
-    .blog-cards-grid {
-        max-width: 1000px;
-    }
-}
-
 /* ── Back to Top Button ─────────────────────────────────────────── */
 #back-to-top {
     position: fixed;

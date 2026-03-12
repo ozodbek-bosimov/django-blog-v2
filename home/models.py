@@ -65,8 +65,9 @@ class AboutMe(models.Model):
     def save(self, *args, **kwargs):
         """Enforce singleton pattern - only one AboutMe instance allowed"""
         if not self.pk and AboutMe.objects.exists():
-            # Delete all existing instances
-            AboutMe.objects.all().delete()
+            # Update the existing instance instead of deleting
+            existing = AboutMe.objects.first()
+            self.pk = existing.pk
         super().save(*args, **kwargs)
 
     @property
@@ -188,51 +189,36 @@ def _delete_media_paths_if_unused(
             default_storage.delete(path)
 
 
-@receiver(post_delete, sender=Blog)
-def delete_thumbnail_on_delete(sender, instance, **kwargs):
-    """Remove file from filesystem when Blog object is deleted."""
-    if instance.thumbnail_img:
-        instance.thumbnail_img.delete(save=False)
-    cache.delete("used_tags")
-    cache.delete(f"blogpost_{instance.slug}")
-
-
 @receiver(pre_save, sender=Blog)
-def delete_old_thumbnail_on_change(sender, instance, **kwargs):
-    """Delete old file when replacing thumbnail_img with a new one."""
+def cleanup_blog_on_save(sender, instance, **kwargs):
+    """Delete old thumbnail and removed media files when Blog is saved."""
     if not instance.pk:
         return
-    try:
-        old = sender.objects.get(pk=instance.pk)
-    except sender.DoesNotExist:
-        return
-    if old.thumbnail_img and old.thumbnail_img != instance.thumbnail_img:
-        old.thumbnail_img.delete(save=False)
-
-
-@receiver(pre_save, sender=Blog)
-def delete_removed_blog_content_media(sender, instance, **kwargs):
-    """Delete media files removed from Blog.content when they are no longer used."""
-    if not instance.pk:
-        return
-
     try:
         old_instance = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
         return
 
+    # Delete old thumbnail if it changed
+    if old_instance.thumbnail_img and old_instance.thumbnail_img != instance.thumbnail_img:
+        old_instance.thumbnail_img.delete(save=False)
+
+    # Delete media files removed from content
     old_media = _extract_media_paths_from_html(old_instance.content)
     new_media = _extract_media_paths_from_html(instance.content)
     removed_media = old_media - new_media
-
     _delete_media_paths_if_unused(removed_media, exclude_blog_pk=instance.pk)
 
 
 @receiver(post_delete, sender=Blog)
-def delete_blog_content_media_on_delete(sender, instance, **kwargs):
-    """Delete media files from Blog.content on object delete when no longer used."""
+def cleanup_blog_on_delete(sender, instance, **kwargs):
+    """Delete thumbnail and media files from Blog.content when Blog is deleted."""
+    if instance.thumbnail_img:
+        instance.thumbnail_img.delete(save=False)
     removed_media = _extract_media_paths_from_html(instance.content)
     _delete_media_paths_if_unused(removed_media)
+    cache.delete("used_tags")
+    cache.delete(f"blogpost_{instance.slug}")
 
 
 @receiver(pre_save, sender=AboutMe)
