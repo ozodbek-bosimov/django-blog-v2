@@ -4,6 +4,7 @@
 
   var MAX_SIZE_MB = 2;
   var MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+  var META_MAX_CHARS = 600;
 
   function validateThumbnail(input) {
     if (!input.files || input.files.length === 0) return;
@@ -43,9 +44,50 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
-    var input = document.getElementById('id_thumbnail_img');
+  function enforceMetaLimit(input) {
     if (!input) return;
-    input.addEventListener('change', function () { validateThumbnail(this); });
+
+    input.setAttribute('maxlength', String(META_MAX_CHARS));
+
+    var counterId = 'meta-char-counter';
+    var counter = document.getElementById(counterId);
+
+    if (!counter) {
+      counter = document.createElement('p');
+      counter.id = counterId;
+      counter.style.cssText = 'margin-top:6px; font-size:12px; color:#8f8f8f;';
+      input.parentNode.appendChild(counter);
+    }
+
+    function updateCounter() {
+      var length = (input.value || '').length;
+      counter.textContent = length + ' / ' + META_MAX_CHARS;
+      counter.style.color = length >= META_MAX_CHARS ? '#ba2121' : '#8f8f8f';
+    }
+
+    function trimToLimit() {
+      var value = input.value || '';
+      if (value.length > META_MAX_CHARS) {
+        input.value = value.slice(0, META_MAX_CHARS);
+      }
+      updateCounter();
+    }
+
+    input.addEventListener('input', trimToLimit);
+    input.addEventListener('paste', function () {
+      setTimeout(trimToLimit, 0);
+    });
+
+    trimToLimit();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var thumbnailInput = document.getElementById('id_thumbnail_img');
+    if (thumbnailInput) {
+      thumbnailInput.addEventListener('change', function () { validateThumbnail(this); });
+    }
+
+    var metaInput = document.getElementById('id_meta');
+    enforceMetaLimit(metaInput);
   });
 })();

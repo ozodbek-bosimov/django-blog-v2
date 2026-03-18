@@ -67,6 +67,8 @@ DJANGO_SECURE_SSL_REDIRECT=true
 DJANGO_FILE_LOGGING=false
 ```
 
+Production ishga tushirishda aniq env fayl tanlang: `DJANGO_ENV_FILE=.env.deploy`.
+
 > Eslatma: `DJANGO_FILE_LOGGING=true` qilsangiz, `logs/` papkasiga yozish ruxsati bo‘lishi shart.
 
 ---

@@ -1,9 +1,93 @@
 from datetime import timedelta
+import ipaddress
+import time
 
 from django.contrib.admin.models import LogEntry
 from django.conf import settings
 from django.core.cache import cache
+from django.http import HttpResponse
 from django.utils import timezone
+
+
+class IpRateLimitMiddleware:
+    """Simple global IP rate limit middleware backed by Django cache."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not getattr(settings, "GLOBAL_RATE_LIMIT_ENABLED", False):
+            return self.get_response(request)
+
+        if self._is_exempt_path(request.path):
+            return self.get_response(request)
+
+        ip = self._get_client_ip(request)
+        if not ip:
+            return self.get_response(request)
+
+        max_requests = max(int(getattr(settings, "GLOBAL_RATE_LIMIT_REQUESTS", 120)), 1)
+        window_seconds = max(int(getattr(settings, "GLOBAL_RATE_LIMIT_WINDOW_SECONDS", 60)), 1)
+        block_seconds = max(int(getattr(settings, "GLOBAL_RATE_LIMIT_BLOCK_SECONDS", 120)), 1)
+
+        blocked_key = f"global_rl:block:{ip}"
+        blocked_until = cache.get(blocked_key)
+        now_ts = int(time.time())
+        if blocked_until and now_ts < int(blocked_until):
+            retry_after = max(int(blocked_until) - now_ts, 1)
+            response = HttpResponse(
+                "Too many requests. Please try again later.",
+                status=429,
+                content_type="text/plain",
+            )
+            response["Retry-After"] = str(retry_after)
+            return response
+
+        window_key = f"global_rl:window:{ip}"
+        try:
+            req_count = cache.incr(window_key)
+        except ValueError:
+            cache.set(window_key, 1, timeout=window_seconds)
+            req_count = 1
+
+        if req_count > max_requests:
+            blocked_until = now_ts + block_seconds
+            cache.set(blocked_key, blocked_until, timeout=block_seconds)
+            response = HttpResponse(
+                "Too many requests. Please try again later.",
+                status=429,
+                content_type="text/plain",
+            )
+            response["Retry-After"] = str(block_seconds)
+            return response
+
+        return self.get_response(request)
+
+    @staticmethod
+    def _is_exempt_path(path):
+        exempt_prefixes = getattr(
+            settings,
+            "GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES",
+            ["/_owner/", "/static/", "/media/"],
+        )
+        return any(path.startswith(prefix) for prefix in exempt_prefixes)
+
+    @staticmethod
+    def _get_client_ip(request):
+        forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR", "")
+        if forwarded_for:
+            ip = forwarded_for.split(",")[0].strip()
+        else:
+            ip = request.META.get("REMOTE_ADDR", "").strip()
+
+        if not ip:
+            return ""
+
+        try:
+            ipaddress.ip_address(ip)
+            return ip
+        except ValueError:
+            return ""
 
 
 class AdminSessionTimeoutMiddleware:
@@ -15,7 +99,7 @@ class AdminSessionTimeoutMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.path.startswith("/admin/") and request.user.is_authenticated:
+        if request.path.startswith("/_owner/") and request.user.is_authenticated:
             request.session.set_expiry(settings.ADMIN_SESSION_TIMEOUT)
             self._cleanup_admin_log_if_needed()
         return self.get_response(request)

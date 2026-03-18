@@ -3,7 +3,7 @@
 <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);"
   class='flex flex-col md:flex-row gap-4 md:gap-x-8 bg-gray-900 p-5 mb-4 rounded-lg'>
   {% if blog.effective_thumbnail %}
-  <div class="w-full md:w-[350px] md:flex-shrink-0 h-[180px] overflow-hidden rounded-lg">
+  <div class="w-full md:w-[350px] md:flex-shrink-0 overflow-hidden rounded-lg" style="height: 200px;">
     <img class="w-full h-full object-cover"
       src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
   </div>
@@ -12,7 +12,7 @@
     <a class='text-blue-100 hover:text-blue-300 transition duration-300'
       href='{% url "blogpost" blog.slug %}'><span
         class='text-xl font-bold'>{{ blog.title|slice:80 }}</span></a><br>
-    <p class='my-3 break-words'>{{ blog.meta|slice:180 }}</p>
+    <p class='my-3 break-words'>{{ blog.meta|slice:600 }}</p>
     <p class='mt-2 mb-4 text-gray-400'>by <i class="bi bi-person"></i> <a href='{% url "about" %}'
         class='group transition-all duration-500 ease-out'><span
           class='bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out group-hover:text-cyan-200'>Ozodbek</span></a>

@@ -53,7 +53,7 @@
     var hiddenAt = null;
 
     function ping() {
-        fetch('/admin/keepalive/', { credentials: 'same-origin' }).catch(function () {});
+        fetch('/_owner/keepalive/', { credentials: 'same-origin' }).catch(function () {});
     }
 
     // Keep session alive with periodic pings

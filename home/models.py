@@ -15,7 +15,7 @@ from django.utils import timezone
 class Blog(models.Model):
     sno = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200)
-    meta = models.CharField(max_length=300)
+    meta = models.CharField(max_length=600)
     content = models.TextField()
     thumbnail_img = models.ImageField(null=True, blank=True, upload_to="images/")
     thumbnail_url = models.URLField(blank=True, null=True)
