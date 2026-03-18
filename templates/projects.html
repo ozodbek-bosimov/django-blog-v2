@@ -21,9 +21,28 @@
 
 {% block content %}
 <style>
-  .project-img { width: 100%; height: 200px; object-fit: cover; border-radius: 0.5rem; }
+  .project-img {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0.5rem;
+    display: block;
+  }
   @media (min-width: 768px) {
-    .project-img { width: 320px; flex-shrink: 0; }
+    .project-img {
+      width: 280px;
+      min-width: 280px;
+      aspect-ratio: 4 / 3;
+    }
+  }
+  @media (min-width: 1024px) {
+    .project-img {
+      width: 320px;
+      min-width: 320px;
+    }
   }
 </style>
 <div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
@@ -31,21 +50,21 @@
 
   {% if projects %}
   {% for project in projects %}
-  <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);"
-    class='flex flex-col md:flex-row gap-6 md:gap-8 bg-gray-900 p-6 mb-6 rounded-lg overflow-hidden'>
+  <div style="box-shadow: 0 5px 30px 0 rgba(0,0,0,.05);"
+    class='flex flex-col md:flex-row md:items-start gap-5 md:gap-8 bg-gray-900 p-5 md:p-6 mb-6 rounded-lg overflow-hidden'>
     <div class='shrink-0'>
       <img class="project-img" src="{{ project.thumbnail_url }}"
-        alt="{{ project.title }}">
+        alt="{{ project.title }}" loading="lazy">
     </div>
 
-    <div class='flex-1 overflow-hidden'>
-      <p class="font-bold text-2xl text-cyan-300 mb-3">{{ project.title }}</p>
+    <div class='flex-1 min-w-0'>
+      <p class="font-bold text-xl md:text-2xl text-cyan-300 mb-2 md:mb-3">{{ project.title }}</p>
 
-      <p class='text-gray-300 leading-relaxed mb-4 break-words'>{{ project.description }}</p>
+      <p class='text-gray-300 text-sm md:text-base leading-relaxed mb-4 break-words'>{{ project.description }}</p>
 
       {% if project.technologies %}
       <div class='mb-4'>
-        <span class='text-sm font-bold text-gray-400 block mb-2'>Technologies used</span>
+        <span class='text-xs md:text-sm font-bold text-gray-400 block mb-2'>Technologies used</span>
         <div class='flex flex-wrap gap-2'>
           {% for tech in project.get_technologies_list %}
           <span class='text-xs bg-gradient-to-r from-cyan-500 to-blue-500 py-1 px-3 rounded-full'>{{ tech }}</span>
@@ -58,13 +77,13 @@
       <div class='flex flex-wrap gap-3 mt-4'>
         {% if project.github_link %}
         <a href='{{ project.github_link }}' target='_blank'
-          class='inline-block bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition delay-75 ease-in-out'>
+          class='inline-block bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition delay-75 ease-in-out text-sm'>
           <i class="bi bi-github"></i> Github
         </a>
         {% endif %}
         {% if project.demo_link %}
         <a href='{{ project.demo_link }}' target='_blank'
-          class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-blue-700 transition delay-75 ease-in-out'>
+          class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-blue-700 transition delay-75 ease-in-out text-sm'>
           Demo <i class="bi bi-box-arrow-up-right"></i>
         </a>
         {% endif %}

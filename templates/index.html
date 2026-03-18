@@ -88,14 +88,14 @@
             <a href='{% url "blogpost" blog.slug %}'>
                 {% if blog.effective_thumbnail %}
                 <div class="w-full overflow-hidden rounded-lg mb-4" style="aspect-ratio: 16/9;">
-                    <img class='w-full h-full object-cover' src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
+                        <img class='w-full h-full object-cover' src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
                 </div>
                 {% endif %}
             </a>
             <a class='text-blue-100 hover:text-blue-300 transition duration-300'
                 href='{% url "blogpost" blog.slug %}'><span
                     class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
-            <p class='my-3 break-words'>{{blog.meta|slice:180}}</p>
+            <p class='my-3 break-words'>{{blog.meta|slice:600}}</p>
             <p class='mt-2 mb-4 text-gray-400'>
                 <span><i class="bi bi-calendar4-event"></i> {{blog.time|date:"M j, Y"}}</span>
                 <i class="bi bi-dot"></i>

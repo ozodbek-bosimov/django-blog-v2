@@ -17,9 +17,9 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 class BlogAdminForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditor5Widget(config_name='default'))
     meta = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 3, 'style': 'width:100%; resize:vertical;'}),
-        max_length=300,
-        help_text='Max 300 characters. This text appears in search results and social media previews.',
+        widget=forms.Textarea(attrs={'rows': 3, 'style': 'width:100%; resize:vertical;', 'maxlength': 600}),
+        max_length=600,
+        help_text='Max 600 characters. This text appears in search results and social media previews.',
     )
 
     class Meta:
@@ -134,6 +134,12 @@ class BlogAdminForm(forms.ModelForm):
 
             content = re.sub(r'<iframe[^>]*>', augment_iframe, content, flags=re.IGNORECASE)
         return content
+
+    def clean_meta(self):
+        meta = (self.cleaned_data.get('meta') or '').strip()
+        if len(meta) > 600:
+            raise forms.ValidationError('Meta text can be at most 600 characters.')
+        return meta
 
 
 class BlogAdmin(admin.ModelAdmin):

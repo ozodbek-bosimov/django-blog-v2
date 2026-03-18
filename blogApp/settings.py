@@ -16,7 +16,9 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / ".env")
+# Load exactly one env file (default: .env). Use DJANGO_ENV_FILE=.env.deploy for production.
+_env_file_name = os.getenv("DJANGO_ENV_FILE", ".env")
+load_dotenv(BASE_DIR / _env_file_name)
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,7 +42,7 @@ def _get_bool_env(name, default=False):
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _get_bool_env("DJANGO_DEBUG", False)
 
-_allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "*")
+_allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "*" if DEBUG else "")
 ALLOWED_HOSTS = [host.strip() for host in _allowed_hosts.split(",") if host.strip()]
 
 _csrf_trusted_origins = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "")
@@ -69,6 +71,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    'blogApp.middleware.IpRateLimitMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -186,6 +189,19 @@ SESSION_COOKIE_SECURE = _get_bool_env("DJANGO_SESSION_COOKIE_SECURE", not DEBUG)
 CSRF_COOKIE_SECURE = _get_bool_env("DJANGO_CSRF_COOKIE_SECURE", not DEBUG)
 SECURE_SSL_REDIRECT = _get_bool_env("DJANGO_SECURE_SSL_REDIRECT", not DEBUG)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Global request rate limiting.
+GLOBAL_RATE_LIMIT_ENABLED = _get_bool_env("GLOBAL_RATE_LIMIT_ENABLED", not DEBUG)
+GLOBAL_RATE_LIMIT_REQUESTS = int(os.getenv("GLOBAL_RATE_LIMIT_REQUESTS", "120"))
+GLOBAL_RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("GLOBAL_RATE_LIMIT_WINDOW_SECONDS", "60"))
+GLOBAL_RATE_LIMIT_BLOCK_SECONDS = int(os.getenv("GLOBAL_RATE_LIMIT_BLOCK_SECONDS", "120"))
+_global_rl_exempt = os.getenv(
+    "GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES",
+    "/_owner/,/static/,/media/",
+)
+GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES = [
+    p.strip() for p in _global_rl_exempt.split(",") if p.strip()
+]
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
