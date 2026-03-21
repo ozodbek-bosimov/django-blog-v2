@@ -189,7 +189,7 @@ sudo systemctl reload nginx
 Deploydan keyin health-check:
 ```bash
 curl -I https://ozodbek.me/
-curl -I https://ozodbek.me/admin/login/
+curl -I https://ozodbek.me/_owner/login/
 curl -I https://ozodbek.me/static/favicon/favicon.ico
 ```
 
@@ -200,7 +200,7 @@ curl -I https://ozodbek.me/static/favicon/favicon.ico
 ### 1) `Healthy`
 Belgilar:
 - `curl -I https://ozodbek.me/` -> `200`
-- `curl -I https://ozodbek.me/admin/login/` -> `200`
+- `curl -I https://ozodbek.me/_owner/login/` -> `200`
 - `gunicorn` active
 
 Tekshiruv:
