@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
-from django.http import HttpResponseNotFound
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
@@ -9,13 +8,8 @@ from django.views.generic import TemplateView
 from home.sitemaps import BlogPostSitemap, CategorySitemap, StaticViewSitemap
 from blogApp.views import admin_keepalive
 
-# Honeypot: bots scanning /admin/ get a plain 404
-def _admin_honeypot(request, _path=""):
-    return HttpResponseNotFound("Not Found")
 
 urlpatterns = [
-    path('admin/', _admin_honeypot),
-    path('admin/<path:_path>', _admin_honeypot),
     path('_owner/keepalive/', admin_keepalive, name='admin_keepalive'),
     path('_owner/', admin.site.urls),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
