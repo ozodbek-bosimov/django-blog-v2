@@ -108,3 +108,120 @@ if (searchModal) {
     }
   });
 }
+
+// ── Hero Interactive Dot Grid ────────────────────────────────────
+(function () {
+  const canvas = document.getElementById("hero-grid");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  let w, h, cols, rows, offsetX, offsetY;
+  const gap = 32;
+  const dotBase = 0.4;
+  const mouse = { x: -1000, y: -1000 };
+  const radius = 120;
+
+  function resize() {
+    w = canvas.width = window.innerWidth * devicePixelRatio;
+    h = canvas.height = window.innerHeight * devicePixelRatio;
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    
+    cols = Math.floor(window.innerWidth / gap) + 1;
+    rows = Math.floor(window.innerHeight / gap) + 1;
+    
+    // Calculate offsets to keep grid perfectly centered and symmetrical
+    const gridWidth = (cols - 1) * gap;
+    const gridHeight = (rows - 1) * gap;
+    offsetX = (window.innerWidth - gridWidth) / 2;
+    offsetY = (window.innerHeight - gridHeight) / 2;
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+
+  window.addEventListener("mousemove", (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  window.addEventListener("mouseleave", () => {
+    mouse.x = -1000;
+    mouse.y = -1000;
+  });
+
+  window.addEventListener("scroll", () => {
+    mouse.x = -1000;
+    mouse.y = -1000;
+  }, { passive: true });
+
+  function draw() {
+    ctx.clearRect(0, 0, w / devicePixelRatio, h / devicePixelRatio);
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        const x = offsetX + i * gap;
+        const y = offsetY + j * gap;
+        const dx = mouse.x - x;
+        const dy = mouse.y - y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const intensity = Math.max(0, 1 - dist / radius);
+
+        ctx.beginPath();
+        ctx.arc(x, y, dotBase + intensity * 2, 0, Math.PI * 2);
+
+        if (intensity > 0) {
+          const alpha = 0.08 + intensity * 0.7;
+          ctx.fillStyle = `rgba(103, 232, 249, ${alpha})`;
+        } else {
+          ctx.fillStyle = "rgba(156, 163, 175, 0)";
+        }
+        ctx.fill();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+
+// ── Hero Typing Effect ───────────────────────────────────────────
+(function () {
+  const el = document.getElementById("hero-typed");
+  if (!el) return;
+
+  const phrases = [
+    "Sharing what I learn",
+    "Documenting the journey",
+    "Exploring new ideas",
+    "Thinking out loud",
+  ];
+
+  let pi = 0,
+    ci = 0,
+    deleting = false;
+
+  function tick() {
+    const phrase = phrases[pi];
+    if (!deleting) {
+      el.textContent = phrase.slice(0, ci + 1);
+      ci++;
+      if (ci === phrase.length) {
+        deleting = true;
+        return setTimeout(tick, 2200);
+      }
+      return setTimeout(tick, 55);
+    } else {
+      el.textContent = phrase.slice(0, ci - 1);
+      ci--;
+      if (ci === 0) {
+        deleting = false;
+        pi = (pi + 1) % phrases.length;
+        return setTimeout(tick, 350);
+      }
+      return setTimeout(tick, 30);
+    }
+  }
+
+  setTimeout(tick, 600);
+})();

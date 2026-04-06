@@ -45,13 +45,18 @@
     }
   }
 </style>
-<div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
-  <p class='text-2xl md:text-4xl font-extrabold py-5 text-center md:text-start'>Projects Completed</p>
+<div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-2">
+    <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+        Projects
+    </h1>
+    <div class="h-px bg-gray-700 w-full"></div>
+</div>
+
+<div class='text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
 
   {% if projects %}
   {% for project in projects %}
-  <div style="box-shadow: 0 5px 30px 0 rgba(0,0,0,.05);"
-    class='flex flex-col md:flex-row md:items-start gap-5 md:gap-8 bg-gray-900 p-5 md:p-6 mb-6 rounded-lg overflow-hidden'>
+  <div class='flex flex-col md:flex-row md:items-start gap-5 md:gap-8 bg-white/5 backdrop-blur-lg rounded-2xl ring-1 ring-inset ring-white/10 shadow-2xl hover:bg-white/10 hover:ring-white/20 p-5 md:p-6 mb-8 overflow-hidden transition-all duration-300 hover:-translate-y-1'>
     <div class='shrink-0'>
       <img class="project-img" src="{{ project.thumbnail_url }}"
         alt="{{ project.title }}" loading="lazy">
@@ -77,14 +82,14 @@
       <div class='flex flex-wrap gap-3 mt-4'>
         {% if project.github_link %}
         <a href='{{ project.github_link }}' target='_blank'
-          class='inline-block bg-gray-800 p-2 px-4 rounded-[6px] hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition delay-75 ease-in-out text-sm'>
+          class='inline-flex items-center gap-2 bg-white/5 backdrop-blur-md px-4 py-2 rounded-xl text-white text-sm font-semibold ring-1 ring-inset ring-white/10 hover:bg-white/10 hover:ring-white/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'>
           <i class="bi bi-github"></i> Github
         </a>
         {% endif %}
         {% if project.demo_link %}
         <a href='{{ project.demo_link }}' target='_blank'
-          class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-blue-700 transition delay-75 ease-in-out text-sm'>
-          Demo <i class="bi bi-box-arrow-up-right"></i>
+          class='inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold ring-1 ring-inset ring-white/20 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300'>
+          Demo <i class="bi bi-box-arrow-up-right text-xs"></i>
         </a>
         {% endif %}
       </div>

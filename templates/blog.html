@@ -21,22 +21,28 @@
 
 {% block content %}
 
-<div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
-  <p class='text-2xl md:text-4xl font-extrabold py-5 text-center md:text-start'>Blog</p>
+<div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-2">
+    <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+        Blog
+    </h1>
+    <div class="h-px bg-gray-700 w-full"></div>
+</div>
+
+<div class='text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
   {% for blog in blogs %}
   {% include 'partials/_blog_list_card.html' %}
   {% endfor %}
   <div class="pagination py-8 flex justify-between items-center">
     {% if blogs.has_previous %}
-    <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out'
-      href="?page={{ blogs.previous_page_number }}"><i class="bi bi-arrow-left font-bold"></i> Previous</a>
+    <a class='inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-4 py-2 rounded-xl ring-1 ring-inset ring-white/20 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300'
+      href="?page={{ blogs.previous_page_number }}"><i class="bi bi-arrow-left"></i> Previous</a>
     {% else %}
     <span></span>
     {% endif %}
 
     {% if blogs.has_next %}
-    <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out'
-      href="?page={{ blogs.next_page_number }}">Next <i class="bi bi-arrow-right font-bold"></i></a>
+    <a class='inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-4 py-2 rounded-xl ring-1 ring-inset ring-white/20 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300'
+      href="?page={{ blogs.next_page_number }}">Next <i class="bi bi-arrow-right"></i></a>
     {% endif %}
   </div>
 </div>

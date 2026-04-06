@@ -203,15 +203,27 @@ class AboutMeAdminForm(forms.ModelForm):
             )
         return img
 
+    def clean_hero_img(self):
+        img = self.cleaned_data.get('hero_img')
+        if img and hasattr(img, 'size') and img.size > 2 * 1024 * 1024:
+            size_mb = img.size / (1024 * 1024)
+            raise forms.ValidationError(
+                f'Image size is {size_mb:.1f} MB — maximum allowed size is 2 MB. '
+                'Please compress the image or choose a smaller file.'
+            )
+        return img
+
 
 class AboutMeAdmin(admin.ModelAdmin):
     """Admin for singleton AboutMe model"""
     form = AboutMeAdminForm
-    readonly_fields = ('profile_image_preview',)
+    readonly_fields = ('profile_image_preview', 'hero_image_preview')
     fieldsets = (
         ('Personal Info', {'fields': ('name', 'profession', 'email', 'phone')}),
         ('About', {'fields': ('bio',)}),
+        ('Resume', {'fields': ('resume_file', 'resume_url')}),
         ('Profile Image', {'fields': ('profile_img', 'profile_image_url', 'profile_image_preview')}),
+        ('Hero Background', {'fields': ('hero_img', 'hero_image_url', 'hero_image_preview')}),
         ('Social Links', {'fields': ('linkedin_url', 'github_url', 'telegram_url', 'x_url', 'leetcode_url')}),
     )
 
@@ -227,6 +239,14 @@ class AboutMeAdmin(admin.ModelAdmin):
             url = obj.effective_profile_image
             if url:
                 return format_html('<img src="{}" style="max-width: 200px; height: auto; border-radius: 50%;" />', escape(url))
+        return '(No image)'
+
+    @admin.display(description='Hero Background Preview')
+    def hero_image_preview(self, obj):
+        if obj:
+            url = obj.effective_hero_image
+            if url:
+                return format_html('<img src="{}" style="max-width: 320px; width: 100%; height: auto; border-radius: 16px;" />', escape(url))
         return '(No image)'
 
 

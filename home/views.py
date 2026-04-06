@@ -6,6 +6,7 @@ from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
+from django.templatetags.static import static
 
 from home.models import Blog, AboutMe, Skill, Project
 
@@ -31,8 +32,38 @@ def custom_404(request, exception=None):
 
 
 def index(request):
+    about_me = AboutMe.objects.first()
+    abs_profile_image = ''
+    abs_hero_image = ''
+    hero_bg_image = f"{request.scheme}://{request.get_host()}{static('images/banner.jpg')}"
+
+    if about_me:
+        profile_image = about_me.effective_profile_image
+        if profile_image and not profile_image.startswith(('http://', 'https://')):
+            abs_profile_image = f"{request.scheme}://{request.get_host()}{profile_image}"
+        else:
+            abs_profile_image = profile_image
+
+        hero_image = about_me.effective_hero_image
+        if hero_image and not hero_image.startswith(('http://', 'https://')):
+            abs_hero_image = f"{request.scheme}://{request.get_host()}{hero_image}"
+        else:
+            abs_hero_image = hero_image
+
+        if abs_hero_image:
+            hero_bg_image = abs_hero_image
+
     random_blogs = Blog.objects.order_by('-time', '-sno')[:3]
-    context = {'random_blogs': random_blogs}
+    context = {
+        'about_me': about_me,
+        'abs_profile_image': abs_profile_image,
+        'abs_hero_image': abs_hero_image,
+        'hero_bg_image': hero_bg_image,
+        'random_blogs': random_blogs,
+        'total_blogs': Blog.objects.count(),
+        'total_projects': Project.objects.count(),
+        'total_categories': Blog.objects.values('category').distinct().count(),
+    }
     return render(request, 'index.html', context)
 
 
