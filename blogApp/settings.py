@@ -41,6 +41,7 @@ def _get_bool_env(name, default=False):
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _get_bool_env("DJANGO_DEBUG", False)
+STATIC_ASSET_VERSION = os.getenv("DJANGO_STATIC_ASSET_VERSION", "20260404")
 
 _allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "*" if DEBUG else "")
 ALLOWED_HOSTS = [host.strip() for host in _allowed_hosts.split(",") if host.strip()]
@@ -71,6 +72,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    'blogApp.middleware.DevStaticNoCacheMiddleware',
     'blogApp.middleware.IpRateLimitMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -95,6 +97,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'home.context_processors.used_tags',
+                'home.context_processors.static_asset_version',
             ],
         },
     },
@@ -212,7 +215,8 @@ SECURE_HSTS_PRELOAD = not DEBUG
 
 # Admin session timeout (seconds). Defaults to 30 minutes.
 ADMIN_SESSION_TIMEOUT = int(os.getenv("ADMIN_SESSION_TIMEOUT", "1800"))
-SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 86400  # 1 day expiration
+SESSION_SAVE_EVERY_REQUEST = False  # Save only when changed to prevent DB bloat
 
 # Admin history (django_admin_log) retention.
 # Keep only the most recent N days to prevent unbounded growth.

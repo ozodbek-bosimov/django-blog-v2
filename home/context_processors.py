@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from django.core.cache import cache
+from django.conf import settings
 
 from home.models import Blog
 
@@ -20,3 +23,15 @@ def used_tags(request):
         )
         cache.set(USED_TAGS_CACHE_KEY, tags, USED_TAGS_CACHE_TTL)
     return {'used_tags': tags}
+
+
+def static_asset_version(request):
+    """Expose a cache-busting version derived from local static file mtimes."""
+    static_dir = Path(settings.BASE_DIR) / 'static'
+    latest_mtime = 0
+    for asset_path in static_dir.rglob('*'):
+        if asset_path.is_file() and asset_path.suffix.lower() in {'.css', '.js', '.map'}:
+            latest_mtime = max(latest_mtime, int(asset_path.stat().st_mtime_ns))
+
+    version = str(latest_mtime or getattr(settings, 'STATIC_ASSET_VERSION', '1'))
+    return {'STATIC_ASSET_VERSION': version}

@@ -17,15 +17,21 @@
 <meta name="twitter:title" content="About — Ozodbek Bosimov">
 <meta name="twitter:description" content="About Ozodbek Bosimov. I am a software engineer writing about backend development, building systems, and other personal interests I explore along the way.">
 <meta name="twitter:image" content="{% if abs_profile_image %}{{ abs_profile_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
-<link rel="stylesheet" href="{% static 'css/about.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/about.css' %}?v={{ STATIC_ASSET_VERSION }}">
 {% endblock meta %}
 
 {% block content %}
 
-<div class='bg-gray-800 text-white p-3 md:px-10 lg:px-20 xl:px-40 2xl:px-72'>
+<div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-2">
+    <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+        About Me
+    </h1>
+    <div class="h-px bg-gray-700 w-full"></div>
+</div>
+
+<div class='text-white p-6 md:p-8 flex flex-col max-w-3xl mx-auto w-full'>
     <div class='m-6'>
         {% if about_me %}
-        <p class='text-2xl md:text-4xl font-extrabold py-5 text-center md:text-start'>About Me</p>
 
         <div class='flex flex-col md:flex-row gap-6 md:gap-8 my-6'>
             <div class='flex justify-center md:justify-start shrink-0'>
@@ -33,25 +39,30 @@
                     class='w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg'>
             </div>
 
-            <div class='flex-1'>
-                <div class='mb-4'>
-                    <h2 class='text-2xl md:text-3xl font-bold text-cyan-200'>{{ about_me.name }}</h2>
-                    <p class='text-lg md:text-xl text-gray-300 mb-3'>{{ about_me.profession }}</p>
-                    {% if about_me.email %}
-                    <p class='text-md text-gray-400 mb-1'>
-                        <i class="bi bi-envelope"></i> <a href="mailto:{{ about_me.email }}"
-                            class="hover:text-cyan-300 hover:underline transition-colors">{{ about_me.email }}</a>
-                    </p>
-                    {% endif %}
-                    {% if about_me.phone %}
-                    <p class='text-md text-gray-400'>
-                        <i class="bi bi-telephone"></i> <a href="tel:{{ about_me.phone }}"
-                            class="hover:text-cyan-300 hover:underline transition-colors">{{ about_me.phone }}</a>
-                    </p>
-                    {% endif %}
+            <div class='flex-1 flex flex-col items-center md:items-start text-center md:text-left w-full'>
+                <div class='mb-4 flex flex-col items-center md:items-start w-full'>
+                    <div class="text-center md:text-left">
+                        <h2 class='text-2xl md:text-3xl font-bold text-cyan-200'>{{ about_me.name }}</h2>
+                        <p class='text-lg md:text-xl text-gray-300 mb-3'>{{ about_me.profession }}</p>
+                    </div>
+                    
+                    <div class="flex flex-col text-left items-start">
+                        {% if about_me.email %}
+                        <p class='text-md text-gray-400 mb-1'>
+                            <span class="inline-block w-5 text-center mr-1"><i class="bi bi-envelope"></i></span> <a href="mailto:{{ about_me.email }}"
+                                class="hover:text-cyan-300 hover:underline transition-colors">{{ about_me.email }}</a>
+                        </p>
+                        {% endif %}
+                        {% if about_me.phone %}
+                        <p class='text-md text-gray-400'>
+                            <span class="inline-block w-5 text-center mr-1"><i class="bi bi-telephone"></i></span> <a href="tel:{{ about_me.phone }}"
+                                class="hover:text-cyan-300 hover:underline transition-colors">{{ about_me.phone }}</a>
+                        </p>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class='flex gap-3'>
+                <div class='flex gap-3 justify-center md:justify-start w-full'>
                     {% if about_me.github_url %}
                     <a href="{{ about_me.github_url }}" target="_blank"
                         class="w-11 h-11 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-300 hover:scale-110">
@@ -97,8 +108,9 @@
         <p class='text-center text-gray-400 py-10'>No about information available yet.</p>
         {% endif %}
 
-        <div class='my-10'>
-            <p class='text-2xl md:text-4xl font-extrabold py-5 text-center md:text-start'>Skills</p>
+        <div class='mt-12 mb-6'>
+            <h2 class='text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center'>Skills</h2>
+            <div class="h-px bg-gray-700/50 w-full mb-8"></div>
             {% if skills %}
             <div class='grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10'>
                 {% for skill in skills %}
@@ -127,6 +139,6 @@
         </div>
     </div>
 </div>
-<script src="{% static 'js/about.js' %}"></script>
+<script src="{% static 'js/about.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 
 {% endblock %}

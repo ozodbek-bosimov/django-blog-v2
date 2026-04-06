@@ -9,6 +9,23 @@ from django.http import HttpResponse
 from django.utils import timezone
 
 
+class DevStaticNoCacheMiddleware:
+    """Prevent stale browser cache for static/media files in local development."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+
+        if getattr(settings, "DEBUG", False) and request.path.startswith(("/static/", "/media/")):
+            response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response["Pragma"] = "no-cache"
+            response["Expires"] = "0"
+
+        return response
+
+
 class IpRateLimitMiddleware:
     """Simple global IP rate limit middleware backed by Django cache."""
 
@@ -93,7 +110,9 @@ class IpRateLimitMiddleware:
 class AdminSessionTimeoutMiddleware:
     CLEANUP_LAST_RUN_CACHE_KEY = "admin_log_cleanup:last_run_ts"
     CLEANUP_LOCK_CACHE_KEY = "admin_log_cleanup:lock"
-    CLEANUP_INTERVAL_SECONDS = 24 * 60 * 60
+    CLEANUP_INTERVAL_SECONDS = 24 * 60 * 60  # Log cleanup daily
+    SESSION_CLEANUP_INTERVAL_SECONDS = 60 * 24 * 60 * 60  # Session cleanup every 60 days
+    SESSION_CLEANUP_LAST_RUN_KEY = "session_cleanup:last_run_ts"
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -102,7 +121,26 @@ class AdminSessionTimeoutMiddleware:
         if request.path.startswith("/_owner/") and request.user.is_authenticated:
             request.session.set_expiry(settings.ADMIN_SESSION_TIMEOUT)
             self._cleanup_admin_log_if_needed()
+            self._cleanup_sessions_if_needed()
         return self.get_response(request)
+
+    def _cleanup_sessions_if_needed(self):
+        """Automatically run clearsessions every 60 days."""
+        now_ts = timezone.now().timestamp()
+        last_run_ts = cache.get(self.SESSION_CLEANUP_LAST_RUN_KEY)
+
+        if last_run_ts and now_ts - float(last_run_ts) < self.SESSION_CLEANUP_INTERVAL_SECONDS:
+            return
+
+        # Double check lock is not needed for a light operation like session cleanup 
+        # but we use a simple flag to avoid multiple runs in same process.
+        from django.core.management import call_command
+        try:
+            call_command('clearsessions')
+            cache.set(self.SESSION_CLEANUP_LAST_RUN_KEY, now_ts, timeout=None)
+        except Exception:
+            # Silent fail to not interrupt admin experience
+            pass
 
     def _cleanup_admin_log_if_needed(self):
         if not getattr(settings, "ADMIN_LOG_RETENTION_ENABLED", True):

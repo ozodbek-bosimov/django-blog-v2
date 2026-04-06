@@ -53,11 +53,24 @@ class AboutMe(models.Model):
     profile_image_url = models.URLField(
         blank=True, help_text="CDN URL for profile image (used if no image is uploaded)"
     )
+    hero_img = models.ImageField(null=True, blank=True, upload_to="hero/")
+    hero_image_url = models.URLField(
+        blank=True, help_text="CDN URL for the homepage hero background image"
+    )
+    resume_file = models.FileField(null=True, blank=True, upload_to="resume/", help_text="Upload your resume file directly (e.g. PDF)")
+    resume_url = models.URLField(blank=True, help_text="External URL for your resume (used if no file is uploaded)")
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
     telegram_url = models.URLField(blank=True)
     x_url = models.URLField(blank=True, help_text="X (formerly Twitter) profile URL")
     leetcode_url = models.URLField(blank=True)
+
+    @property
+    def effective_resume(self):
+        """Return the uploaded resume file URL if it exists, otherwise the external resume URL."""
+        if self.resume_file and hasattr(self.resume_file, "url"):
+            return self.resume_file.url
+        return self.resume_url or ""
 
     def __str__(self):
         return self.name
@@ -76,6 +89,13 @@ class AboutMe(models.Model):
         if self.profile_img and hasattr(self.profile_img, "url"):
             return self.profile_img.url
         return self.profile_image_url or ""
+
+    @property
+    def effective_hero_image(self):
+        """Return the URL to use for the hero background image."""
+        if self.hero_img and hasattr(self.hero_img, "url"):
+            return self.hero_img.url
+        return self.hero_image_url or ""
 
     class Meta:
         verbose_name = "About Me"
@@ -246,6 +266,10 @@ def delete_aboutme_bio_media_on_delete(sender, instance, **kwargs):
     _delete_media_paths_if_unused(removed_media)
     if instance.profile_img:
         instance.profile_img.delete(save=False)
+    if instance.hero_img:
+        instance.hero_img.delete(save=False)
+    if instance.resume_file:
+        instance.resume_file.delete(save=False)
 
 
 @receiver(pre_save, sender=AboutMe)
@@ -259,3 +283,29 @@ def delete_old_profile_img_on_change(sender, instance, **kwargs):
         return
     if old.profile_img and old.profile_img != instance.profile_img:
         old.profile_img.delete(save=False)
+
+
+@receiver(pre_save, sender=AboutMe)
+def delete_old_hero_img_on_change(sender, instance, **kwargs):
+    """Delete old hero image file when replacing it with a new one."""
+    if not instance.pk:
+        return
+    try:
+        old = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+    if old.hero_img and old.hero_img != instance.hero_img:
+        old.hero_img.delete(save=False)
+
+
+@receiver(pre_save, sender=AboutMe)
+def delete_old_resume_file_on_change(sender, instance, **kwargs):
+    """Delete old resume file when replacing it with a new one."""
+    if not instance.pk:
+        return
+    try:
+        old = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+    if old.resume_file and old.resume_file != instance.resume_file:
+        old.resume_file.delete(save=False)

@@ -5,112 +5,168 @@
 {% block title %}Home{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="Personal website of Ozodbek Bosimov — software developer sharing projects, technical articles, and ideas about building software and learning new things.">
+<meta name="description"
+    content="Personal website of Ozodbek Bosimov — software developer sharing projects, technical articles, and ideas about building software and learning new things.">
 <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ozodbek Bosimov">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="Ozodbek Bosimov — Software Engineer & Personal Blog">
-<meta property="og:description" content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
+<meta property="og:description"
+    content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
 <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}">
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ozodbek Bosimov — Software Engineer & Personal Blog">
-<meta name="twitter:description" content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
+<meta name="twitter:description"
+    content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 {% endblock meta %}
 
 {% block content %}
+<!-- Canvas dot grid background for the entire page -->
+<canvas id="hero-grid" class="fixed inset-0 w-full h-full pointer-events-none" style="z-index: 0;"></canvas>
+
 <div
-    class='hero-section bg-gray-800 text-white text-center flex flex-col justify-start items-center h-[550px] md:h-[580px] lg:h-[600px] pt-8 md:pt-12 lg:pt-16'>
-    <!-- <span class='font-mono my-2'><span class='wave'>&#128075;</span>Ozodbek Bosimov</span> -->
-    <span
-        class='text-3xl font-extrabold md:text-4xl lg:text-5xl px-[20px] md:px-[140px] lg:px-[170px] xl:px-[200px] 2xl:px-[360px]'>
-        I'm a <span class='bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 text-transparent'>Software Engineer</span>. This is my portfolio & blog.
-    </span>
-    <div class='updn hero-img my-4'>
-        <img src="{% static 'images/h.png' %}" class='h-auto w-52 md:w-56 lg:w-60 xl:w-64'>
-        <div
-            class='updn z-50 absolute flex justify-center items-center text-2xl bg-cyan-50 text-blue-700 rounded-full shadow-2xl -mt-40 xl:-mt-52 w-10 h-10'>
-            <i class="fa-brands fa-python"></i>
+    class='hero-section relative overflow-hidden bg-transparent text-white flex flex-col justify-center items-center min-h-[550px] md:min-h-[580px] lg:min-h-[600px] py-12'>
+
+    <!-- Main content -->
+    <div class='relative z-10 w-full max-w-5xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-8 lg:gap-12'>
+
+        <!-- Left: Text content -->
+        <div class='flex-1 text-left'>
+
+            <div class='text-center lg:text-left mb-3'>
+                <h1 class='inline-block text-left text-3xl md:text-4xl lg:text-[2.75rem] font-extrabold leading-tight'>
+                    Welcome to my
+                    <span class='block ml-10 md:ml-20 lg:ml-32 pb-2 w-max bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 text-transparent'>Digital Space</span>
+                </h1>
+            </div>
+
+            <div class='text-base md:text-lg text-gray-400 mb-6 h-7 font-light'>
+                <span class="text-gray-500 font-mono text-sm mr-1">&gt;</span>
+                <span id='hero-typed'></span><span class='hero-caret'>_</span>
+            </div>
+
+            <p class="text-sm md:text-base text-gray-400 leading-relaxed mb-8 max-w-lg">
+                An archive of my projects, writing, and mental notes. This space 
+                serves as a quiet place to organize my thoughts, log interesting 
+                discoveries, and reflect on everyday experiences.
+            </p>
+
+            <div class='flex flex-wrap items-center content-start justify-center lg:justify-start gap-3 md:gap-4 mt-8'>
+                <a href='{% url "about" %}'
+                    class='group flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-2.5 rounded-lg text-white text-sm font-semibold hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:-translate-y-0.5'>
+                    <i class="bi bi-person"></i> About Me
+                </a>
+                <a {% if about_me.effective_resume %}href='{{ about_me.effective_resume }}' target='_blank'{% else %}href='javascript:void(0)'{% endif %}
+                    class='flex items-center justify-center gap-2 bg-gray-700/50 border border-gray-600 px-5 py-2.5 rounded-lg text-gray-300 text-sm font-semibold hover:bg-gray-700 hover:text-white hover:border-gray-500 transition-all duration-300 hover:-translate-y-0.5 {% if not about_me.effective_resume %}opacity-70 cursor-default hover:-translate-y-0{% endif %}'>
+                    <i class="bi bi-download"></i> Resume
+                </a>
+                <a href='{% url "projects" %}'
+                    class='flex items-center justify-center gap-2 bg-gray-700/50 border border-gray-600 px-5 py-2.5 rounded-lg text-gray-300 text-sm font-semibold hover:bg-gray-700 hover:text-white hover:border-gray-500 transition-all duration-300 hover:-translate-y-0.5'>
+                    <i class="bi bi-code-slash"></i> View Projects
+                </a>
+            </div>
         </div>
-        <div
-            class='updn z-50 absolute flex justify-center items-center text-2xl bg-cyan-50 text-blue-700 rounded-full shadow-2xl -mt-20 ml-44 md:ml-52 md:-mt-24 xl:ml-60 xl:-mt-28 w-10 h-10'>
-            <i class="fa-solid fa-server"></i>
-        </div>
-        <div
-            class='updn z-50 absolute flex justify-center items-center text-2xl bg-cyan-50 text-blue-700 rounded-full shadow-2xl -mt-16 w-10 h-10'>
-            <i class="fa-solid fa-database"></i>
-        </div>
-        <div
-            class='updn z-50 absolute flex justify-center items-center text-2xl bg-cyan-50 text-blue-700 rounded-full shadow-2xl -mt-6 ml-20 md:-mt-6 md:ml-28 w-10 h-10'>
-            <i class="bi bi-terminal-fill"></i>
+
+        <!-- Right: AboutMe hero imagery -->
+        <div class='hidden lg:block w-full max-w-[420px]'>
+            <div
+                class='relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-gray-900/50 shadow-2xl shadow-black/40'>
+                <div class='relative h-[380px] sm:h-[460px] lg:h-[520px] overflow-hidden'>
+                    <img src="{{ hero_bg_image }}" alt="Hero background"
+                        style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0;">
+                    <div
+                        style="position:absolute; inset:0; background:linear-gradient(to top, rgba(3,7,18,0.38), rgba(3,7,18,0.12), rgba(3,7,18,0)); z-index:1;">
+                    </div>
+
+
+                </div>
+
+
+            </div>
         </div>
     </div>
-    <div class='hero-btn my-3 md:mt-2 font-bold text-sm md:text-[16px] md:leading-6'>
-        <div class='flex flex-row gap-4 md:space-x-2'>
-            <a href='https://cdn.jsdelivr.net/gh/ozodbek-bosimov/host@latest/static/ozodbek-bosimov.pdf' download>
-                <div class='relative group'>
-                    <div
-                        class='bg-gradient-to-r from-cyan-300 to-blue-600 px-6 py-2 text-white rounded-md -inset-0.5 absolute blur-sm opacity-75 group-hover:-inset-1 transition group-hover:duration-400 group-hover:opacity-90 duration-1000'>
-                    </div>
-                    <span
-                        class='relative block bg-gray-800 px-7 py-2 text-white rounded-md group-hover:text-gray-50 transition duration-200'>
-                        <i class="bi bi-download font-bold"></i> Download CV
-                    </span>
-                </div>
-            </a>
-            <a href='{% url "about" %}'>
-                <div class='relative group'>
-                    <div
-                        class='bg-gradient-to-r from-cyan-300 to-blue-600 px-6 py-2 text-white rounded-md -inset-0.5 absolute blur-sm opacity-75 group-hover:-inset-1 transition group-hover:duration-400 group-hover:opacity-90 duration-1000'>
-                    </div>
-                    <span
-                        class='relative block bg-gray-800 px-7 py-2 text-white rounded-md group-hover:text-gray-50 transition duration-200'>
-                        <i class="bi bi-person"></i> About me
-                    </span>
-                </div>
-            </a>
+
+    <!-- Bottom stats bar -->
+    <div class='relative z-10 w-full max-w-5xl mx-auto px-6 mt-20 md:mt-24 lg:mt-12'>
+        <div class='flex justify-center lg:justify-start gap-8 md:gap-12 text-center'>
+            <div>
+                <div class='text-xl md:text-2xl font-bold text-white'>{{ total_blogs|default:"10" }}<span
+                        class='text-cyan-400'>+</span></div>
+                <div class='text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5'>Articles</div>
+            </div>
+            <div class='w-px bg-gray-700'></div>
+            <div>
+                <div class='text-xl md:text-2xl font-bold text-white'>{{ total_categories|default:"4" }}<span
+                        class='text-cyan-400'>+</span></div>
+                <div class='text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5'>Topics</div>
+            </div>
+            <div class='w-px bg-gray-700'></div>
+            <div>
+                <div class='text-xl md:text-2xl font-bold text-white'>{{ total_projects|default:"5" }}<span
+                        class='text-cyan-400'>+</span></div>
+                <div class='text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5'>Projects</div>
+            </div>
         </div>
     </div>
 </div>
 
-<div class='blog-section bg-gray-900 p-4 text-white'>
-    <p class='text-2xl md:text-4xl font-extrabold py-5 px-2 md:pl-36 text-center md:text-start'>Checkout my latest posts</p>
-<style>
-    .blog-cards-grid { max-width: 365px; margin-left: auto; margin-right: auto; }
-    @media (min-width: 768px) { .blog-cards-grid { max-width: 1250px; } }
-</style>
+<div class='blog-section text-white overflow-hidden relative z-10'>
+    <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-2">
+        <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+            Checkout my latest posts
+        </h1>
+        <div class="h-px bg-gray-700 w-full"></div>
+    </div>
+    <style>
+        .blog-cards-grid {
+            max-width: 365px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (min-width: 768px) {
+            .blog-cards-grid {
+                max-width: 1250px;
+            }
+        }
+
+        .blog-card-item {
+            overflow: hidden;
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+    </style>
     <div class='blogs blog-cards-grid my-5 grid gap-6 px-4 md:grid-cols-3'>
         {% for blog in random_blogs %}
-        <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);"
-            class='hover:scale-105 hover:transform bg-gray-800 p-5 rounded-lg h-auto shadow-2xl transition-all duration-300'>
+        <div class='blog-card-item bg-white/5 backdrop-blur-lg rounded-2xl ring-1 ring-inset ring-white/10 shadow-2xl hover:bg-white/10 hover:ring-white/20 p-5 h-auto transition-all duration-300 hover:-translate-y-1'>
             <a href='{% url "blogpost" blog.slug %}'>
                 {% if blog.effective_thumbnail %}
                 <div class="w-full overflow-hidden rounded-lg mb-4" style="aspect-ratio: 16/9;">
-                        <img class='w-full h-full object-cover' src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
+                    <img class='w-full h-full object-cover' src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
                 </div>
                 {% endif %}
             </a>
             <a class='text-blue-100 hover:text-blue-300 transition duration-300'
                 href='{% url "blogpost" blog.slug %}'><span
                     class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
-            <p class='my-3 break-words'>{{blog.meta|slice:600}}</p>
+            <p class='my-3 break-words' style='overflow-wrap: anywhere;'>{{blog.meta|truncatechars:200}}</p>
             <p class='mt-2 mb-4 text-gray-400'>
                 <span><i class="bi bi-calendar4-event"></i> {{blog.time|date:"M j, Y"}}</span>
                 <i class="bi bi-dot"></i>
-                <span class='text-gray-500'><i class="bi bi-clock"></i> {{ blog.content|reading_time }} min read</span>
+                <span><i class="bi bi-clock"></i> {{ blog.content|reading_time }} min read</span>
             </p>
             <a href='{% url "blogpost" blog.slug %}'
-                    class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Read
-                    more <i class="bi bi-arrow-right font-bold"></i></a>
+                class='inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-4 py-2 rounded-xl ring-1 ring-inset ring-white/20 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300 my-3'>Read
+                full post <i class="bi bi-arrow-right"></i></a>
         </div>
         {% endfor %}
     </div>
-    <div class='flex justify-center'>
-        <a href='{% url "blog" %}'
-                class='inline-block bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3'>Load
-                more <i class="bi bi-arrow-right font-bold"></i></a>
+    <div class='text-center mt-2 mb-8'>
+        <a href='{% url "blog" %}' class='inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-6 py-2.5 rounded-xl ring-1 ring-inset ring-white/20 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300'>View all posts <i class="bi bi-arrow-right"></i></a>
     </div>
 </div>
 
