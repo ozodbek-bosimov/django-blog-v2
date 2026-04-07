@@ -28,11 +28,11 @@ class BlogAdminForm(forms.ModelForm):
     
     def clean_thumbnail_img(self):
         img = self.cleaned_data.get('thumbnail_img')
-        if img and hasattr(img, 'size') and img.size > 2 * 1024 * 1024:
+        if img and hasattr(img, 'size') and img.size > 15 * 1024 * 1024:
             size_mb = img.size / (1024 * 1024)
             raise forms.ValidationError(
-                f'Image size is {size_mb:.1f} MB — maximum allowed size is 2 MB. '
-                'Please compress the image or choose a smaller file.'
+                f'Image size is {size_mb:.1f} MB — maximum allowed size is 15 MB. '
+                'Please choose a smaller file.'
             )
         return img
 
@@ -195,21 +195,21 @@ class AboutMeAdminForm(forms.ModelForm):
 
     def clean_profile_img(self):
         img = self.cleaned_data.get('profile_img')
-        if img and hasattr(img, 'size') and img.size > 2 * 1024 * 1024:
+        if img and hasattr(img, 'size') and img.size > 15 * 1024 * 1024:
             size_mb = img.size / (1024 * 1024)
             raise forms.ValidationError(
-                f'Image size is {size_mb:.1f} MB — maximum allowed size is 2 MB. '
-                'Please compress the image or choose a smaller file.'
+                f'Image size is {size_mb:.1f} MB — maximum allowed size is 15 MB. '
+                'Please choose a smaller file.'
             )
         return img
 
     def clean_hero_img(self):
         img = self.cleaned_data.get('hero_img')
-        if img and hasattr(img, 'size') and img.size > 2 * 1024 * 1024:
+        if img and hasattr(img, 'size') and img.size > 15 * 1024 * 1024:
             size_mb = img.size / (1024 * 1024)
             raise forms.ValidationError(
-                f'Image size is {size_mb:.1f} MB — maximum allowed size is 2 MB. '
-                'Please compress the image or choose a smaller file.'
+                f'Image size is {size_mb:.1f} MB — maximum allowed size is 15 MB. '
+                'Please choose a smaller file.'
             )
         return img
 

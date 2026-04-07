@@ -224,9 +224,9 @@ ADMIN_LOG_RETENTION_ENABLED = _get_bool_env("ADMIN_LOG_RETENTION_ENABLED", True)
 ADMIN_LOG_RETENTION_DAYS = int(os.getenv("ADMIN_LOG_RETENTION_DAYS", "90"))
 
 # Upload limits (increase max request / file size for admin uploads)
-# 5 MB per request / file – adjust if you need more or less
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
-FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+# 15 MB per request / file – matching admin.py limits
+DATA_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024
 
 # CKEditor 5 configuration
 CKEDITOR_5_CONFIGS = {

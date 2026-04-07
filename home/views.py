@@ -53,16 +53,21 @@ def index(request):
         if abs_hero_image:
             hero_bg_image = abs_hero_image
 
-    random_blogs = Blog.objects.order_by('-time', '-sno')[:3]
+    # Cache intensive numbers and homepage queries to save VPS CPU
+    random_blogs = cache.get_or_set('latest_blogs', lambda: list(Blog.objects.order_by('-time', '-sno')[:3]), 86400)
+    total_blogs = cache.get_or_set('total_blogs', lambda: Blog.objects.count(), 86400)
+    total_projects = cache.get_or_set('total_projects', lambda: Project.objects.count(), 86400)
+    total_categories = cache.get_or_set('total_categories', lambda: Blog.objects.values('category').distinct().count(), 86400)
+
     context = {
         'about_me': about_me,
         'abs_profile_image': abs_profile_image,
         'abs_hero_image': abs_hero_image,
         'hero_bg_image': hero_bg_image,
         'random_blogs': random_blogs,
-        'total_blogs': Blog.objects.count(),
-        'total_projects': Project.objects.count(),
-        'total_categories': Blog.objects.values('category').distinct().count(),
+        'total_blogs': total_blogs,
+        'total_projects': total_projects,
+        'total_categories': total_categories,
     }
     return render(request, 'index.html', context)
 
@@ -171,7 +176,9 @@ def search(request):
 
 def blogpost(request, slug):
     try:
-        blog = Blog.objects.get(slug=slug)
+        blog_cache_key = f"blogpost_{slug}"
+        blog = cache.get_or_set(blog_cache_key, lambda: Blog.objects.get(slug=slug), 86400)
+
         thumb = blog.effective_thumbnail
         if thumb and not thumb.startswith(('http://', 'https://')):
             thumb = f"{request.scheme}://{request.get_host()}{thumb}"
