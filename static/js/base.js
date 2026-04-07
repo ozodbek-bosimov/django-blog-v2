@@ -69,7 +69,10 @@ function showSearchModal() {
 }
 
 function hideSearchModal() {
-  if (searchModal) searchModal.style.display = "none";
+  if (searchModal) {
+    searchModal.style.display = "none";
+    if (searchInput) searchInput.value = "";
+  }
 }
 
 function submitSearchForm(event) {

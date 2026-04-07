@@ -8,7 +8,39 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
+import sys
+from io import BytesIO
+from PIL import Image
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
+
+
+def _compress_and_rename_image(image_field, max_size=(1000, 1000), quality=80):
+    """Compresses an image field using Pillow to save disk space and bandwidth"""
+    if not image_field or getattr(image_field, '_committed', True):
+        return image_field  # No new image uploaded
+    
+    try:
+        img = Image.open(image_field)
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        img.thumbnail(max_size, Image.Resampling.LANCZOS)
+        
+        output = BytesIO()
+        img.save(output, format='JPEG', quality=quality, optimize=True)
+        size = output.tell()
+        output.seek(0)
+        
+        # Ensure name doesn't include path prefixes manually
+        base_name = getattr(image_field, 'name', 'img').rsplit('/', 1)[-1].rsplit('.', 1)[0]
+        new_name = f"{base_name}.jpg"
+        
+        return InMemoryUploadedFile(
+            output, 'ImageField', new_name, 'image/jpeg', 
+            size, None
+        )
+    except Exception:
+        return image_field  # Return original if compression fails
 
 
 # Create your models here.
@@ -29,9 +61,24 @@ class Blog(models.Model):
     def save(self, *args, **kwargs):
         if self.category:
             self.category = self.category.strip().lower()
+        
+        if self.thumbnail_img:
+            self.thumbnail_img = _compress_and_rename_image(
+                self.thumbnail_img, max_size=(1280, 720), quality=90
+            )
+
         super().save(*args, **kwargs)
+        
+        # Invalidate related caches
         cache.delete("used_tags")
         cache.delete(f"blogpost_{self.slug}")
+        cache.delete_many(["latest_blogs", "total_blogs", "total_categories"])
+
+    def delete(self, *args, **kwargs):
+        cache.delete("used_tags")
+        cache.delete(f"blogpost_{self.slug}")
+        cache.delete_many(["latest_blogs", "total_blogs", "total_categories"])
+        super().delete(*args, **kwargs)
 
     @property
     def effective_thumbnail(self):
@@ -81,6 +128,16 @@ class AboutMe(models.Model):
             # Update the existing instance instead of deleting
             existing = AboutMe.objects.first()
             self.pk = existing.pk
+
+        if self.profile_img:
+            self.profile_img = _compress_and_rename_image(
+                self.profile_img, max_size=(800, 800), quality=95
+            )
+        if self.hero_img:
+            self.hero_img = _compress_and_rename_image(
+                self.hero_img, max_size=(2560, 1440), quality=85
+            )
+
         super().save(*args, **kwargs)
 
     @property
@@ -150,6 +207,14 @@ class Project(models.Model):
 
     class Meta:
         ordering = ["order", "-created_at"]
+
+    def save(self, *args, **kwargs):
+        cache.delete("total_projects")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        cache.delete("total_projects")
+        super().delete(*args, **kwargs)
 
 
 # signals for cleaning up image files when a Blog is changed or removed

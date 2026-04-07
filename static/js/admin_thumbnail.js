@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var MAX_SIZE_MB = 2;
+  var MAX_SIZE_MB = 15;
   var MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
   var META_MAX_CHARS = 600;
 
@@ -29,7 +29,7 @@
 
       existing.textContent =
         'Image size is ' + sizeMB + ' MB — maximum allowed size is ' +
-        MAX_SIZE_MB + ' MB. Please compress the image or choose a smaller file.';
+        MAX_SIZE_MB + ' MB. Please choose a smaller file.';
 
       // Disable save buttons
       document.querySelectorAll('[name="_save"], [name="_continue"], [name="_addanother"]')

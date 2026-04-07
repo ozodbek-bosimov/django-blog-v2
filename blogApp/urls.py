@@ -27,6 +27,7 @@ urlpatterns = [
     path('robots.txt', TemplateView.as_view(
         template_name='robots.txt', content_type='text/plain'
     ), name='robots'),
+    path('404/', TemplateView.as_view(template_name='404.html'), name='test_404'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = 'home.views.custom_404'
