@@ -3,7 +3,7 @@ from pathlib import Path
 from django.core.cache import cache
 from django.conf import settings
 
-from home.models import Blog
+from home.models import Blog, AboutMe
 
 USED_TAGS_CACHE_KEY = 'used_tags'
 USED_TAGS_CACHE_TTL = 300  # 5 minutes
@@ -43,3 +43,8 @@ def static_asset_version(request):
     version = str(latest_mtime or getattr(settings, 'STATIC_ASSET_VERSION', '1'))
     cache.set(STATIC_ASSET_VERSION_CACHE_KEY, version, STATIC_ASSET_VERSION_CACHE_TTL)
     return {'STATIC_ASSET_VERSION': version}
+
+
+def about_me(request):
+    """Provide the AboutMe singleton to all templates for footer/social links."""
+    return {'about_me': AboutMe.objects.first()}

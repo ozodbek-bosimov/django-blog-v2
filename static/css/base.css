@@ -432,3 +432,66 @@ body {
     }
 }
 
+
+/* Social Icon Button */
+.btn-social {
+    width: 2.75rem; /* w-11 */
+    height: 2.75rem; /* h-11 */
+    border-radius: 0.75rem; /* rounded-xl */
+    background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* ring-white/10 equivalent */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 300ms ease-in-out;
+}
+
+.btn-social:hover {
+    transform: scale(1.1);
+}
+
+/* Hero Section Buttons */
+.btn-hero-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-image: linear-gradient(to right, #06b6d4, #3b82f6);
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.2);
+    transition: all 300ms ease-in-out;
+}
+
+.btn-hero-primary:hover {
+    background-image: linear-gradient(to right, #22d3ee, #60a5fa);
+    box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-hero-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    color: #d1d5db;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 300ms ease-in-out;
+}
+
+.btn-hero-ghost:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}

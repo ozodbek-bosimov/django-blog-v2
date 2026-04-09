@@ -110,6 +110,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'home.context_processors.used_tags',
                 'home.context_processors.static_asset_version',
+                'home.context_processors.about_me',
             ],
         },
     },
