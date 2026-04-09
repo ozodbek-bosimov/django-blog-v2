@@ -7,6 +7,8 @@ from home.models import Blog
 
 USED_TAGS_CACHE_KEY = 'used_tags'
 USED_TAGS_CACHE_TTL = 300  # 5 minutes
+STATIC_ASSET_VERSION_CACHE_KEY = 'static_asset_version'
+STATIC_ASSET_VERSION_CACHE_TTL = 300  # 5 minutes
 
 
 def used_tags(request):
@@ -27,11 +29,17 @@ def used_tags(request):
 
 def static_asset_version(request):
     """Expose a cache-busting version derived from local static file mtimes."""
+    cached = cache.get(STATIC_ASSET_VERSION_CACHE_KEY)
+    if cached:
+        return {'STATIC_ASSET_VERSION': cached}
+
     static_dir = Path(settings.BASE_DIR) / 'static'
     latest_mtime = 0
-    for asset_path in static_dir.rglob('*'):
-        if asset_path.is_file() and asset_path.suffix.lower() in {'.css', '.js', '.map'}:
-            latest_mtime = max(latest_mtime, int(asset_path.stat().st_mtime_ns))
+    if static_dir.exists():
+        for asset_path in static_dir.rglob('*'):
+            if asset_path.is_file() and asset_path.suffix.lower() in {'.css', '.js', '.map'}:
+                latest_mtime = max(latest_mtime, int(asset_path.stat().st_mtime_ns))
 
     version = str(latest_mtime or getattr(settings, 'STATIC_ASSET_VERSION', '1'))
+    cache.set(STATIC_ASSET_VERSION_CACHE_KEY, version, STATIC_ASSET_VERSION_CACHE_TTL)
     return {'STATIC_ASSET_VERSION': version}

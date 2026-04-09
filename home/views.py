@@ -139,8 +139,11 @@ def search(request):
             req_count = 1
 
         if req_count > 20:
+            # Keep template expectations consistent: `results` should be a Page object
+            # so pagination checks (`has_previous`/`has_next`) don't error.
+            empty_page = Paginator(Blog.objects.none(), 3).get_page(1)
             return render(request, 'search.html', {
-                'results': [],
+                'results': empty_page,
                 'query': '',
                 'message': 'Too many requests. Please wait a moment and try again.',
                 'rate_limited': True,
