@@ -334,3 +334,101 @@ body {
     box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 0 40px -10px rgba(6, 182, 212, 0.1);
 }
 
+/* ── UI Design System (Preserving original colors/animations) ── */
+
+/* The exact glass card style used across the site */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+    backdrop-filter: blur(16px);           /* backdrop-blur-lg */
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 1rem;                   /* rounded-2xl */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* shadow-2xl */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* ring-1 ring-white/10 */
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.1);  /* hover:bg-white/10 */
+    border-color: rgba(255, 255, 255, 0.2); /* hover:ring-white/20 */
+    transform: translateY(-4px);           /* hover:-translate-y-1 */
+}
+
+/* Main Blue Button */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #2563eb;             /* bg-blue-600 */
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 0.75rem;                /* rounded-xl */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* ring-white/20 */
+    transition: all 300ms ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #3b82f6;             /* hover:bg-blue-500 */
+    transform: translateY(-2px);           /* hover:-translate-y-0.5 */
+    box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3); /* hover:shadow-blue-500/30 */
+}
+
+/* Translucent Button (Github etc.) */
+.btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+    backdrop-filter: blur(12px);
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 300ms ease-in-out;
+}
+
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Layout Helpers */
+.blog-cards-grid {
+    max-width: 365px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .blog-cards-grid {
+        max-width: 1250px;
+    }
+}
+
+.project-img {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0.75rem;
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .project-img {
+        width: 280px;
+        min-width: 280px;
+        aspect-ratio: 4 / 3;
+    }
+}
+
+@media (min-width: 1024px) {
+    .project-img {
+        width: 320px;
+        min-width: 320px;
+    }
+}
+

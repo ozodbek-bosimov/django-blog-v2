@@ -43,7 +43,19 @@ def _get_bool_env(name, default=False):
 DEBUG = _get_bool_env("DJANGO_DEBUG", False)
 STATIC_ASSET_VERSION = os.getenv("DJANGO_STATIC_ASSET_VERSION", "20260404")
 
-_allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "*" if DEBUG else "")
+_allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS")
+if not (_allowed_hosts and _allowed_hosts.strip()):
+    # Safe defaults:
+    # - In dev (DEBUG=True): allow everything for convenience.
+    # - In non-debug (DEBUG=False): allow local/test hosts so manage.py commands,
+    #   smoke scripts, and simple local runs don't fail with DisallowedHost.
+    #   Production should always provide DJANGO_ALLOWED_HOSTS explicitly.
+    _allowed_hosts = (
+        "*"
+        if DEBUG
+        else "localhost,127.0.0.1,0.0.0.0,[::1],testserver"
+    )
+
 ALLOWED_HOSTS = [host.strip() for host in _allowed_hosts.split(",") if host.strip()]
 
 _csrf_trusted_origins = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "")
@@ -301,8 +313,12 @@ CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'staff'
 
 # Basic file logging to capture production errors.
 LOG_DIR = os.path.join(BASE_DIR, "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
 _file_logging_enabled = _get_bool_env("DJANGO_FILE_LOGGING", False)
+if _file_logging_enabled:
+    try:
+        os.makedirs(LOG_DIR, exist_ok=True)
+    except PermissionError:
+        _file_logging_enabled = False
 _log_dir_writable = os.access(LOG_DIR, os.W_OK)
 if _file_logging_enabled and _log_dir_writable:
     LOGGING = {
