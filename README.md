@@ -67,7 +67,9 @@ DJANGO_SECURE_SSL_REDIRECT=true
 DJANGO_FILE_LOGGING=false
 ```
 
-Production ishga tushirishda aniq env fayl tanlang: `DJANGO_ENV_FILE=.env.deploy`.
+Serverda haqiqiy qiymatlar uchun `.env.deploy.example` ni nusxalang: `cp .env.deploy.example .env.deploy`, keyin `DJANGO_SECRET_KEY` va domenlarni to‘ldiring. `.env.deploy` gitga kirmasligi kerak (`.gitignore` da).
+
+Ishga tushirishda: `DJANGO_ENV_FILE=.env.deploy` (yoki fayl nomingiz bo‘yicha).
 
 > Eslatma: `DJANGO_FILE_LOGGING=true` qilsangiz, `logs/` papkasiga yozish ruxsati bo‘lishi shart.
 
