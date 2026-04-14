@@ -65,32 +65,32 @@
                 <div class='flex gap-3 justify-center md:justify-start w-full'>
                     {% if about_me.github_url %}
                     <a href="{{ about_me.github_url }}" target="_blank"
-                        class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-white hover:text-black hover:border-white transition-all duration-300 hover:scale-110">
+                        class="btn-social hover:bg-white hover:text-black hover:border-white">
                         <i class="bi bi-github text-xl"></i>
                     </a>
                     {% endif %}
                     {% if about_me.linkedin_url %}
                     <a href="{{ about_me.linkedin_url }}" target="_blank"
-                        class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white transition-all duration-300 hover:scale-110">
+                        class="btn-social hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white">
                         <i class="bi bi-linkedin text-xl"></i>
                     </a>
                     {% endif %}
                     {% if about_me.telegram_url %}
                     <a href="{{ about_me.telegram_url }}" target="_blank"
-                        class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white transition-all duration-300 hover:scale-110">
+                        class="btn-social hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white">
                         <i class="bi bi-telegram text-xl"></i>
                     </a>
                     {% endif %}
                     {% if about_me.x_url %}
                     <a href="{{ about_me.x_url }}" target="_blank"
-                        class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-black hover:border-black transition-all duration-300 hover:scale-110 group">
+                        class="btn-social hover:bg-black hover:border-black group">
                         <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" alt="X"
                             class="w-5 h-5 filter brightness-0 invert transition-all">
                     </a>
                     {% endif %}
                     {% if about_me.leetcode_url %}
                     <a href="{{ about_me.leetcode_url }}" target="_blank"
-                        class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-[#FFA116] hover:border-[#FFA116] transition-all duration-300 hover:scale-110 group">
+                        class="btn-social hover:bg-[#FFA116] hover:border-[#FFA116] group">
                         <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/leetcode.svg" alt="LeetCode"
                             class="w-5 h-5 filter invert group-hover:invert-0 transition-all">
                     </a>

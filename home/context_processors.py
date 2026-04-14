@@ -47,4 +47,8 @@ def static_asset_version(request):
 
 def about_me(request):
     """Provide the AboutMe singleton to all templates for footer/social links."""
-    return {'about_me': AboutMe.objects.first()}
+    about_me_obj = cache.get("about_me_singleton")
+    if about_me_obj is None:
+        about_me_obj = AboutMe.objects.first()
+        cache.set("about_me_singleton", about_me_obj, 86400 * 30) # 30 days, cleared by signal
+    return {'about_me': about_me_obj}

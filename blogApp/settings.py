@@ -8,8 +8,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -28,9 +28,10 @@ load_dotenv(BASE_DIR / _env_file_name)
 # For local development you can keep this default, but in production
 # always override it via the DJANGO_SECRET_KEY environment variable.
 SECRET_KEY = os.getenv(
-    'DJANGO_SECRET_KEY',
-    'django-insecure-1xw9u!m7f^z0&g2p_@k3s8r#q5b%v4h+lnc7d1e',
+    "DJANGO_SECRET_KEY",
+    "django-insecure-1xw9u!m7f^z0&g2p_@k3s8r#q5b%v4h+lnc7d1e",
 )
+
 
 def _get_bool_env(name, default=False):
     value = os.getenv(name)
@@ -50,87 +51,106 @@ if not (_allowed_hosts and _allowed_hosts.strip()):
     # - In non-debug (DEBUG=False): allow local/test hosts so manage.py commands,
     #   smoke scripts, and simple local runs don't fail with DisallowedHost.
     #   Production should always provide DJANGO_ALLOWED_HOSTS explicitly.
-    _allowed_hosts = (
-        "*"
-        if DEBUG
-        else "localhost,127.0.0.1,0.0.0.0,[::1],testserver"
-    )
+    _allowed_hosts = "*" if DEBUG else "localhost,127.0.0.1,0.0.0.0,[::1],testserver"
 
 ALLOWED_HOSTS = [host.strip() for host in _allowed_hosts.split(",") if host.strip()]
 
 _csrf_trusted_origins = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "")
 CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in _csrf_trusted_origins.split(",")
-    if origin.strip()
+    origin.strip() for origin in _csrf_trusted_origins.split(",") if origin.strip()
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django_ckeditor_5',
-    'home.apps.HomeConfig',
-    'django.contrib.sitemaps',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django_ckeditor_5",
+    "home.apps.HomeConfig",
+    "django.contrib.sitemaps",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
 
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'blogApp.middleware.DevStaticNoCacheMiddleware',
-    'blogApp.middleware.IpRateLimitMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'blogApp.middleware.AdminSessionTimeoutMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "blogApp.middleware.DevStaticNoCacheMiddleware",
+    "blogApp.middleware.IpRateLimitMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "blogApp.middleware.AdminSessionTimeoutMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'blogApp.urls'
+ROOT_URLCONF = "blogApp.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'home.context_processors.used_tags',
-                'home.context_processors.static_asset_version',
-                'home.context_processors.about_me',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "home.context_processors.used_tags",
+                "home.context_processors.static_asset_version",
+                "home.context_processors.about_me",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'blogApp.wsgi.application'
+WSGI_APPLICATION = "blogApp.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
 # To use PostgreSQL, set these environment variables and update DATABASES accordingly:
 # DJANGO_DB_ENGINE, DJANGO_DB_NAME, DJANGO_DB_USER, DJANGO_DB_PASSWORD, DJANGO_DB_HOST, DJANGO_DB_PORT
+
+# Cache configuration
+# Set DJANGO_REDIS_URL to enable Redis (required for production with multiple workers).
+# Example: redis://localhost:6379/1  or  redis://:password@host:6379/1
+# Without Redis, rate limiting and shared caches won't work across multiple Gunicorn workers.
+_redis_url = os.getenv("DJANGO_REDIS_URL", "").strip()
+if _redis_url:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": _redis_url,
+            "OPTIONS": {
+                "socket_connect_timeout": 5,
+                "socket_timeout": 5,
+            },
+        }
+    }
+else:
+    # Fallback: per-process in-memory cache (development only).
+    # ⚠ Rate limiting and shared caches will NOT work correctly across multiple workers.
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
 
 
 # Password validation
@@ -138,16 +158,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -155,10 +175,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
 # TIME_ZONE = 'UTC'
-TIME_ZONE = 'Asia/Tashkent'
+TIME_ZONE = "Asia/Tashkent"
 
 USE_I18N = True
 
@@ -168,13 +188,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 if not DEBUG:
     STORAGES = {
@@ -198,7 +218,7 @@ if not DEBUG:
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Security/cookie settings for production. Override via environment variables.
 SESSION_COOKIE_SECURE = _get_bool_env("DJANGO_SESSION_COOKIE_SECURE", not DEBUG)
@@ -209,8 +229,12 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # Global request rate limiting.
 GLOBAL_RATE_LIMIT_ENABLED = _get_bool_env("GLOBAL_RATE_LIMIT_ENABLED", not DEBUG)
 GLOBAL_RATE_LIMIT_REQUESTS = int(os.getenv("GLOBAL_RATE_LIMIT_REQUESTS", "120"))
-GLOBAL_RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("GLOBAL_RATE_LIMIT_WINDOW_SECONDS", "60"))
-GLOBAL_RATE_LIMIT_BLOCK_SECONDS = int(os.getenv("GLOBAL_RATE_LIMIT_BLOCK_SECONDS", "120"))
+GLOBAL_RATE_LIMIT_WINDOW_SECONDS = int(
+    os.getenv("GLOBAL_RATE_LIMIT_WINDOW_SECONDS", "60")
+)
+GLOBAL_RATE_LIMIT_BLOCK_SECONDS = int(
+    os.getenv("GLOBAL_RATE_LIMIT_BLOCK_SECONDS", "120")
+)
 _global_rl_exempt = os.getenv(
     "GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES",
     "/_owner/,/static/,/media/",
@@ -222,7 +246,9 @@ GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES = [
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 # HSTS: 0 in dev (DEBUG=True), 1 year in production. Override via env.
-SECURE_HSTS_SECONDS = 0 if DEBUG else int(os.getenv("DJANGO_SECURE_HSTS_SECONDS", "31536000"))
+SECURE_HSTS_SECONDS = (
+    0 if DEBUG else int(os.getenv("DJANGO_SECURE_HSTS_SECONDS", "31536000"))
+)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
 
@@ -243,74 +269,133 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024
 
 # CKEditor 5 configuration
 CKEDITOR_5_CONFIGS = {
-    'default': {
-        'toolbar': [
-            'heading', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '-',
-            'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code', 'removeFormat', '-',
-            'link', 'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent', 'alignment', '-',
-            'imageUpload', 'insertTable', 'mediaEmbed', 'blockQuote', 'codeBlock', 'horizontalLine', 'specialCharacters', '-',
-            'sourceEditing', '|', 'undo', 'redo'
+    "default": {
+        "toolbar": [
+            "heading",
+            "|",
+            "fontSize",
+            "fontFamily",
+            "fontColor",
+            "fontBackgroundColor",
+            "highlight",
+            "-",
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "subscript",
+            "superscript",
+            "code",
+            "removeFormat",
+            "-",
+            "link",
+            "bulletedList",
+            "numberedList",
+            "todoList",
+            "outdent",
+            "indent",
+            "alignment",
+            "-",
+            "imageUpload",
+            "insertTable",
+            "mediaEmbed",
+            "blockQuote",
+            "codeBlock",
+            "horizontalLine",
+            "specialCharacters",
+            "-",
+            "sourceEditing",
+            "|",
+            "undo",
+            "redo",
         ],
-        'list': {
-            'properties': {
-                'styles': True,
-                'startIndex': True,
-                'reversed': True,
+        "list": {
+            "properties": {
+                "styles": True,
+                "startIndex": True,
+                "reversed": True,
             }
         },
-        'heading': {
-            'options': [
-                {'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph'},
-                {'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1'},
-                {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
-                {'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3'},
-                {'model': 'heading4', 'view': 'h4', 'title': 'Heading 4', 'class': 'ck-heading_heading4'},
+        "heading": {
+            "options": [
+                {
+                    "model": "paragraph",
+                    "title": "Paragraph",
+                    "class": "ck-heading_paragraph",
+                },
+                {
+                    "model": "heading1",
+                    "view": "h1",
+                    "title": "Heading 1",
+                    "class": "ck-heading_heading1",
+                },
+                {
+                    "model": "heading2",
+                    "view": "h2",
+                    "title": "Heading 2",
+                    "class": "ck-heading_heading2",
+                },
+                {
+                    "model": "heading3",
+                    "view": "h3",
+                    "title": "Heading 3",
+                    "class": "ck-heading_heading3",
+                },
+                {
+                    "model": "heading4",
+                    "view": "h4",
+                    "title": "Heading 4",
+                    "class": "ck-heading_heading4",
+                },
             ]
         },
-        'height': '400px',
-        'width': '100%',
-        'placeholder': 'Write your content here...',
-        'image': {
-            'toolbar': [
-                'imageTextAlternative',
-                'imageStyle:alignLeft',
-                'imageStyle:alignCenter',
-                'imageStyle:alignRight',
-                'toggleImageCaption',
-                'linkImage',
+        "height": "400px",
+        "width": "100%",
+        "placeholder": "Write your content here...",
+        "image": {
+            "toolbar": [
+                "imageTextAlternative",
+                "imageStyle:alignLeft",
+                "imageStyle:alignCenter",
+                "imageStyle:alignRight",
+                "toggleImageCaption",
+                "linkImage",
             ],
         },
-        'table': {
-            'contentToolbar': [
-                'tableColumn', 'tableRow', 'mergeTableCells',
-                'tableProperties', 'tableCellProperties'
+        "table": {
+            "contentToolbar": [
+                "tableColumn",
+                "tableRow",
+                "mergeTableCells",
+                "tableProperties",
+                "tableCellProperties",
             ]
         },
-        'htmlSupport': {
-            'allow': [
+        "htmlSupport": {
+            "allow": [
                 {
-                    'name': '/.*/',
-                    'attributes': True,
-                    'classes': True,
-                    'styles': True,
+                    "name": "/.*/",
+                    "attributes": True,
+                    "classes": True,
+                    "styles": True,
                 }
             ]
         },
-        'mediaEmbed': {
-            'previewsInData': True,
+        "mediaEmbed": {
+            "previewsInData": True,
         },
-        'link': {
-            'addTargetToExternalLinks': True,
-            'defaultProtocol': 'https://',
+        "link": {
+            "addTargetToExternalLinks": True,
+            "defaultProtocol": "https://",
         },
-        'removePlugins': ['Markdown', 'Style'],
+        "removePlugins": ["Markdown", "Style"],
     },
 }
 
-CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp', 'svg']
+CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg"]
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
 
-CKEDITOR_5_FILE_UPLOAD_PERMISSION = 'staff'
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
 
 # Basic file logging to capture production errors.
 LOG_DIR = os.path.join(BASE_DIR, "logs")
@@ -343,4 +428,3 @@ if _file_logging_enabled and _log_dir_writable:
             },
         },
     }
-

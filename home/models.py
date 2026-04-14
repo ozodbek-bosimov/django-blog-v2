@@ -1,43 +1,44 @@
 import re
+import sys
+from io import BytesIO
 from urllib.parse import urlparse
 
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.storage import default_storage
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models.signals import post_delete, pre_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
-import sys
-from io import BytesIO
-from PIL import Image
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
+from PIL import Image
 
 
 def _compress_and_rename_image(image_field, max_size=(1000, 1000), quality=80):
     """Compresses an image field using Pillow to save disk space and bandwidth"""
-    if not image_field or getattr(image_field, '_committed', True):
+    if not image_field or getattr(image_field, "_committed", True):
         return image_field  # No new image uploaded
-    
+
     try:
         img = Image.open(image_field)
         if img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
         img.thumbnail(max_size, Image.Resampling.LANCZOS)
-        
+
         output = BytesIO()
-        img.save(output, format='JPEG', quality=quality, optimize=True)
+        img.save(output, format="JPEG", quality=quality, optimize=True)
         size = output.tell()
         output.seek(0)
-        
+
         # Ensure name doesn't include path prefixes manually
-        base_name = getattr(image_field, 'name', 'img').rsplit('/', 1)[-1].rsplit('.', 1)[0]
+        base_name = (
+            getattr(image_field, "name", "img").rsplit("/", 1)[-1].rsplit(".", 1)[0]
+        )
         new_name = f"{base_name}.jpg"
-        
+
         return InMemoryUploadedFile(
-            output, 'ImageField', new_name, 'image/jpeg', 
-            size, None
+            output, "ImageField", new_name, "image/jpeg", size, None
         )
     except Exception:
         return image_field  # Return original if compression fails
@@ -61,23 +62,15 @@ class Blog(models.Model):
     def save(self, *args, **kwargs):
         if self.category:
             self.category = self.category.strip().lower()
-        
+
         if self.thumbnail_img:
             self.thumbnail_img = _compress_and_rename_image(
                 self.thumbnail_img, max_size=(1280, 720), quality=90
             )
 
         super().save(*args, **kwargs)
-        
-        # Invalidate related caches
-        cache.delete("used_tags")
-        cache.delete(f"blogpost_{self.slug}")
-        cache.delete_many(["latest_blogs", "total_blogs", "total_categories"])
 
     def delete(self, *args, **kwargs):
-        cache.delete("used_tags")
-        cache.delete(f"blogpost_{self.slug}")
-        cache.delete_many(["latest_blogs", "total_blogs", "total_categories"])
         super().delete(*args, **kwargs)
 
     @property
@@ -86,6 +79,13 @@ class Blog(models.Model):
         if self.thumbnail_img and hasattr(self.thumbnail_img, "url"):
             return self.thumbnail_img.url
         return self.thumbnail_url or ""
+
+    def get_absolute_thumbnail_url(self, request):
+        """Return the absolute URL for the thumbnail, including scheme and host."""
+        img_url = self.effective_thumbnail
+        if img_url and not img_url.startswith(("http://", "https://")):
+            return f"{request.scheme}://{request.get_host()}{img_url}"
+        return img_url
 
 
 class AboutMe(models.Model):
@@ -104,8 +104,16 @@ class AboutMe(models.Model):
     hero_image_url = models.URLField(
         blank=True, help_text="CDN URL for the homepage hero background image"
     )
-    resume_file = models.FileField(null=True, blank=True, upload_to="resume/", help_text="Upload your resume file directly (e.g. PDF)")
-    resume_url = models.URLField(blank=True, help_text="External URL for your resume (used if no file is uploaded)")
+    resume_file = models.FileField(
+        null=True,
+        blank=True,
+        upload_to="resume/",
+        help_text="Upload your resume file directly (e.g. PDF)",
+    )
+    resume_url = models.URLField(
+        blank=True,
+        help_text="External URL for your resume (used if no file is uploaded)",
+    )
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
     telegram_url = models.URLField(blank=True)
@@ -153,6 +161,20 @@ class AboutMe(models.Model):
         if self.hero_img and hasattr(self.hero_img, "url"):
             return self.hero_img.url
         return self.hero_image_url or ""
+
+    def get_absolute_profile_image_url(self, request):
+        """Return the absolute URL for the profile image, including scheme and host."""
+        img_url = self.effective_profile_image
+        if img_url and not img_url.startswith(("http://", "https://")):
+            return f"{request.scheme}://{request.get_host()}{img_url}"
+        return img_url
+
+    def get_absolute_hero_image_url(self, request):
+        """Return the absolute URL for the hero image, including scheme and host."""
+        img_url = self.effective_hero_image
+        if img_url and not img_url.startswith(("http://", "https://")):
+            return f"{request.scheme}://{request.get_host()}{img_url}"
+        return img_url
 
     class Meta:
         verbose_name = "About Me"
@@ -209,11 +231,9 @@ class Project(models.Model):
         ordering = ["order", "-created_at"]
 
     def save(self, *args, **kwargs):
-        cache.delete("total_projects")
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        cache.delete("total_projects")
         super().delete(*args, **kwargs)
 
 
@@ -276,16 +296,25 @@ def _delete_media_paths_if_unused(
 
 @receiver(pre_save, sender=Blog)
 def cleanup_blog_on_save(sender, instance, **kwargs):
-    """Delete old thumbnail and removed media files when Blog is saved."""
+    """Delete old thumbnail and removed media files when Blog is saved.
+    Also stores the old slug on the instance for post_save cache invalidation."""
     if not instance.pk:
+        instance._old_slug = None
         return
     try:
         old_instance = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
+        instance._old_slug = None
         return
 
+    # Store old slug so post_save can invalidate stale cache when slug changes
+    instance._old_slug = old_instance.slug
+
     # Delete old thumbnail if it changed
-    if old_instance.thumbnail_img and old_instance.thumbnail_img != instance.thumbnail_img:
+    if (
+        old_instance.thumbnail_img
+        and old_instance.thumbnail_img != instance.thumbnail_img
+    ):
         old_instance.thumbnail_img.delete(save=False)
 
     # Delete media files removed from content
@@ -302,26 +331,66 @@ def cleanup_blog_on_delete(sender, instance, **kwargs):
         instance.thumbnail_img.delete(save=False)
     removed_media = _extract_media_paths_from_html(instance.content)
     _delete_media_paths_if_unused(removed_media)
+
+    # Invalidate all related caches
     cache.delete("used_tags")
     cache.delete(f"blogpost_{instance.slug}")
+    cache.delete_many(["latest_blogs", "total_blogs", "total_categories", "all_categories"])
+
+
+@receiver(post_save, sender=Blog)
+def invalidate_blog_cache_on_save(sender, instance, **kwargs):
+    """Invalidate caches when a Blog post is created or updated."""
+    cache.delete("used_tags")
+    cache.delete(f"blogpost_{instance.slug}")
+    # If slug was changed, also invalidate the old slug's cache to avoid stale responses
+    old_slug = getattr(instance, "_old_slug", None)
+    if old_slug and old_slug != instance.slug:
+        cache.delete(f"blogpost_{old_slug}")
+    cache.delete_many(["latest_blogs", "total_blogs", "total_categories", "all_categories"])
+
+
+@receiver([post_save, post_delete], sender=Project)
+def invalidate_project_cache(sender, instance, **kwargs):
+    """Invalidate cache when a Project is created, updated, or deleted."""
+    cache.delete_many(["total_projects", "all_projects"])
+
+
+@receiver([post_save, post_delete], sender=Skill)
+def invalidate_skill_cache(sender, instance, **kwargs):
+    """Invalidate skills cache when a Skill is created, updated, or deleted."""
+    cache.delete("all_skills")
 
 
 @receiver(pre_save, sender=AboutMe)
-def delete_removed_aboutme_bio_media(sender, instance, **kwargs):
-    """Delete media files removed from AboutMe.bio when they are no longer used."""
+def cleanup_aboutme_on_save(sender, instance, **kwargs):
+    """Handle all file cleanup when AboutMe is saved.
+    Combines bio media, profile image, hero image, and resume file cleanup
+    into a single DB query instead of four separate ones."""
     if not instance.pk:
         return
-
     try:
-        old_instance = sender.objects.get(pk=instance.pk)
+        old = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
         return
 
-    old_media = _extract_media_paths_from_html(old_instance.bio)
+    # Delete media files removed from bio
+    old_media = _extract_media_paths_from_html(old.bio)
     new_media = _extract_media_paths_from_html(instance.bio)
     removed_media = old_media - new_media
-
     _delete_media_paths_if_unused(removed_media, exclude_aboutme_pk=instance.pk)
+
+    # Delete old profile image if changed
+    if old.profile_img and old.profile_img != instance.profile_img:
+        old.profile_img.delete(save=False)
+
+    # Delete old hero image if changed
+    if old.hero_img and old.hero_img != instance.hero_img:
+        old.hero_img.delete(save=False)
+
+    # Delete old resume file if changed
+    if old.resume_file and old.resume_file != instance.resume_file:
+        old.resume_file.delete(save=False)
 
 
 @receiver(post_delete, sender=AboutMe)
@@ -337,40 +406,7 @@ def delete_aboutme_bio_media_on_delete(sender, instance, **kwargs):
         instance.resume_file.delete(save=False)
 
 
-@receiver(pre_save, sender=AboutMe)
-def delete_old_profile_img_on_change(sender, instance, **kwargs):
-    """Delete old profile image file when replacing it with a new one."""
-    if not instance.pk:
-        return
-    try:
-        old = sender.objects.get(pk=instance.pk)
-    except sender.DoesNotExist:
-        return
-    if old.profile_img and old.profile_img != instance.profile_img:
-        old.profile_img.delete(save=False)
-
-
-@receiver(pre_save, sender=AboutMe)
-def delete_old_hero_img_on_change(sender, instance, **kwargs):
-    """Delete old hero image file when replacing it with a new one."""
-    if not instance.pk:
-        return
-    try:
-        old = sender.objects.get(pk=instance.pk)
-    except sender.DoesNotExist:
-        return
-    if old.hero_img and old.hero_img != instance.hero_img:
-        old.hero_img.delete(save=False)
-
-
-@receiver(pre_save, sender=AboutMe)
-def delete_old_resume_file_on_change(sender, instance, **kwargs):
-    """Delete old resume file when replacing it with a new one."""
-    if not instance.pk:
-        return
-    try:
-        old = sender.objects.get(pk=instance.pk)
-    except sender.DoesNotExist:
-        return
-    if old.resume_file and old.resume_file != instance.resume_file:
-        old.resume_file.delete(save=False)
+@receiver([post_save, post_delete], sender=AboutMe)
+def invalidate_aboutme_cache(sender, instance, **kwargs):
+    """Invalidate cache when AboutMe is updated."""
+    cache.delete("about_me_singleton")
