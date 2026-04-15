@@ -134,7 +134,7 @@
                 href='{% url "blogpost" blog.slug %}'><span
                     class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
             <p class='my-3 break-words' style='overflow-wrap: anywhere;'>{{blog.meta|truncatechars:200}}</p>
-            <div class='post-meta'>
+            <div class='post-meta text-gray-400'>
                 <span><i class="bi bi-calendar4-event"></i> {{blog.time|date:"M j, Y"}}</span>
                 <i class="bi bi-dot"></i>
                 <span><i class="bi bi-clock"></i> {{ blog.content|reading_time }} min read</span>
