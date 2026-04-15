@@ -12,7 +12,7 @@
       href='{% url "blogpost" blog.slug %}'><span
         class='text-xl font-bold'>{{ blog.title|slice:80 }}</span></a><br>
     <p class='my-3 break-words'>{{ blog.meta|slice:600 }}</p>
-    <div class='post-meta'>
+    <div class='post-meta text-gray-400'>
       <span><i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'
         class='hover:text-cyan-400 transition-colors duration-300'>{{ blog.category }}</a></span>
       <i class="bi bi-dot"></i>
