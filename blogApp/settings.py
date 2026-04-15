@@ -128,29 +128,12 @@ DATABASES = {
 # DJANGO_DB_ENGINE, DJANGO_DB_NAME, DJANGO_DB_USER, DJANGO_DB_PASSWORD, DJANGO_DB_HOST, DJANGO_DB_PORT
 
 # Cache configuration
-# Set DJANGO_REDIS_URL to enable Redis (required for production with multiple workers).
-# Example: redis://localhost:6379/1  or  redis://:password@host:6379/1
-# Without Redis, rate limiting and shared caches won't work across multiple Gunicorn workers.
-_redis_url = os.getenv("DJANGO_REDIS_URL", "").strip()
-if _redis_url:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": _redis_url,
-            "OPTIONS": {
-                "socket_connect_timeout": 5,
-                "socket_timeout": 5,
-            },
-        }
+# Keep cache setup simple and provider-agnostic.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
-else:
-    # Fallback: per-process in-memory cache (development only).
-    # ⚠ Rate limiting and shared caches will NOT work correctly across multiple workers.
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        }
-    }
+}
 
 
 # Password validation
