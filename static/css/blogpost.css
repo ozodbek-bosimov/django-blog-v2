@@ -261,3 +261,92 @@ pre[class*="language-"] code {
     border: 1px solid rgba(148, 163, 184, 0.15) !important;
     word-break: break-word !important;
 }
+
+/* ── Tables ─────────────────────────────────────────────────────────── */
+.blog-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+    overflow-x: auto;
+    display: block;
+}
+
+.blog-content table th,
+.blog-content table td {
+    padding: 0.65rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+    color: #cbd5e1;
+}
+
+.blog-content table th {
+    background: rgba(6, 182, 212, 0.1);
+    color: #e2e8f0;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.blog-content table tr:hover td {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* ── Horizontal Line ────────────────────────────────────────────────── */
+.blog-content hr {
+    border: none;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 2.5rem 0;
+}
+
+/* ── Todo / Checkbox List ───────────────────────────────────────────── */
+.blog-content .todo-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+}
+
+.blog-content .todo-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.blog-content .todo-list li label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #cbd5e1;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.blog-content .todo-list li label input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.15em;
+    height: 1.15em;
+    margin-top: 0.35em;
+    border: 2px solid rgba(103, 232, 249, 0.4);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.blog-content .todo-list li label input[type="checkbox"]:checked {
+    background: #06b6d4;
+    border-color: #06b6d4;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.blog-content .todo-list li.todo-list__label__description-checked span {
+    text-decoration: line-through;
+    color: #64748b;
+}

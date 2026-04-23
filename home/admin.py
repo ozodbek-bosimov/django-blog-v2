@@ -13,6 +13,98 @@ from home.models import Blog, AboutMe, Skill, Project
 from django.utils.html import format_html, escape
 from django_ckeditor_5.widgets import CKEditor5Widget
 
+
+def _sanitize_youtube_embeds(html_content):
+    """Convert YouTube watch/short URLs to embed URLs and ensure proper iframe attributes.
+    Shared by BlogAdminForm.clean_content() and AboutMeAdminForm.clean_bio()."""
+    if not html_content:
+        return html_content
+
+    def time_to_seconds(time_str):
+        if not time_str:
+            return None
+        time_str = time_str.strip()
+        if time_str.isdigit():
+            return int(time_str)
+        match = re.match(r'(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$', time_str)
+        if not match:
+            return None
+        hours = int(match.group(1) or 0)
+        minutes = int(match.group(2) or 0)
+        seconds = int(match.group(3) or 0)
+        total = (hours * 3600) + (minutes * 60) + seconds
+        return total if total > 0 else None
+
+    def build_embed_url(video_id, time_str):
+        base = f"https://www.youtube.com/embed/{video_id}"
+        start_seconds = time_to_seconds(time_str)
+        if start_seconds is None:
+            return base
+        return f"{base}?start={start_seconds}"
+
+    def add_rel_param(url):
+        if 'rel=' in url:
+            return url
+        separator = '&' if '?' in url else '?'
+        return f"{url}{separator}rel=0"
+
+    def ensure_iframe_attr(tag, attr, value=None):
+        if attr == 'allowfullscreen':
+            if re.search(r'\ballowfullscreen\b', tag, re.IGNORECASE):
+                return tag
+            return tag[:-1] + ' allowfullscreen>'
+        if re.search(rf'\b{attr}\s*=', tag, re.IGNORECASE):
+            return tag
+        return tag[:-1] + f' {attr}="{value}">'
+
+    # Convert watch URLs to embed URLs (for media plugin)
+    html_content = re.sub(
+        r'https://www\.youtube\.com/watch\?v=([a-zA-Z0-9_-]+)(?:&t=([0-9hms]+))?',
+        lambda match: build_embed_url(match.group(1), match.group(2)),
+        html_content
+    )
+
+    # Also handle youtu.be short URLs
+    html_content = re.sub(
+        r'https://youtu\.be/([a-zA-Z0-9_-]+)(?:\?t=([0-9hms]+))?',
+        lambda match: build_embed_url(match.group(1), match.group(2)),
+        html_content
+    )
+
+    # Normalize embed URLs that use ?t=
+    html_content = re.sub(
+        r'https://www\.youtube\.com/embed/([a-zA-Z0-9_-]+)\?t=([0-9hms]+)',
+        lambda match: build_embed_url(match.group(1), match.group(2)),
+        html_content
+    )
+
+    # Ensure rel=0 for YouTube embed URLs
+    html_content = re.sub(
+        r'https://www\.youtube\.com/embed/[a-zA-Z0-9_-]+(?:\?[^"\s>]*)?',
+        lambda match: add_rel_param(match.group(0)),
+        html_content
+    )
+
+    # Ensure iframe attributes needed for YouTube playback
+    def augment_iframe(match):
+        tag = match.group(0)
+        if 'youtube.com/embed' not in tag:
+            return tag
+        tag = ensure_iframe_attr(
+            tag,
+            'allow',
+            'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+        )
+        tag = ensure_iframe_attr(tag, 'referrerpolicy', 'strict-origin-when-cross-origin')
+        tag = ensure_iframe_attr(tag, 'title', 'YouTube video player')
+        tag = ensure_iframe_attr(tag, 'frameborder', '0')
+        tag = ensure_iframe_attr(tag, 'allowfullscreen')
+        return tag
+
+    html_content = re.sub(r'<iframe[^>]*>', augment_iframe, html_content, flags=re.IGNORECASE)
+    return html_content
+
+
 # Register your models here.
 class BlogAdminForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditor5Widget(config_name='default'))
@@ -50,90 +142,7 @@ class BlogAdminForm(forms.ModelForm):
                 'Maximum allowed size is 5 MB. Please reduce the content size.'
             )
 
-        if content:
-            def time_to_seconds(time_str):
-                if not time_str:
-                    return None
-                time_str = time_str.strip()
-                if time_str.isdigit():
-                    return int(time_str)
-                match = re.match(r'(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$', time_str)
-                if not match:
-                    return None
-                hours = int(match.group(1) or 0)
-                minutes = int(match.group(2) or 0)
-                seconds = int(match.group(3) or 0)
-                total = (hours * 3600) + (minutes * 60) + seconds
-                return total if total > 0 else None
-
-            def build_embed_url(video_id, time_str):
-                base = f"https://www.youtube.com/embed/{video_id}"
-                start_seconds = time_to_seconds(time_str)
-                if start_seconds is None:
-                    return base
-                return f"{base}?start={start_seconds}"
-
-            def add_rel_param(url):
-                if 'rel=' in url:
-                    return url
-                separator = '&' if '?' in url else '?'
-                return f"{url}{separator}rel=0"
-
-            def ensure_iframe_attr(tag, attr, value=None):
-                if attr == 'allowfullscreen':
-                    if re.search(r'\ballowfullscreen\b', tag, re.IGNORECASE):
-                        return tag
-                    return tag[:-1] + ' allowfullscreen>'
-                if re.search(rf'\b{attr}\s*=', tag, re.IGNORECASE):
-                    return tag
-                return tag[:-1] + f' {attr}="{value}">'
-            
-            # Convert watch URLs to embed URLs (for media plugin)
-            content = re.sub(
-                r'https://www\.youtube\.com/watch\?v=([a-zA-Z0-9_-]+)(?:&t=([0-9hms]+))?',
-                lambda match: build_embed_url(match.group(1), match.group(2)),
-                content
-            )
-            
-            # Also handle youtu.be short URLs
-            content = re.sub(
-                r'https://youtu\.be/([a-zA-Z0-9_-]+)(?:\?t=([0-9hms]+))?',
-                lambda match: build_embed_url(match.group(1), match.group(2)),
-                content
-            )
-
-            # Normalize embed URLs that use ?t=
-            content = re.sub(
-                r'https://www\.youtube\.com/embed/([a-zA-Z0-9_-]+)\?t=([0-9hms]+)',
-                lambda match: build_embed_url(match.group(1), match.group(2)),
-                content
-            )
-
-            # Ensure rel=0 for YouTube embed URLs
-            content = re.sub(
-                r'https://www\.youtube\.com/embed/[a-zA-Z0-9_-]+(?:\?[^"\s>]*)?',
-                lambda match: add_rel_param(match.group(0)),
-                content
-            )
-
-            # Ensure iframe attributes needed for YouTube playback
-            def augment_iframe(match):
-                tag = match.group(0)
-                if 'youtube.com/embed' not in tag:
-                    return tag
-                tag = ensure_iframe_attr(
-                    tag,
-                    'allow',
-                    'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
-                )
-                tag = ensure_iframe_attr(tag, 'referrerpolicy', 'strict-origin-when-cross-origin')
-                tag = ensure_iframe_attr(tag, 'title', 'YouTube video player')
-                tag = ensure_iframe_attr(tag, 'frameborder', '0')
-                tag = ensure_iframe_attr(tag, 'allowfullscreen')
-                return tag
-
-            content = re.sub(r'<iframe[^>]*>', augment_iframe, content, flags=re.IGNORECASE)
-        return content
+        return _sanitize_youtube_embeds(content)
 
     def clean_meta(self):
         meta = (self.cleaned_data.get('meta') or '').strip()
@@ -181,7 +190,7 @@ class AboutMeAdminForm(forms.ModelForm):
         fields = "__all__"
 
     def clean_bio(self):
-        """Check bio content size limit"""
+        """Check bio content size limit and sanitize YouTube embeds"""
         bio = self.cleaned_data.get('bio', '')
         bio_size_bytes = len(bio.encode('utf-8'))
         max_size_bytes = 5 * 1024 * 1024  # 5MB
@@ -191,7 +200,7 @@ class AboutMeAdminForm(forms.ModelForm):
                 f'Bio content is too large ({size_mb:.1f} MB). '
                 'Maximum allowed size is 5 MB. Please reduce the content size.'
             )
-        return bio
+        return _sanitize_youtube_embeds(bio)
 
     def clean_profile_img(self):
         img = self.cleaned_data.get('profile_img')
