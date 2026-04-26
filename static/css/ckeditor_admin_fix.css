@@ -1,0 +1,71 @@
+/* Keep CKEditor fully within admin form width and prevent first-render overflow. */
+.ck-editor-container,
+.ck.ck-editor,
+.ck.ck-editor__main,
+.ck.ck-editor__editable {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure editing area can scroll horizontally instead of pushing outside viewport. */
+.ck.ck-editor__editable {
+    overflow-x: auto;
+}
+
+/* Embedded media should stay in normal document flow and not overlap following text. */
+.ck-content figure,
+.ck-content .image,
+.ck-content .media {
+    clear: both;
+    max-width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Make media embeds responsive inside admin editor/content. */
+.ck-content .media .ck-media__wrapper,
+.ck-content .media iframe,
+.ck-content iframe,
+.ck-content video,
+.ck-content img {
+    max-width: 100%;
+}
+
+/* Keep preview iframe from stretching outside on narrow screens. */
+.ck-content .media iframe,
+.ck-content iframe {
+    width: 100%;
+}
+
+/* Reserve vertical space for embedded media wrappers to avoid text overlap. */
+.ck-content figure.media {
+    display: block;
+    clear: both;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.ck-content figure.media .ck-media__wrapper {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+    overflow: hidden;
+}
+
+.ck-content figure.media .ck-media__wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.ck-content figure.media + * {
+    clear: both;
+}

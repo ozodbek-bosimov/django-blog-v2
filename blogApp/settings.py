@@ -375,6 +375,9 @@ CKEDITOR_5_CONFIGS = {
     },
 }
 
+# Extra editor-only CSS loaded by django-ckeditor-5 widget (admin form).
+CKEDITOR_5_CUSTOM_CSS = "css/ckeditor_admin_fix.css"
+
 CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg"]
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
 

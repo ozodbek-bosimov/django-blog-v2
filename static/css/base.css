@@ -256,6 +256,37 @@ body {
     clear: both;
 }
 
+.ck-content figure.media {
+    display: block;
+    width: 100%;
+    clear: both;
+    margin: 1.25em 0;
+}
+
+.ck-content figure.media .ck-media__wrapper {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+    overflow: hidden;
+    border-radius: 0.5rem;
+}
+
+.ck-content figure.media .ck-media__wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.ck-content figure.media + * {
+    clear: both;
+}
+
 .ck-content figure.image img {
     display: block;
     margin: 0 auto;
@@ -558,4 +589,82 @@ body {
     color: #ffffff;
     border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
+}
+
+/* ── Mobile Touch Enhancements ────────────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+    /* Provide instant tactile feedback on touch for interactive elements */
+    button:active, 
+    a:active,
+    .glass-card:active,
+    .searchSubmitBtn:active,
+    .searchCloseBtn:active,
+    #back-to-top:active {
+        transform: scale(0.96) !important;
+        transition: transform 50ms ease-out, opacity 50ms ease-out !important;
+        opacity: 0.8 !important;
+    }
+
+    /* Prevent text links from scaling, just change opacity */
+    p a:active,
+    span a:active,
+    .ck-content a:active,
+    .post-meta a:active,
+    footer a:not(.btn-social):active {
+        transform: none !important;
+        opacity: 0.5 !important;
+    }
+
+    /* Fix "sticky hover" issue on mobile touch screens */
+    .glass-card:hover,
+    .btn-primary:hover,
+    .btn-ghost:hover,
+    .btn-social:hover,
+    .btn-pagination:hover,
+    .btn-hero-primary:hover,
+    .btn-hero-ghost:hover {
+        transform: none !important;
+    }
+
+    /* Keep animations but reduce expensive effects on touch devices. */
+    .glass-card,
+    .btn-hero-ghost,
+    #back-to-top {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .wave {
+        animation-duration: 3.2s;
+    }
+
+    .updn {
+        animation-duration: 6s;
+    }
+
+    .hero-pulse {
+        animation-duration: 2.8s;
+    }
+
+    .hero-code-card,
+    .btn-primary,
+    .btn-ghost,
+    .btn-social,
+    .btn-pagination,
+    .btn-hero-primary,
+    .btn-hero-ghost,
+    #back-to-top {
+        transition-duration: 180ms;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
