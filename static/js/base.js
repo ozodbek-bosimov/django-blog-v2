@@ -1,15 +1,20 @@
 // Back to Top Button
 const backToTopBtn = document.getElementById("back-to-top");
-const prefersReducedMotion = window.matchMedia(
-  "(prefers-reduced-motion: reduce)",
-);
-
 if (backToTopBtn) {
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (window.scrollY > 400) {
+        backToTopBtn.classList.add("visible");
+      } else {
+        backToTopBtn.classList.remove("visible");
+      }
+    },
+    { passive: true },
+  );
+
   backToTopBtn.addEventListener("click", function () {
-    window.scrollTo({
-      top: 0,
-      behavior: prefersReducedMotion.matches ? "auto" : "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
@@ -42,38 +47,11 @@ if (toggleButton && navbarContent) {
       navbarContent.classList.add("translate-x-full", "opacity-0");
     }
   });
-}
 
-let latestScrollY = window.scrollY;
-let isScrollTicking = false;
-
-function runScrollEffects() {
-  if (backToTopBtn) {
-    if (latestScrollY > 400) {
-      backToTopBtn.classList.add("visible");
-    } else {
-      backToTopBtn.classList.remove("visible");
-    }
-  }
-
-  if (toggleButton && navbarContent) {
+  window.addEventListener("scroll", () => {
     navbarContent.classList.add("translate-x-full", "opacity-0");
-  }
-
-  isScrollTicking = false;
+  });
 }
-
-window.addEventListener(
-  "scroll",
-  () => {
-    latestScrollY = window.scrollY;
-    if (!isScrollTicking) {
-      isScrollTicking = true;
-      requestAnimationFrame(runScrollEffects);
-    }
-  },
-  { passive: true },
-);
 
 // Search Modal
 const searchBtns = document.querySelectorAll(".searchBtn, .searchBtn1");

@@ -122,7 +122,7 @@
     </div>
     <div class='blogs blog-cards-grid my-5 grid gap-6 px-4 md:grid-cols-3'>
         {% for blog in latest_blogs %}
-        <div class='blog-card-item glass-card p-5 h-auto'>
+        <div class='blog-card-item glass-card solid-content-card p-5 h-auto'>
             <a href='{% url "blogpost" blog.slug %}'>
                 {% if blog.effective_thumbnail %}
                 <div class="w-full overflow-hidden rounded-lg mb-4" style="aspect-ratio: 16/9;">
