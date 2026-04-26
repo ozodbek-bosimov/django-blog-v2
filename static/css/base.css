@@ -5,11 +5,11 @@
     right: 2rem;
     width: 3.25rem;
     height: 3.25rem;
-    border-radius: 1rem;
-    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 1rem; /* Mac squircle */
+    background-color: rgba(255, 255, 255, 0.05); /* Lighter glass */
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: none !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,23 +18,29 @@
     z-index: 50;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(20px);
+    transform: translateY(20px) translateZ(0);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1), /* Mac top highlight */
+        0 10px 15px -3px rgba(0, 0, 0, 0.3);
 }
 
 #back-to-top.visible {
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
 }
 
 #back-to-top:hover {
-    background-color: rgba(30, 41, 59, 0.9);
-    border-color: rgba(6, 182, 212, 0.4);
-    color: #06b6d4;
-    transform: translateY(-5px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 0 20px rgba(6, 182, 212, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    transform: translateY(-5px) translateZ(0);
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 20px 25px -5px rgba(0, 0, 0, 0.4), 
+        0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 #back-to-top:hover i {
@@ -390,6 +396,36 @@ body {
     transform: translateY(-4px);           /* hover:-translate-y-1 */
 }
 
+/* Sleek Modern Dark Card (Perfectly integrated with the site) */
+.solid-content-card {
+    /* Deep slate gradient, slightly transparent for a very subtle glass effect */
+    background: linear-gradient(180deg, rgba(43, 53, 69, 0.95) 0%, rgba(37, 48, 66, 0.95) 100%) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    
+    border: none !important;
+    /* Back to standard 1rem (16px) radius, which fits web design much better than the 1.5rem Mac pill */
+    border-radius: 1rem !important; 
+    
+    /* Clean, crisp edges without the heavy Mac "thick plastic" 3D emboss */
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.08), /* Crisp outer border */
+        inset 0 1px 0 rgba(255, 255, 255, 0.05), /* Very subtle top highlight */
+        0 10px 25px -10px rgba(0, 0, 0, 0.5) !important; /* Soft shadow */
+        
+    transform: translateZ(0);
+    transition: all 0.3s ease !important;
+}
+
+.solid-content-card:hover {
+    background: linear-gradient(180deg, rgba(47, 58, 75, 0.95) 0%, rgba(40, 52, 70, 0.95) 100%) !important;
+    transform: translateY(-2px) translateZ(0) !important;
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 15px 35px -10px rgba(0, 0, 0, 0.6) !important;
+}
+
 /* Main Blue Button */
 .btn-primary {
     display: inline-flex;
@@ -399,15 +435,23 @@ body {
     background-color: #2563eb;             /* bg-blue-600 */
     color: #ffffff;
     font-weight: 600;
-    border-radius: 0.75rem;                /* rounded-xl */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* ring-white/20 */
-    transition: all 300ms ease-in-out;
+    border-radius: 0.75rem;                /* squircle */
+    border: none !important;
+    box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2), /* Mac top highlight */
+        0 4px 12px rgba(37, 99, 235, 0.3);
+    transform: translateZ(0);
+    transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .btn-primary:hover {
     background-color: #3b82f6;             /* hover:bg-blue-500 */
-    transform: translateY(-2px);           /* hover:-translate-y-0.5 */
-    box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3); /* hover:shadow-blue-500/30 */
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 8px 16px rgba(59, 130, 246, 0.4);
 }
 
 /* Translucent Button (Github etc.) */
@@ -416,19 +460,28 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+    background: rgba(255, 255, 255, 0.03); /* Lighter base for glass */
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: #ffffff;
     font-weight: 600;
     border-radius: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 300ms ease-in-out;
+    border: none !important;
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.08), /* Sleek crisp border */
+        inset 0 1px 0 rgba(255, 255, 255, 0.05), /* Subtle top glass highlight */
+        0 4px 12px rgba(0, 0, 0, 0.2); /* Soft depth shadow */
+    transform: translateZ(0);
+    transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* Layout Helpers */
@@ -473,14 +526,22 @@ body {
     font-weight: 600;
     padding: 0.625rem 1rem;
     border-radius: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 300ms ease-in-out;
+    border: none !important;
+    box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2), 
+        0 4px 12px rgba(37, 99, 235, 0.3);
+    transform: translateZ(0);
+    transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .btn-pagination:hover {
     background-color: #3b82f6;
-    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
-    transform: translateY(-2px);
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 8px 16px rgba(59, 130, 246, 0.4);
 }
 
 /* Blogpost Thumbnail Container */
@@ -553,18 +614,26 @@ body {
     gap: 0.5rem;
     background-image: linear-gradient(to right, #06b6d4, #3b82f6);
     padding: 0.625rem 1.25rem;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
+    border: none !important;
     color: #ffffff;
     font-size: 0.875rem;
     font-weight: 600;
-    box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.2);
-    transition: all 300ms ease-in-out;
+    box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25), /* Mac top highlight */
+        0 4px 12px rgba(6, 182, 212, 0.3);
+    transform: translateZ(0);
+    transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .btn-hero-primary:hover {
     background-image: linear-gradient(to right, #22d3ee, #60a5fa);
-    box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.4);
-    transform: translateY(-2px);
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 8px 16px rgba(6, 182, 212, 0.4);
 }
 
 .btn-hero-ghost {
@@ -572,23 +641,31 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 0.625rem 1.25rem;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     color: #d1d5db;
     font-size: 0.875rem;
     font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 300ms ease-in-out;
+    border: none !important;
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateZ(0);
+    transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .btn-hero-ghost:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.08);
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Mobile Touch Enhancements ────────────────────────────────── */
@@ -600,7 +677,7 @@ body {
     .searchSubmitBtn:active,
     .searchCloseBtn:active,
     #back-to-top:active {
-        transform: scale(0.96) !important;
+        transform: scale(0.96) translateZ(0) !important;
         transition: transform 50ms ease-out, opacity 50ms ease-out !important;
         opacity: 0.8 !important;
     }
@@ -634,17 +711,9 @@ body {
         -webkit-backdrop-filter: blur(8px);
     }
 
-    .wave {
-        animation-duration: 3.2s;
-    }
-
-    .updn {
-        animation-duration: 6s;
-    }
-
-    .hero-pulse {
-        animation-duration: 2.8s;
-    }
+    .wave { animation-duration: 3.2s; }
+    .updn { animation-duration: 6s; }
+    .hero-pulse { animation-duration: 2.8s; }
 
     .hero-code-card,
     .btn-primary,
