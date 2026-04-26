@@ -155,7 +155,7 @@ class BlogAdmin(admin.ModelAdmin):
     form = BlogAdminForm
 
     class Media:
-        js = ('js/admin_thumbnail.js',)
+        js = ('js/admin_thumbnail.js', 'js/admin_ckeditor_fix.js')
     list_display = ['title', 'category', 'created_at_display', 'slug']
     list_filter = ['category']
     search_fields = ['title', 'category', 'slug']
@@ -226,6 +226,10 @@ class AboutMeAdminForm(forms.ModelForm):
 class AboutMeAdmin(admin.ModelAdmin):
     """Admin for singleton AboutMe model"""
     form = AboutMeAdminForm
+
+    class Media:
+        js = ('js/admin_ckeditor_fix.js',)
+
     readonly_fields = ('profile_image_preview', 'hero_image_preview')
     fieldsets = (
         ('Personal Info', {'fields': ('name', 'profession', 'email', 'phone')}),
