@@ -27,13 +27,13 @@
     <div class="h-px bg-gray-700 w-full"></div>
 </div>
 
-<div class='text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
+<div class='list-container'>
 
   {% if projects %}
   {% for project in projects %}
-  <div class='glass-card solid-content-card flex flex-col md:flex-row md:items-start gap-5 md:gap-8 p-5 md:p-6 mb-8 overflow-hidden'>
-    <div class='shrink-0'>
-      <img class="project-img" src="{{ project.thumbnail_url }}"
+  <div class='blog-list-card glass-card solid-content-card flex flex-col gap-5 p-5 md:p-6 mb-8 overflow-hidden'>
+    <div class='blog-list-thumb'>
+      <img class="w-full h-full object-cover" src="{{ project.thumbnail_url }}"
         alt="{{ project.title }}" loading="lazy">
     </div>
 
