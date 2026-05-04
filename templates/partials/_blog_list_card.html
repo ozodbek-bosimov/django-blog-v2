@@ -1,26 +1,24 @@
 {% load blog_extras %}
 
-<div class='glass-card solid-content-card flex flex-col md:flex-row gap-4 md:gap-x-8 p-5 mb-6'>
+<div class='blog-list-card glass-card solid-content-card flex flex-col gap-4 md:gap-x-8 p-5 mb-6'>
   {% if blog.effective_thumbnail %}
-  <div class="w-full md:w-[350px] md:flex-shrink-0 overflow-hidden rounded-lg" style="height: 200px;">
-    <img class="w-full h-full object-cover"
-      src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
+  <div class="blog-list-thumb">
+    <img class="w-full h-full object-cover" src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
   </div>
   {% endif %}
   <div class="min-w-0">
-    <a class='text-blue-100 hover:text-cyan-400 transition duration-300'
-      href='{% url "blogpost" blog.slug %}'><span
+    <a class='text-blue-100 hover:text-cyan-400 transition duration-300' href='{% url "blogpost" blog.slug %}'><span
         class='text-xl font-bold'>{{ blog.title|slice:80 }}</span></a><br>
     <p class='my-3 break-words'>{{ blog.meta|slice:600 }}</p>
     <div class='post-meta text-gray-400'>
       <span><i class="bi bi-tag"></i> <a href='{% url "category" blog.category %}'
-        class='hover:text-cyan-400 transition-colors duration-300'>{{ blog.category }}</a></span>
+          class='hover:text-cyan-400 transition-colors duration-300'>{{ blog.category }}</a></span>
       <i class="bi bi-dot"></i>
       <span><i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}</span>
       <i class="bi bi-dot"></i>
       <span><i class="bi bi-clock"></i> {{ blog.content|reading_time }} min read</span>
     </div>
-    <a href='{% url "blogpost" blog.slug %}'
-      class='btn-primary px-4 py-2 my-3 whitespace-nowrap'>Read more <i class="bi bi-arrow-right"></i></a>
+    <a href='{% url "blogpost" blog.slug %}' class='btn-primary px-4 py-2 my-3 whitespace-nowrap'>Read more <i
+        class="bi bi-arrow-right"></i></a>
   </div>
 </div>
