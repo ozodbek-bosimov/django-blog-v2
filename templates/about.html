@@ -30,10 +30,9 @@
 </div>
 
 <div class='text-white p-6 md:p-8 flex flex-col max-w-3xl mx-auto w-full'>
-    <div class='m-6'>
         {% if about_me %}
 
-        <div class='flex flex-col md:flex-row gap-6 md:gap-8 my-6'>
+        <div class='flex flex-col md:flex-row gap-6 md:gap-8 my-6 mx-6'>
             <div class='flex justify-center md:justify-start shrink-0'>
                 <img src="{{ about_me.effective_profile_image }}" alt="{{ about_me.name }}"
                     class='w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg'>
@@ -99,10 +98,9 @@
             </div>
         </div>
 
-        <div class='mt-8 text-gray-300 leading-relaxed'>
-            <div class='blog-content ck-content leading-relaxed'>
-                {{ about_me.bio|safe }}
-            </div>
+        <!-- Bio Content -->
+        <div class="blog-content ck-content leading-relaxed mt-2">
+            {{ about_me.bio|safe }}
         </div>
         {% else %}
         <p class='text-center text-gray-400 py-10'>No about information available yet.</p>
@@ -137,7 +135,6 @@
             <p class='text-center text-gray-400'>No skills added yet.</p>
             {% endif %}
         </div>
-    </div>
 </div>
 <script src="{% static 'js/about.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 

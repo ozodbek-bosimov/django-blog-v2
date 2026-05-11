@@ -133,7 +133,7 @@
             <a class='text-blue-100 hover:text-cyan-400 transition duration-300'
                 href='{% url "blogpost" blog.slug %}'><span
                     class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
-            <p class='my-3 break-words' style='overflow-wrap: anywhere;'>{{blog.meta|truncatechars:200}}</p>
+            <p class='my-3 break-words text-sm md:text-base leading-relaxed text-gray-100' style='overflow-wrap: anywhere;'>{{blog.meta|truncatechars:200}}</p>
             <div class='post-meta text-gray-400'>
                 <span><i class="bi bi-calendar4-event"></i> {{blog.time|date:"M j, Y"}}</span>
                 <i class="bi bi-dot"></i>
