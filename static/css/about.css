@@ -62,6 +62,14 @@ h6 {
   font-size: 1.05rem;
 }
 
+.blog-content ul {
+  list-style-type: disc;
+}
+
+.blog-content ol {
+  list-style-type: decimal;
+}
+
 .blog-content li {
   margin-bottom: 0.5rem;
 }
