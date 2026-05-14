@@ -1,5 +1,4 @@
 import re
-import sys
 from io import BytesIO
 from urllib.parse import urlparse
 
@@ -16,32 +15,52 @@ from PIL import Image
 
 
 def _compress_and_rename_image(image_field, max_size=(1000, 1000), quality=80):
-    """Compresses an image field using Pillow to save disk space and bandwidth"""
-    if not image_field or getattr(image_field, "_committed", True):
-        return image_field  # No new image uploaded
+    """Compresses an image field using Pillow to save disk space and bandwidth.
+
+    Converts images to WebP format for superior compression.  Transparent
+    images (RGBA / P with transparency) are kept as WebP with alpha;
+    everything else is converted to RGB first.
+    """
+    if not image_field:
+        return image_field
+
+    # Only process *new* uploads (not already-saved files)
+    if getattr(image_field, "_committed", True):
+        return image_field
 
     try:
+        # Reset file pointer — critical for files that have been partially
+        # read during Django's upload validation / CKEditor processing.
+        if hasattr(image_field, "seek"):
+            image_field.seek(0)
+
         img = Image.open(image_field)
-        if img.mode in ("RGBA", "P"):
-            img = img.convert("RGB")
         img.thumbnail(max_size, Image.Resampling.LANCZOS)
 
+        # Decide whether to keep alpha channel
+        has_alpha = img.mode in ("RGBA", "LA") or (
+            img.mode == "P" and "transparency" in img.info
+        )
+        if not has_alpha:
+            img = img.convert("RGB")
+
         output = BytesIO()
-        img.save(output, format="JPEG", quality=quality, optimize=True)
-        size = output.tell()
+        img.save(output, format="WEBP", quality=quality, method=4)
+        compressed_size = output.tell()
         output.seek(0)
 
-        # Ensure name doesn't include path prefixes manually
-        base_name = (
-            getattr(image_field, "name", "img").rsplit("/", 1)[-1].rsplit(".", 1)[0]
-        )
-        new_name = f"{base_name}.jpg"
+        original_name = getattr(image_field, "name", "img") or "img"
+        base_name = original_name.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+        new_name = f"{base_name}.webp"
 
         return InMemoryUploadedFile(
-            output, "ImageField", new_name, "image/jpeg", size, None
+            output, "ImageField", new_name, "image/webp", compressed_size, None
         )
     except Exception:
-        return image_field  # Return original if compression fails
+        # Reset pointer so Django can still save the original file
+        if hasattr(image_field, "seek"):
+            image_field.seek(0)
+        return image_field
 
 
 # Create your models here.
