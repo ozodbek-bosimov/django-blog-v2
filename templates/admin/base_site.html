@@ -27,6 +27,9 @@
     font-weight: bold;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
+#session-warning-banner.session-restored {
+    background: #28a745;
+}
 #session-warning-banner a {
     color: #fff;
     text-decoration: underline;
@@ -39,38 +42,108 @@
 {% block footer %}
 {{ block.super }}
 <div id="session-warning-banner">
-    Your session may have expired. Please save your data before refreshing the page.
-    <a href="javascript:location.reload()">Refresh page</a>
+    <span id="session-warning-text">Your session has expired. Please extend it before saving.</span>
+    <a id="session-extend-btn">Extend session</a>
     <a onclick="document.getElementById('session-warning-banner').style.display='none'">Close</a>
 </div>
 <script>
 (function () {
-    // Ping interval: every 5 minutes (well within 30-minute session timeout)
-    var PING_INTERVAL = 5 * 60 * 1000;
-    // Warn if tab was hidden longer than 29 minutes
-    var WARN_AFTER = 29 * 60 * 1000;
+    var PING_INTERVAL = 5 * 60 * 1000;   // 5 min keepalive
+    var WARN_AFTER    = 29 * 60 * 1000;   // warn threshold
 
     var hiddenAt = null;
+    var sessionExpired = false;
+    var banner   = document.getElementById('session-warning-banner');
+    var msgEl    = document.getElementById('session-warning-text');
+    var extBtn   = document.getElementById('session-extend-btn');
 
-    function ping() {
-        fetch('/_owner/keepalive/', { credentials: 'same-origin' }).catch(function () {});
+    /* ── helpers ─────────────────────────────────────── */
+
+    function ping(cb) {
+        fetch('/_owner/keepalive/', { credentials: 'same-origin' })
+            .then(function (r) { cb(r.ok); })
+            .catch(function () { cb(false); });
     }
 
-    // Keep session alive with periodic pings
-    setInterval(ping, PING_INTERVAL);
+    function showExpired() {
+        sessionExpired = true;
+        banner.className = '';
+        msgEl.textContent = 'Your session has expired. Please extend it before saving.';
+        extBtn.style.display = '';
+        banner.style.display = 'block';
+    }
 
-    // Detect computer sleep / tab switch
+    function showRestored() {
+        sessionExpired = false;
+        banner.className = 'session-restored';
+        msgEl.textContent = 'Session restored ✓';
+        extBtn.style.display = 'none';
+        banner.style.display = 'block';
+        setTimeout(function () { banner.style.display = 'none'; }, 3000);
+    }
+
+    /* ── extend button ──────────────────────────────── */
+
+    extBtn.addEventListener('click', function () {
+        extBtn.textContent = '...';
+        ping(function (ok) {
+            if (ok) {
+                showRestored();
+            } else {
+                /* truly dead — must re-login */
+                msgEl.textContent =
+                    'Session could not be restored. Please copy your work, then log in again.';
+                extBtn.style.display = 'none';
+            }
+            extBtn.textContent = 'Extend session';
+        });
+    });
+
+    /* ── periodic keepalive while tab is active ─────── */
+
+    setInterval(function () {
+        if (!document.hidden) ping(function () {});
+    }, PING_INTERVAL);
+
+    /* ── visibility change (sleep / tab switch) ─────── */
+
     document.addEventListener('visibilitychange', function () {
         if (document.hidden) {
             hiddenAt = Date.now();
         } else {
             if (hiddenAt !== null && (Date.now() - hiddenAt) > WARN_AFTER) {
-                document.getElementById('session-warning-banner').style.display = 'block';
+                /* Tab was hidden too long — try to revive session first */
+                ping(function (ok) {
+                    if (ok) {
+                        showRestored();
+                    } else {
+                        showExpired();
+                    }
+                });
             } else {
-                // Tab came back quickly — refresh session
-                ping();
+                /* Short absence — just refresh silently */
+                ping(function () {});
             }
             hiddenAt = null;
+        }
+    });
+
+    /* ── protect unsaved work ───────────────────────── */
+
+    window.addEventListener('beforeunload', function (e) {
+        if (!sessionExpired) return;
+
+        /* Check if any form input was modified */
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+            var inputs = forms[i].querySelectorAll('input, textarea, select');
+            for (var j = 0; j < inputs.length; j++) {
+                if (inputs[j].defaultValue !== undefined &&
+                    inputs[j].value !== inputs[j].defaultValue) {
+                    e.preventDefault();
+                    return;
+                }
+            }
         }
     });
 }());

@@ -135,6 +135,8 @@ upstream gunicorn {
 server {
     server_name ozodbek.me www.ozodbek.me;
 
+    client_max_body_size 20m;
+
     location /static/ {
         alias /var/www/django-blog/staticfiles/;
         expires 30d;
@@ -274,6 +276,21 @@ DJANGO_FILE_LOGGING=false
 # variant 2
 sudo mkdir -p /var/www/django-blog/logs
 sudo chown -R www-data:www-data /var/www/django-blog/logs
+```
+
+### D) Rasm yuklashda 413/403 xato (Nginx)
+Sabab:
+- `client_max_body_size` Nginx'da sozlanmagan (default 1MB)
+- Django 15MB ga ruxsat bersa ham, Nginx katta fayllarni to'saydi
+
+Yechim:
+```bash
+# /etc/nginx/sites-available/django-blog ichida server{} blokiga qo'shing:
+client_max_body_size 20m;
+
+# Keyin:
+sudo nginx -t
+sudo systemctl reload nginx
 ```
 
 ---
