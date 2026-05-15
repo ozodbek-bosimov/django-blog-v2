@@ -359,6 +359,8 @@ body {
     padding: 0.2em 0.4em;
     border-radius: 0.25rem;
     font-family: "Courier New", monospace;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
 }
 
 /* ── Hero Section ─────────────────────────────────────────────── */
