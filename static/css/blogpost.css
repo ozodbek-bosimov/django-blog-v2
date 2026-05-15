@@ -292,8 +292,6 @@ pre[class*="language-"] code {
         "Liberation Mono", "Courier New", monospace !important;
     border: 1px solid rgba(148, 163, 184, 0.15) !important;
     word-break: break-word !important;
-    -webkit-box-decoration-break: clone !important;
-    box-decoration-break: clone !important;
 }
 
 /* ── Tables ─────────────────────────────────────────────────────────── */
