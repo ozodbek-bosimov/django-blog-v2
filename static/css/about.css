@@ -8,6 +8,7 @@
     0% {
         width: 0%;
     }
+
     100% {
         width: var(--target-width);
     }
@@ -26,15 +27,13 @@
     position: absolute;
     left: 0;
     top: 0;
-    bottom: 0;
+    bottom: -2rem;
     width: 1px;
-    background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(34, 211, 238, 0.25) 15%,
-        rgba(34, 211, 238, 0.12) 85%,
-        transparent
-    );
+    background: linear-gradient(to bottom,
+            transparent,
+            rgba(34, 211, 238, 0.25) 15%,
+            rgba(34, 211, 238, 0.12) 85%,
+            transparent);
 }
 
 /* Each timeline entry */
@@ -130,6 +129,70 @@
     margin-bottom: 0.25rem;
 }
 
+/* ── Multi-role: grouped by company ────────────────────────────────── */
+.timeline-position a {
+    color: #f1f5f9;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.timeline-position a:hover {
+    color: #67e8f9;
+}
+
+.timeline-roles {
+    position: relative;
+    margin-top: 0.75rem;
+    padding-left: 1.25rem;
+    margin-left: 0.25rem;
+}
+
+.timeline-role {
+    position: relative;
+    padding-bottom: 1.25rem;
+}
+
+.timeline-role:last-child {
+    padding-bottom: 0;
+}
+
+/* Line connecting this dot to the next dot */
+.timeline-role:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: -1.25rem;
+    top: calc(0.4rem + 7px);
+    bottom: -0.4rem;
+    width: 1px;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Small dot for each role */
+.timeline-role-dot {
+    position: absolute;
+    left: -1.25rem;
+    top: 0.4rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #94a3b8;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.timeline-role-content {
+    padding-top: 0.1rem;
+}
+
+.timeline-role-title {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin: 0 0 0.1rem 0;
+    line-height: 1.4;
+}
+
 /* ── Timeline Animation ──────────────────────────────────────────── */
 @keyframes timeline-reveal {
     to {
@@ -153,5 +216,24 @@
 
     .timeline-position {
         font-size: 0.98rem;
+    }
+
+    .timeline-roles {
+        padding-left: 1rem;
+    }
+
+    .timeline-role-dot {
+        left: -1rem;
+        width: 6px;
+        height: 6px;
+    }
+
+    .timeline-role:not(:last-child)::after {
+        left: -1rem;
+        top: calc(0.4rem + 6px);
+    }
+
+    .timeline-role-title {
+        font-size: 0.92rem;
     }
 }

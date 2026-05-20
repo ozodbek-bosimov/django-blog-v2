@@ -90,7 +90,9 @@ def about(request):
 
     # Experience entries — cache for 24 hours.
     experiences = cache.get_or_set(
-        "all_experiences", lambda: list(Experience.objects.all()), 86400
+        "all_experiences",
+        lambda: list(Experience.objects.prefetch_related("roles").all()),
+        86400,
     )
 
     abs_profile_image = ""
@@ -118,7 +120,7 @@ def blog(request):
         lambda: list(Blog.objects.order_by("-time", "-sno")),
         86400,
     )
-    paginator = Paginator(all_blogs, 3)
+    paginator = Paginator(all_blogs, 5)
     page = request.GET.get("page")
     blogs = paginator.get_page(page)
     context = {"blogs": blogs}
