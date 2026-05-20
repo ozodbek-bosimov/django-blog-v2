@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.utils.html import escape, format_html
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from home.models import AboutMe, Blog, Experience, Project, Skill
+from home.models import AboutMe, Blog, Experience, ExperienceRole, Project, Skill
 
 
 def _sanitize_youtube_embeds(html_content):
@@ -442,20 +442,93 @@ class LogEntryAdmin(admin.ModelAdmin):
         return redirect(self._changelist_url())
 
 
-class ExperienceAdmin(admin.ModelAdmin):
-    """Admin for Experience model"""
+class ExperienceRoleInline(admin.StackedInline):
+    """Inline for multiple positions/roles within one company."""
 
-    list_display = ["position", "company", "work_type", "start_date", "is_current", "order"]
-    list_editable = ["order"]
-    list_filter = ["is_current", "work_type"]
-    search_fields = ["company", "position", "location"]
+    model = ExperienceRole
+    extra = 0
     fieldsets = (
-        ("Position", {"fields": ("position", "company", "company_url")}),
-        ("Work Details", {"fields": ("work_type", "location")}),
+        (None, {"fields": ("position", "work_type", "location")}),
         ("Duration", {"fields": ("start_date", "end_date", "is_current")}),
-        ("Details", {"fields": ("description",)}),
-        ("Ordering", {"fields": ("order",)}),
+        ("Details", {"fields": ("description", "order")}),
     )
+
+
+class ExperienceAdminForm(forms.ModelForm):
+    """Validates that an Experience entry uses exactly one mode:
+    single-position fields OR roles via the inline — not both."""
+
+    class Meta:
+        model = Experience
+        fields = "__all__"
+
+    def clean(self):
+        cleaned = super().clean()
+        position = cleaned.get("position", "").strip()
+        start_date = cleaned.get("start_date")
+        # We can only check saved roles (new inline rows aren't validated here).
+        # The most important case: position + start_date means single-position mode.
+        # If the user also added roles in the inline, warn them.
+        if self.instance.pk and position and start_date:
+            if self.instance.roles.exists():
+                raise forms.ValidationError(
+                    "This company already has Roles defined. "
+                    "You cannot fill both the Position fields and the "
+                    "Roles inline at the same time — use one or the other."
+                )
+        return cleaned
+
+
+class ExperienceAdmin(admin.ModelAdmin):
+    """Admin for Experience model.
+
+    Two usage modes:
+      1. Single position — fill in the Position section, leave Roles empty.
+      2. Multiple positions (e.g. promotions) — fill only the Company section,
+         leave the Position section EMPTY, and add each role via the
+         Roles inline below.
+    """
+
+    form = ExperienceAdminForm
+    list_display = ["company", "entry_type", "order"]
+    list_editable = ["order"]
+    list_filter = ["work_type"]
+    search_fields = ["company", "position", "location"]
+    inlines = [ExperienceRoleInline]
+    fieldsets = (
+        ("Company", {"fields": ("company", "company_url", "order")}),
+        (
+            "Single position — fill only if this is a one-role entry",
+            {
+                "description": (
+                    "Use these fields if you held a single position at this company. "
+                    "For multiple positions (promotions / role changes), leave this section "
+                    "EMPTY and add each role via the Roles inline below instead."
+                ),
+                "fields": (
+                    "position",
+                    "work_type",
+                    "location",
+                    "start_date",
+                    "end_date",
+                    "is_current",
+                    "description",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
+    @admin.display(description="Type")
+    def entry_type(self, obj):
+        role_count = obj.roles.count()
+        if role_count:
+            return format_html(
+                '<span style="color:#22d3ee">{} role(s)</span>', role_count
+            )
+        if obj.position:
+            return format_html('<span style="color:#94a3b8">{}</span>', obj.position)
+        return format_html('<span style="color:#ef4444">— empty —</span>')
 
 
 admin.site.register(AboutMe, AboutMeAdmin)

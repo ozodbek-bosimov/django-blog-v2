@@ -229,7 +229,12 @@ class Skill(models.Model):
 
 
 class Experience(models.Model):
-    """Work experience entries for the About page timeline"""
+    """Work experience entries for the About page timeline.
+
+    Single-position: fill in position/dates directly on this model.
+    Multi-position (promotions): leave position/dates here empty and add
+    ExperienceRole children instead.  The template handles both cases.
+    """
 
     WORK_TYPE_CHOICES = [
         ("on-site", "On-site"),
@@ -241,7 +246,8 @@ class Experience(models.Model):
     company_url = models.URLField(
         blank=True, help_text="Company website URL (opens in new tab)"
     )
-    position = models.CharField(max_length=200)
+    # Single-position fields (used when no ExperienceRole children exist)
+    position = models.CharField(max_length=200, blank=True)
     work_type = models.CharField(
         max_length=10,
         choices=WORK_TYPE_CHOICES,
@@ -249,7 +255,7 @@ class Experience(models.Model):
         help_text="On-site, Hybrid, or Remote",
     )
     location = models.CharField(max_length=200, blank=True)
-    start_date = models.DateField()
+    start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(
         null=True, blank=True, help_text="Leave blank if current"
     )
@@ -264,20 +270,15 @@ class Experience(models.Model):
         default=0, help_text="Display order (lower numbers first)"
     )
 
-    @property
-    def duration_display(self):
-        """Human-readable duration like '2 yrs 1 mo' or '3 mos'."""
-        end = (
-            self.end_date
-            if self.end_date and not self.is_current
-            else timezone.now().date()
+    @staticmethod
+    def _compute_duration(start_date, end_date, is_current):
+        """Shared duration formatter: '2 yrs 1 mo', '3 mos', etc."""
+        if not start_date:
+            return ""
+        end = end_date if end_date and not is_current else timezone.now().date()
+        total_months = (end.year - start_date.year) * 12 + (
+            end.month - start_date.month
         )
-        total_months = (end.year - self.start_date.year) * 12 + (
-            end.month - self.start_date.month
-        )
-        if total_months < 0:
-            total_months = 0
-        # Include partial month as 1
         total_months = max(total_months, 1)
         years = total_months // 12
         months = total_months % 12
@@ -293,8 +294,50 @@ class Experience(models.Model):
         return " ".join(parts) if parts else "1 mo"
 
     @property
+    def has_roles(self):
+        """True when this Experience has ExperienceRole children.
+        Uses .all() (not .exists()) so prefetch_related cache is respected —
+        avoids an extra SELECT per experience on the About page."""
+        return bool(self.roles.all())
+
+    @property
+    def duration_display(self):
+        """Duration for single-position entries."""
+        return self._compute_duration(self.start_date, self.end_date, self.is_current)
+
+    @property
+    def total_duration_display(self):
+        """Duration spanning all roles (min start_date → max end_date / present).
+        Iterates the prefetched roles list exactly once."""
+        roles = list(self.roles.all())  # uses prefetch cache; materialise once
+        if not roles:
+            return self.duration_display
+
+        earliest = None
+        latest = None
+        any_current = False
+
+        for r in roles:
+            if not r.start_date:
+                continue
+            if earliest is None or r.start_date < earliest:
+                earliest = r.start_date
+            if r.is_current:
+                any_current = True
+            elif r.end_date:
+                if latest is None or r.end_date > latest:
+                    latest = r.end_date
+
+        if earliest is None:
+            return ""
+        # If any role is current, pass latest=None so _compute_duration uses today
+        return self._compute_duration(
+            earliest, None if any_current else latest, any_current
+        )
+
+    @property
     def description_lines(self):
-        """Split description into individual bullet point lines."""
+        """Split description into individual lines."""
         if not self.description:
             return []
         return [
@@ -304,18 +347,76 @@ class Experience(models.Model):
         ]
 
     def __str__(self):
-        if self.is_current:
-            status = "Present"
-        elif self.end_date:
-            status = self.end_date.strftime("%m/%Y")
-        else:
-            status = "Present"  # end_date blank = still current
-        return f"{self.position} @ {self.company} ({self.start_date.strftime('%m/%Y')} – {status})"
+        if self.position:
+            if self.is_current:
+                status = "Present"
+            elif self.end_date:
+                status = self.end_date.strftime("%m/%Y")
+            else:
+                status = "Present"
+            return f"{self.position} @ {self.company} ({self.start_date.strftime('%m/%Y') if self.start_date else '?'} – {status})"
+        return self.company
 
     class Meta:
         ordering = ["order", "-start_date"]
         verbose_name = "Experience"
         verbose_name_plural = "Experiences"
+
+
+class ExperienceRole(models.Model):
+    """A position/role within an Experience (company).
+
+    Use this when someone held multiple positions at the same company.
+    """
+
+    experience = models.ForeignKey(
+        Experience, on_delete=models.CASCADE, related_name="roles"
+    )
+    position = models.CharField(max_length=200)
+    work_type = models.CharField(
+        max_length=10,
+        choices=Experience.WORK_TYPE_CHOICES,
+        default="on-site",
+    )
+    location = models.CharField(max_length=200, blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField(
+        null=True, blank=True, help_text="Leave blank if current"
+    )
+    is_current = models.BooleanField(
+        default=False, help_text="Check if this is your current position"
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Each line becomes a bullet point.",
+    )
+    order = models.IntegerField(
+        default=0, help_text="Display order (lower numbers first)"
+    )
+
+    @property
+    def duration_display(self):
+        return Experience._compute_duration(
+            self.start_date, self.end_date, self.is_current
+        )
+
+    @property
+    def description_lines(self):
+        if not self.description:
+            return []
+        return [
+            line.strip()
+            for line in self.description.strip().splitlines()
+            if line.strip()
+        ]
+
+    def __str__(self):
+        return f"{self.position} @ {self.experience.company}"
+
+    class Meta:
+        ordering = ["order", "-start_date"]
+        verbose_name = "Experience Role"
+        verbose_name_plural = "Experience Roles"
 
 
 class Project(models.Model):
@@ -536,6 +637,12 @@ def invalidate_skill_cache(sender, instance, **kwargs):
 @receiver([post_save, post_delete], sender=Experience)
 def invalidate_experience_cache(sender, instance, **kwargs):
     """Invalidate experience cache when an Experience is created, updated, or deleted."""
+    cache.delete("all_experiences")
+
+
+@receiver([post_save, post_delete], sender=ExperienceRole)
+def invalidate_experience_role_cache(sender, instance, **kwargs):
+    """Invalidate experience cache when a Role is created, updated, or deleted."""
     cache.delete("all_experiences")
 
 
