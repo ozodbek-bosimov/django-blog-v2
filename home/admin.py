@@ -280,14 +280,31 @@ class SkillAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 
+class ProjectAdminForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = "__all__"
+
+    def clean_thumbnail_img(self):
+        img = self.cleaned_data.get('thumbnail_img')
+        if img and hasattr(img, 'size') and img.size > 10 * 1024 * 1024:
+            size_mb = img.size / (1024 * 1024)
+            raise forms.ValidationError(
+                f'Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. '
+                'Please choose a smaller file.'
+            )
+        return img
+
+
 class ProjectAdmin(admin.ModelAdmin):
     """Admin for Project model"""
+    form = ProjectAdminForm
     list_display = ['title', 'order', 'created_at']
     list_editable = ['order']
     readonly_fields = ('thumbnail_preview', 'created_at')
     fieldsets = (
         ('Basic Info', {'fields': ('title', 'description')}),
-        ('Media', {'fields': ('thumbnail_url', 'thumbnail_preview')}),
+        ('Thumbnail', {'fields': ('thumbnail_img', 'thumbnail_url', 'thumbnail_preview')}),
         ('Links', {'fields': ('github_link', 'demo_link')}),
         ('Technical', {'fields': ('technologies',)}),
         ('Meta', {'fields': ('order', 'created_at')}),
@@ -296,8 +313,10 @@ class ProjectAdmin(admin.ModelAdmin):
 
     @admin.display(description='Thumbnail Preview')
     def thumbnail_preview(self, obj):
-        if obj and obj.thumbnail_url:
-            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', escape(obj.thumbnail_url))
+        if obj:
+            url = obj.effective_thumbnail
+            if url:
+                return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', escape(url))
         return '(No image)'
 
 

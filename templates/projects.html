@@ -33,7 +33,7 @@
   {% for project in projects %}
   <div class='blog-list-card glass-card solid-content-card flex flex-col gap-5 p-5 md:p-6 mb-8 overflow-hidden'>
     <div class='blog-list-thumb'>
-      <img class="w-full h-full object-cover" src="{{ project.thumbnail_url }}"
+      <img class="w-full h-full object-cover" src="{{ project.effective_thumbnail }}"
         alt="{{ project.title }}" loading="lazy">
     </div>
 
