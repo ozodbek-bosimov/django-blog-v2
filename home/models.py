@@ -224,7 +224,14 @@ class Project(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField()
-    thumbnail_url = models.URLField(help_text="CDN URL for project thumbnail")
+    thumbnail_img = models.ImageField(
+        null=True, blank=True, upload_to="projects/",
+        help_text="Upload a thumbnail image (preferred over URL)",
+    )
+    thumbnail_url = models.URLField(
+        blank=True,
+        help_text="CDN URL for project thumbnail (used if no image is uploaded)",
+    )
     github_link = models.URLField(blank=True)
     demo_link = models.URLField(blank=True)
     technologies = models.CharField(
@@ -238,6 +245,13 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def effective_thumbnail(self):
+        """Return the URL to use for the thumbnail, preferring the uploaded image."""
+        if self.thumbnail_img and hasattr(self.thumbnail_img, "url"):
+            return self.thumbnail_img.url
+        return self.thumbnail_url or ""
+
     def get_technologies_list(self):
         """Return technologies as a list"""
         if self.technologies:
@@ -250,10 +264,15 @@ class Project(models.Model):
         ordering = ["order", "-created_at"]
 
     def save(self, *args, **kwargs):
+        if self.thumbnail_img:
+            self.thumbnail_img = _compress_and_rename_image(
+                self.thumbnail_img, max_size=(1280, 720), quality=90
+            )
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         super().delete(*args, **kwargs)
+
 
 
 # signals for cleaning up image files when a Blog is changed or removed
@@ -367,6 +386,26 @@ def invalidate_blog_cache_on_save(sender, instance, **kwargs):
     if old_slug and old_slug != instance.slug:
         cache.delete(f"blogpost_{old_slug}")
     cache.delete_many(["latest_blogs", "total_blogs", "total_categories", "all_categories"])
+
+
+@receiver(pre_save, sender=Project)
+def cleanup_project_thumbnail_on_save(sender, instance, **kwargs):
+    """Delete old thumbnail when Project thumbnail is changed."""
+    if not instance.pk:
+        return
+    try:
+        old = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+    if old.thumbnail_img and old.thumbnail_img != instance.thumbnail_img:
+        old.thumbnail_img.delete(save=False)
+
+
+@receiver(post_delete, sender=Project)
+def cleanup_project_thumbnail_on_delete(sender, instance, **kwargs):
+    """Delete thumbnail file when Project is deleted."""
+    if instance.thumbnail_img:
+        instance.thumbnail_img.delete(save=False)
 
 
 @receiver([post_save, post_delete], sender=Project)
