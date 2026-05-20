@@ -69,7 +69,7 @@ class Blog(models.Model):
     title = models.CharField(max_length=200)
     meta = models.CharField(max_length=600)
     content = models.TextField()
-    thumbnail_img = models.ImageField(null=True, blank=True, upload_to="images/")
+    thumbnail_img = models.ImageField(null=True, blank=True, upload_to="postimages/")
     thumbnail_url = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=255, default="uncategorized")
     slug = models.CharField(max_length=100, unique=True)

@@ -382,6 +382,9 @@ CKEDITOR_5_CUSTOM_CSS = "css/ckeditor_admin_fix.css"
 CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "gif", "bmp", "webp", "svg"]
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
 
+# Route CKEditor inline uploads to media/postimages/
+CKEDITOR_5_FILE_STORAGE = "home.storage.CKEditor5Storage"
+
 CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
 
 # Basic file logging to capture production errors.
