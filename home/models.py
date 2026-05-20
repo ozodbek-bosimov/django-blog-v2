@@ -1,3 +1,4 @@
+import math
 import re
 from io import BytesIO
 from urllib.parse import urlparse
@@ -74,9 +75,19 @@ class Blog(models.Model):
     category = models.CharField(max_length=255, default="uncategorized")
     slug = models.CharField(max_length=100, unique=True)
     time = models.DateTimeField(default=timezone.now)
+    reading_time_minutes = models.PositiveSmallIntegerField(default=1, editable=False)
 
     def __str__(self):
         return self.title
+
+    def _compute_reading_time(self):
+        """Calculate estimated reading time in minutes from HTML content."""
+        if not self.content:
+            return 1
+        text = re.sub(r"<[^>]+>", " ", self.content)
+        text = re.sub(r"\s+", " ", text).strip()
+        word_count = len(text.split()) if text else 0
+        return max(1, math.ceil(word_count / 160))
 
     def save(self, *args, **kwargs):
         if self.category:
@@ -87,10 +98,8 @@ class Blog(models.Model):
                 self.thumbnail_img, max_size=(1280, 720), quality=90
             )
 
+        self.reading_time_minutes = self._compute_reading_time()
         super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
 
     @property
     def effective_thumbnail(self):
@@ -219,13 +228,105 @@ class Skill(models.Model):
         ordering = ["order", "name"]
 
 
+class Experience(models.Model):
+    """Work experience entries for the About page timeline"""
+
+    WORK_TYPE_CHOICES = [
+        ("on-site", "On-site"),
+        ("hybrid", "Hybrid"),
+        ("remote", "Remote"),
+    ]
+
+    company = models.CharField(max_length=200)
+    company_url = models.URLField(
+        blank=True, help_text="Company website URL (opens in new tab)"
+    )
+    position = models.CharField(max_length=200)
+    work_type = models.CharField(
+        max_length=10,
+        choices=WORK_TYPE_CHOICES,
+        default="on-site",
+        help_text="On-site, Hybrid, or Remote",
+    )
+    location = models.CharField(max_length=200, blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField(
+        null=True, blank=True, help_text="Leave blank if current"
+    )
+    is_current = models.BooleanField(
+        default=False, help_text="Check if this is your current position"
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Key responsibilities and achievements. Each line becomes a bullet point.",
+    )
+    order = models.IntegerField(
+        default=0, help_text="Display order (lower numbers first)"
+    )
+
+    @property
+    def duration_display(self):
+        """Human-readable duration like '2 yrs 1 mo' or '3 mos'."""
+        end = (
+            self.end_date
+            if self.end_date and not self.is_current
+            else timezone.now().date()
+        )
+        total_months = (end.year - self.start_date.year) * 12 + (
+            end.month - self.start_date.month
+        )
+        if total_months < 0:
+            total_months = 0
+        # Include partial month as 1
+        total_months = max(total_months, 1)
+        years = total_months // 12
+        months = total_months % 12
+        parts = []
+        if years == 1:
+            parts.append("1 yr")
+        elif years > 1:
+            parts.append(f"{years} yrs")
+        if months == 1:
+            parts.append("1 mo")
+        elif months > 1:
+            parts.append(f"{months} mos")
+        return " ".join(parts) if parts else "1 mo"
+
+    @property
+    def description_lines(self):
+        """Split description into individual bullet point lines."""
+        if not self.description:
+            return []
+        return [
+            line.strip()
+            for line in self.description.strip().splitlines()
+            if line.strip()
+        ]
+
+    def __str__(self):
+        if self.is_current:
+            status = "Present"
+        elif self.end_date:
+            status = self.end_date.strftime("%m/%Y")
+        else:
+            status = "Present"  # end_date blank = still current
+        return f"{self.position} @ {self.company} ({self.start_date.strftime('%m/%Y')} – {status})"
+
+    class Meta:
+        ordering = ["order", "-start_date"]
+        verbose_name = "Experience"
+        verbose_name_plural = "Experiences"
+
+
 class Project(models.Model):
     """Portfolio projects"""
 
     title = models.CharField(max_length=200)
     description = models.TextField()
     thumbnail_img = models.ImageField(
-        null=True, blank=True, upload_to="projects/",
+        null=True,
+        blank=True,
+        upload_to="projects/",
         help_text="Upload a thumbnail image (preferred over URL)",
     )
     thumbnail_url = models.URLField(
@@ -269,10 +370,6 @@ class Project(models.Model):
                 self.thumbnail_img, max_size=(1280, 720), quality=90
             )
         super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
-
 
 
 # signals for cleaning up image files when a Blog is changed or removed
@@ -373,7 +470,15 @@ def cleanup_blog_on_delete(sender, instance, **kwargs):
     # Invalidate all related caches
     cache.delete("used_tags")
     cache.delete(f"blogpost_{instance.slug}")
-    cache.delete_many(["latest_blogs", "total_blogs", "total_categories", "all_categories"])
+    cache.delete_many(
+        [
+            "latest_blogs",
+            "total_blogs",
+            "total_categories",
+            "all_categories",
+            "all_blogs_list",
+        ]
+    )
 
 
 @receiver(post_save, sender=Blog)
@@ -385,7 +490,15 @@ def invalidate_blog_cache_on_save(sender, instance, **kwargs):
     old_slug = getattr(instance, "_old_slug", None)
     if old_slug and old_slug != instance.slug:
         cache.delete(f"blogpost_{old_slug}")
-    cache.delete_many(["latest_blogs", "total_blogs", "total_categories", "all_categories"])
+    cache.delete_many(
+        [
+            "latest_blogs",
+            "total_blogs",
+            "total_categories",
+            "all_categories",
+            "all_blogs_list",
+        ]
+    )
 
 
 @receiver(pre_save, sender=Project)
@@ -418,6 +531,12 @@ def invalidate_project_cache(sender, instance, **kwargs):
 def invalidate_skill_cache(sender, instance, **kwargs):
     """Invalidate skills cache when a Skill is created, updated, or deleted."""
     cache.delete("all_skills")
+
+
+@receiver([post_save, post_delete], sender=Experience)
+def invalidate_experience_cache(sender, instance, **kwargs):
+    """Invalidate experience cache when an Experience is created, updated, or deleted."""
+    cache.delete("all_experiences")
 
 
 @receiver(pre_save, sender=AboutMe)

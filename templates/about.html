@@ -4,137 +4,284 @@
 {% block title %}About{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="About Ozodbek Bosimov — software engineer sharing projects, technical articles, and ideas about building software.">
-<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'about' %}">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Ozodbek Bosimov">
-<meta property="og:locale" content="en_US">
-<meta property="og:title" content="About — Ozodbek Bosimov">
-<meta property="og:description" content="About Ozodbek Bosimov. I am a software engineer writing about backend development, building systems, and other personal interests I explore along the way.">
-<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'about' %}">
-<meta property="og:image" content="{% if abs_profile_image %}{{ abs_profile_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="About — Ozodbek Bosimov">
-<meta name="twitter:description" content="About Ozodbek Bosimov. I am a software engineer writing about backend development, building systems, and other personal interests I explore along the way.">
-<meta name="twitter:image" content="{% if abs_profile_image %}{{ abs_profile_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}">
-<link rel="stylesheet" href="{% static 'css/about.css' %}?v={{ STATIC_ASSET_VERSION }}">
-{% endblock meta %}
-
-{% block content %}
+<meta
+    name="description"
+    content="About Ozodbek Bosimov — software engineer sharing projects, technical articles, and ideas about building software."
+/>
+<link
+    rel="canonical"
+    href="{{ request.scheme }}://{{ request.get_host }}{% url 'about' %}"
+/>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Ozodbek Bosimov" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content="About — Ozodbek Bosimov" />
+<meta
+    property="og:description"
+    content="About Ozodbek Bosimov. I am a software engineer writing about backend development, building systems, and other personal interests I explore along the way."
+/>
+<meta
+    property="og:url"
+    content="{{ request.scheme }}://{{ request.get_host }}{% url 'about' %}"
+/>
+<meta
+    property="og:image"
+    content="{% if abs_profile_image %}{{ abs_profile_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}"
+/>
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="About — Ozodbek Bosimov" />
+<meta
+    name="twitter:description"
+    content="About Ozodbek Bosimov. I am a software engineer writing about backend development, building systems, and other personal interests I explore along the way."
+/>
+<meta
+    name="twitter:image"
+    content="{% if abs_profile_image %}{{ abs_profile_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}"
+/>
+<link
+    rel="stylesheet"
+    href="{% static 'css/about.css' %}?v={{ STATIC_ASSET_VERSION }}"
+/>
+{% endblock meta %} {% block content %}
 
 <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-2">
-    <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+    <h1
+        class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
+    >
         About Me
     </h1>
     <div class="h-px bg-gray-700 w-full"></div>
 </div>
 
-<div class='text-white p-6 md:p-8 flex flex-col max-w-3xl mx-auto w-full'>
-        {% if about_me %}
+<div class="text-white p-6 md:p-8 flex flex-col max-w-3xl mx-auto w-full">
+    {% if about_me %}
 
-        <div class='flex flex-col md:flex-row gap-6 md:gap-8 my-6 mx-6'>
-            <div class='flex justify-center md:justify-start shrink-0'>
-                <img src="{{ about_me.effective_profile_image }}" alt="{{ about_me.name }}"
-                    class='w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg'>
-            </div>
-
-            <div class='flex-1 flex flex-col items-center md:items-start text-center md:text-left w-full'>
-                <div class='mb-4 flex flex-col items-center md:items-start w-full'>
-                    <div class="text-center md:text-left">
-                        <h2 class='text-2xl md:text-3xl font-bold text-cyan-200'>{{ about_me.name }}</h2>
-                        <p class='text-lg md:text-xl text-gray-300 mb-3'>{{ about_me.profession }}</p>
-                    </div>
-                    
-                    <div class="flex flex-col text-left items-start">
-                        {% if about_me.email %}
-                        <p class='text-md text-gray-400 mb-1'>
-                            <span class="inline-block w-5 text-center mr-1"><i class="bi bi-envelope"></i></span> <a href="mailto:{{ about_me.email }}"
-                                class="hover:text-cyan-300 hover:underline transition-colors">{{ about_me.email }}</a>
-                        </p>
-                        {% endif %}
-                        {% if about_me.phone %}
-                        <p class='text-md text-gray-400'>
-                            <span class="inline-block w-5 text-center mr-1"><i class="bi bi-telephone"></i></span> <a href="tel:{{ about_me.phone }}"
-                                class="hover:text-cyan-300 hover:underline transition-colors">{{ about_me.phone }}</a>
-                        </p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class='flex gap-3 justify-center md:justify-start w-full'>
-                    {% if about_me.github_url %}
-                    <a href="{{ about_me.github_url }}" target="_blank"
-                        class="btn-social hover:bg-white hover:text-black hover:border-white">
-                        <i class="bi bi-github text-xl"></i>
-                    </a>
-                    {% endif %}
-                    {% if about_me.linkedin_url %}
-                    <a href="{{ about_me.linkedin_url }}" target="_blank"
-                        class="btn-social hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white">
-                        <i class="bi bi-linkedin text-xl"></i>
-                    </a>
-                    {% endif %}
-                    {% if about_me.telegram_url %}
-                    <a href="{{ about_me.telegram_url }}" target="_blank"
-                        class="btn-social hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white">
-                        <i class="bi bi-telegram text-xl"></i>
-                    </a>
-                    {% endif %}
-                    {% if about_me.x_url %}
-                    <a href="{{ about_me.x_url }}" target="_blank"
-                        class="btn-social hover:bg-black hover:border-black group">
-                        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" alt="X"
-                            class="w-5 h-5 filter brightness-0 invert transition-all">
-                    </a>
-                    {% endif %}
-                    {% if about_me.leetcode_url %}
-                    <a href="{{ about_me.leetcode_url }}" target="_blank"
-                        class="btn-social hover:bg-[#FFA116] hover:border-[#FFA116] group">
-                        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/leetcode.svg" alt="LeetCode"
-                            class="w-5 h-5 filter invert group-hover:invert-0 transition-all">
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
+    <div class="flex flex-col md:flex-row gap-6 md:gap-8 my-6 mx-6">
+        <div class="flex justify-center md:justify-start shrink-0">
+            <img
+                src="{{ about_me.effective_profile_image }}"
+                alt="{{ about_me.name }}"
+                class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg"
+            />
         </div>
 
-        <!-- Bio Content -->
-        <div class="blog-content ck-content leading-relaxed mt-2">
-            {{ about_me.bio|safe }}
+        <div
+            class="flex-1 flex flex-col items-center md:items-start text-center md:text-left w-full"
+        >
+            <div class="mb-4 flex flex-col items-center md:items-start w-full">
+                <div class="text-center md:text-left">
+                    <h2 class="text-2xl md:text-3xl font-bold text-cyan-200">
+                        {{ about_me.name }}
+                    </h2>
+                    <p class="text-lg md:text-xl text-gray-300 mb-3">
+                        {{ about_me.profession }}
+                    </p>
+                </div>
+
+                <div class="flex flex-col text-left items-start">
+                    {% if about_me.email %}
+                    <p class="text-md text-gray-400 mb-1">
+                        <span class="inline-block w-5 text-center mr-1"
+                            ><i class="bi bi-envelope"></i
+                        ></span>
+                        <a
+                            href="mailto:{{ about_me.email }}"
+                            class="hover:text-cyan-300 hover:underline transition-colors"
+                            >{{ about_me.email }}</a
+                        >
+                    </p>
+                    {% endif %} {% if about_me.phone %}
+                    <p class="text-md text-gray-400">
+                        <span class="inline-block w-5 text-center mr-1"
+                            ><i class="bi bi-telephone"></i
+                        ></span>
+                        <a
+                            href="tel:{{ about_me.phone }}"
+                            class="hover:text-cyan-300 hover:underline transition-colors"
+                            >{{ about_me.phone }}</a
+                        >
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex gap-3 justify-center md:justify-start w-full">
+                {% if about_me.github_url %}
+                <a
+                    href="{{ about_me.github_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-social hover:bg-white hover:text-black hover:border-white"
+                >
+                    <i class="bi bi-github text-xl"></i>
+                </a>
+                {% endif %} {% if about_me.linkedin_url %}
+                <a
+                    href="{{ about_me.linkedin_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-social hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white"
+                >
+                    <i class="bi bi-linkedin text-xl"></i>
+                </a>
+                {% endif %} {% if about_me.telegram_url %}
+                <a
+                    href="{{ about_me.telegram_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-social hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white"
+                >
+                    <i class="bi bi-telegram text-xl"></i>
+                </a>
+                {% endif %} {% if about_me.x_url %}
+                <a
+                    href="{{ about_me.x_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-social hover:bg-black hover:border-black group"
+                >
+                    <img
+                        src="{% static 'images/icons/x.svg' %}"
+                        alt="X"
+                        class="w-5 h-5 filter brightness-0 invert transition-all"
+                    />
+                </a>
+                {% endif %} {% if about_me.leetcode_url %}
+                <a
+                    href="{{ about_me.leetcode_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-social hover:bg-[#FFA116] hover:border-[#FFA116] group"
+                >
+                    <img
+                        src="{% static 'images/icons/leetcode.svg' %}"
+                        alt="LeetCode"
+                        class="w-5 h-5 filter invert group-hover:invert-0 transition-all"
+                    />
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bio Content -->
+    <div class="blog-content ck-content leading-relaxed mt-2">
+        {{ about_me.bio|safe }}
+    </div>
+    {% else %}
+    <p class="text-center text-gray-400 py-10">
+        No about information available yet.
+    </p>
+    {% endif %}
+
+    <!-- ── Experience Timeline ───────────────────────────────────────── -->
+    {% if experiences %}
+    <div class="mt-12 mb-6">
+        <h2 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+            Experience
+        </h2>
+        <div class="h-px bg-gray-700/50 w-full mb-10"></div>
+
+        <div class="experience-timeline">
+            {% for exp in experiences %}
+            <div class="timeline-item" style="--delay: {{ forloop.counter0 }}">
+                <!-- Dot -->
+                <div class="timeline-dot"></div>
+
+                <!-- Content -->
+                <div class="timeline-card">
+                    <!-- Position -->
+                    <h3 class="timeline-position">{{ exp.position }}</h3>
+
+                    <!-- Company -->
+                    <p class="timeline-company">
+                        {% if exp.company_url %}
+                        <a href="{{ exp.company_url }}" target="_blank" rel="noopener noreferrer">{{ exp.company }}</a>
+                        {% else %}
+                        {{ exp.company }}
+                        {% endif %}
+                    </p>
+
+                    <!-- Date + Duration -->
+                    <p class="timeline-meta">
+                        {{ exp.start_date|date:"M Y" }} –
+                        {% if exp.is_current %}
+                        Present
+                        {% elif exp.end_date %}
+                        {{ exp.end_date|date:"M Y" }}
+                        {% endif %}
+                        <span class="timeline-sep">·</span>
+                        {{ exp.duration_display }}
+                    </p>
+
+                    <!-- Location + Work Type -->
+                    {% if exp.location %}
+                    <p class="timeline-meta">
+                        {{ exp.location }}
+                        <span class="timeline-sep">·</span>
+                        {{ exp.get_work_type_display }}
+                    </p>
+                    {% endif %}
+
+                    <!-- Bullet points -->
+                    {% if exp.description_lines %}
+                    <ul class="timeline-bullets">
+                        {% for line in exp.description_lines %}
+                        <li>{{ line }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ── Skills ────────────────────────────────────────────────────── -->
+    <div class="mt-12 mb-6">
+        <h2
+            class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
+        >
+            Skills
+        </h2>
+        <div class="h-px bg-gray-700/50 w-full mb-8"></div>
+        {% if skills %}
+        <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10">
+            {% for skill in skills %}
+            <div class="my-3">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="text-base font-medium">{{ skill.name }}</p>
+                    <span class="text-sm text-cyan-300">
+                        {% if skill.percentage <= 19 %}
+                            Familiar
+                        {% elif skill.percentage <= 39 %}
+                            Basic
+                        {% elif skill.percentage <= 69 %}
+                            Working knowledge
+                        {% elif skill.percentage <= 89 %}
+                            Advanced
+                        {% else %}
+                            Expert
+                        {% endif %}
+                    </span>
+                </div>
+                <div
+                    class="w-full bg-white/5 ring-1 ring-inset ring-white/5 rounded-full h-2.5"
+                >
+                    <div
+                        class="skill-bar bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.4)]"
+                        data-percentage="{{ skill.percentage }}"
+                        style="width: 0%"
+                    ></div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
         {% else %}
-        <p class='text-center text-gray-400 py-10'>No about information available yet.</p>
+        <p class="text-center text-gray-400">No skills added yet.</p>
         {% endif %}
-
-        <div class='mt-12 mb-6'>
-            <h2 class='text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center'>Skills</h2>
-            <div class="h-px bg-gray-700/50 w-full mb-8"></div>
-            {% if skills %}
-            <div class='grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10'>
-                {% for skill in skills %}
-                <div class='my-3'>
-                    <div class='flex justify-between items-center mb-2'>
-                        <p class="text-base font-medium">{{ skill.name }}</p>
-                        <span class="text-sm text-cyan-300">
-                            {% if skill.percentage <= 19 %}Familiar
-                            {% elif skill.percentage <= 39 %}Basic
-                            {% elif skill.percentage <= 69 %}Working knowledge
-                            {% elif skill.percentage <= 89 %}Advanced
-                            {% else %}Expert
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="w-full bg-white/5 ring-1 ring-inset ring-white/5 rounded-full h-2.5">
-                        <div class="skill-bar bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.4)]"
-                            data-percentage="{{ skill.percentage }}" style="width: 0%"></div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <p class='text-center text-gray-400'>No skills added yet.</p>
-            {% endif %}
-        </div>
+    </div>
 </div>
 <script src="{% static 'js/about.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 

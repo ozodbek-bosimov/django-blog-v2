@@ -33,7 +33,10 @@
     name="twitter:image"
     content="{% if abs_thumbnail %}{{ abs_thumbnail }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}"
 />
-<link rel="stylesheet" href="{% static 'css/blogpost.css' %}?v={{ STATIC_ASSET_VERSION }}" />
+<link
+    rel="stylesheet"
+    href="{% static 'css/blogpost.css' %}?v={{ STATIC_ASSET_VERSION }}"
+/>
 <link
     href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
     rel="stylesheet"
@@ -43,9 +46,7 @@
 <!-- Reading Progress Bar -->
 <div id="reading-progress-bar"></div>
 
-<div
-    class="text-white p-6 md:p-8 pt-12 flex flex-col max-w-3xl mx-auto w-full"
->
+<div class="text-white p-6 md:p-8 pt-12 flex flex-col max-w-3xl mx-auto w-full">
     <!-- Title -->
     <h1 class="text-center text-2xl md:text-4xl font-bold text-cyan-200">
         {{ blog.title }}
@@ -56,20 +57,31 @@
         <span>
             by <i class="bi bi-person"></i>
             <a href="{% url 'about' %}" class="group">
-                <span class="group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">Ozodbek</span>
+                <span
+                    class="group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out"
+                    >Ozodbek</span
+                >
             </a>
         </span>
         <i class="bi bi-dot"></i>
         <span>
             <i class="bi bi-tag"></i>
             <a href="{% url 'category' blog.category %}" class="group">
-                <span class="group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">{{ blog.category }}</span>
+                <span
+                    class="group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out"
+                    >{{ blog.category }}</span
+                >
             </a>
         </span>
         <i class="bi bi-dot"></i>
-        <span><i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}</span>
+        <span>
+            <i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}
+        </span>
         <i class="bi bi-dot"></i>
-        <span><i class="bi bi-clock"></i> {{ blog.content|reading_time }} min read</span>
+        <span
+            ><i class="bi bi-clock"></i> {{ blog.reading_time_minutes }} min
+            read</span
+        >
     </div>
 
     <!-- Thumbnail -->
@@ -100,8 +112,11 @@
                 class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-black hover:ring-black transition-all duration-300 hover:scale-110 group"
                 title="Share on Twitter / X"
             >
-                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" alt="X"
-                    class="w-5 h-5 filter brightness-0 invert transition-all">
+                <img
+                    src="{% static 'images/icons/x.svg' %}"
+                    alt="X"
+                    class="w-5 h-5 filter brightness-0 invert transition-all"
+                />
             </a>
 
             <!-- LinkedIn -->
@@ -141,15 +156,13 @@
 </div>
 
 <script src="{% static 'js/blogpost.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
-{% endblock %}
-
-{% block extra_scripts %}
+{% endblock %} {% block extra_scripts %}
+<!-- Prism.js autoloader: loads only the language components actually used on the page.
+     This replaces 8 separate CDN requests with just 2, saving ~30 KB on most posts. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+    Prism.plugins.autoloader.languages_path =
+        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/";
+</script>
 {% endblock extra_scripts %}

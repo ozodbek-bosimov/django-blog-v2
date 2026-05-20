@@ -8,7 +8,11 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.templatetags.static import static
 
-from home.models import AboutMe, Blog, Project, Skill
+from home.models import AboutMe, Blog, Experience, Project, Skill
+
+# Sentinel: distinguishes "key not in cache" from "key cached with value None".
+# cache.get() returns None in both cases, so we pass this as the default instead.
+_CACHE_MISS = object()
 
 
 def _is_valid_ip(ip):
@@ -29,8 +33,8 @@ def custom_404(request, exception=None):
 def index(request):
     # 'about_me' is already injected by the about_me context processor,
     # but we still need the object locally to build absolute image URLs.
-    about_me = cache.get("about_me_singleton")
-    if about_me is None:
+    about_me = cache.get("about_me_singleton", _CACHE_MISS)
+    if about_me is _CACHE_MISS:
         about_me = AboutMe.objects.first()
         cache.set("about_me_singleton", about_me, 86400 * 30)
 
@@ -76,32 +80,45 @@ def index(request):
 
 def about(request):
     # Needed locally only to build the absolute profile image URL.
-    about_me = cache.get("about_me_singleton")
-    if about_me is None:
+    about_me = cache.get("about_me_singleton", _CACHE_MISS)
+    if about_me is _CACHE_MISS:
         about_me = AboutMe.objects.first()
         cache.set("about_me_singleton", about_me, 86400 * 30)
 
     # Skills rarely change — cache them for 24 hours.
     skills = cache.get_or_set("all_skills", lambda: list(Skill.objects.all()), 86400)
 
+    # Experience entries — cache for 24 hours.
+    experiences = cache.get_or_set(
+        "all_experiences", lambda: list(Experience.objects.all()), 86400
+    )
+
     abs_profile_image = ""
     if about_me:
         abs_profile_image = about_me.get_absolute_profile_image_url(request)
 
     # 'about_me' intentionally omitted — provided by the about_me context processor
-    context = {"skills": skills, "abs_profile_image": abs_profile_image}
+    context = {"skills": skills, "experiences": experiences, "abs_profile_image": abs_profile_image}
     return render(request, "about.html", context)
 
 
 def projects(request):
-    projects = cache.get_or_set("all_projects", lambda: list(Project.objects.all()), 86400)
+    projects = cache.get_or_set(
+        "all_projects", lambda: list(Project.objects.all()), 86400
+    )
     context = {"projects": projects}
     return render(request, "projects.html", context)
 
 
 def blog(request):
-    blogs_qs = Blog.objects.all().order_by("-time", "-sno")
-    paginator = Paginator(blogs_qs, 3)
+    # Cache all blog posts for 24 hours; invalidated by post_save/post_delete signals.
+    # Paginator slices the in-memory list — no extra DB queries per page.
+    all_blogs = cache.get_or_set(
+        "all_blogs_list",
+        lambda: list(Blog.objects.order_by("-time", "-sno")),
+        86400,
+    )
+    paginator = Paginator(all_blogs, 3)
     page = request.GET.get("page")
     blogs = paginator.get_page(page)
     context = {"blogs": blogs}
@@ -109,14 +126,22 @@ def blog(request):
 
 
 def category(request, category):
-    category_qs = Blog.objects.filter(category=category).order_by("-time", "-sno")
-    if not category_qs.exists():
+    # Reuse the already-cached full blog list and filter in Python.
+    # This avoids a per-category DB query while keeping a single cache key to invalidate.
+    all_blogs = cache.get_or_set(
+        "all_blogs_list",
+        lambda: list(Blog.objects.order_by("-time", "-sno")),
+        86400,
+    )
+    category_list = [b for b in all_blogs if b.category == category]
+
+    if not category_list:
         message = f"No posts found in category: '{category}'"
         return render(
             request, "category.html", {"message": message, "category": category}
         )
 
-    paginator = Paginator(category_qs, 3)
+    paginator = Paginator(category_list, 3)
     page = request.GET.get("page")
     category_posts = paginator.get_page(page)
     return render(
@@ -127,7 +152,11 @@ def category(request, category):
 
 
 def categories(request):
-    all_categories = cache.get_or_set("all_categories", lambda: list(Blog.objects.values("category").distinct().order_by("category")), 86400)
+    all_categories = cache.get_or_set(
+        "all_categories",
+        lambda: list(Blog.objects.values("category").distinct().order_by("category")),
+        86400,
+    )
     return render(request, "categories.html", {"all_categories": all_categories})
 
 

@@ -4,76 +4,117 @@
 {% block title %}Projects{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments.">
-<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Ozodbek Bosimov">
-<meta property="og:locale" content="en_US">
-<meta property="og:title" content="Projects — Ozodbek Bosimov">
-<meta property="og:description" content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments.">
-<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}">
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Projects — Ozodbek Bosimov">
-<meta name="twitter:description" content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments.">
-<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
-{% endblock meta %}
-
-{% block content %}
+<meta
+    name="description"
+    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments."
+/>
+<link
+    rel="canonical"
+    href="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}"
+/>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Ozodbek Bosimov" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content="Projects — Ozodbek Bosimov" />
+<meta
+    property="og:description"
+    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments."
+/>
+<meta
+    property="og:url"
+    content="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}"
+/>
+<meta
+    property="og:image"
+    content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}"
+/>
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Projects — Ozodbek Bosimov" />
+<meta
+    name="twitter:description"
+    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments."
+/>
+<meta
+    name="twitter:image"
+    content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}"
+/>
+{% endblock meta %} {% block content %}
 <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-2">
-    <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+    <h1
+        class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
+    >
         Projects
     </h1>
     <div class="h-px bg-gray-700 w-full"></div>
 </div>
 
-<div class='list-container'>
-
-  {% if projects %}
-  {% for project in projects %}
-  <div class='blog-list-card glass-card solid-content-card flex flex-col gap-5 p-5 md:p-6 mb-8 overflow-hidden'>
-    <div class='blog-list-thumb'>
-      <img class="w-full h-full object-cover" src="{{ project.effective_thumbnail }}"
-        alt="{{ project.title }}" loading="lazy">
-    </div>
-
-    <div class='flex-1 min-w-0'>
-      <p class="font-bold text-xl md:text-2xl text-cyan-300 mb-2 md:mb-3">{{ project.title }}</p>
-
-      <p class='text-sm md:text-base leading-relaxed mb-4 break-words text-gray-100'>{{ project.description }}</p>
-
-      {% if project.technologies %}
-      <div class='mb-4'>
-        <span class='text-xs md:text-sm font-bold text-gray-400 block mb-2'>Technologies used</span>
-        <div class='flex flex-wrap gap-2'>
-          {% for tech in project.get_technologies_list %}
-          <span class='text-xs bg-gradient-to-r from-cyan-500 to-blue-500 py-1 px-3 rounded-full'>{{ tech }}</span>
-          {% endfor %}
+<div class="list-container">
+    {% if projects %} {% for project in projects %}
+    <div
+        class="blog-list-card glass-card solid-content-card flex flex-col gap-5 p-5 md:p-6 mb-8 overflow-hidden"
+    >
+        <div class="blog-list-thumb">
+            <img
+                class="w-full h-full object-cover"
+                src="{{ project.effective_thumbnail }}"
+                alt="{{ project.title }}"
+                loading="lazy"
+            />
         </div>
-      </div>
-      {% endif %}
 
-      {% if project.github_link or project.demo_link %}
-      <div class='flex flex-wrap gap-3 mt-6'>
-        {% if project.github_link %}
-        <a href='{{ project.github_link }}' target='_blank'
-          class='btn-ghost w-[116px] px-2 py-2 text-[13px]'>
-          <i class="bi bi-github text-sm"></i> GitHub
-        </a>
-        {% endif %}
-        {% if project.demo_link %}
-        <a href='{{ project.demo_link }}' target='_blank'
-          class='btn-primary w-[116px] px-2 py-2 text-[13px]'>
-          Live site <i class="bi bi-box-arrow-up-right text-xs"></i>
-        </a>
-        {% endif %}
-      </div>
-      {% endif %}
+        <div class="flex-1 min-w-0">
+            <p class="font-bold text-xl md:text-2xl text-cyan-300 mb-2 md:mb-3">
+                {{ project.title }}
+            </p>
+
+            <p
+                class="text-sm md:text-base leading-relaxed mb-4 break-words text-gray-100"
+            >
+                {{ project.description }}
+            </p>
+
+            {% if project.technologies %}
+            <div class="mb-4">
+                <span
+                    class="text-xs md:text-sm font-bold text-gray-400 block mb-2"
+                    >Technologies used</span
+                >
+                <div class="flex flex-wrap gap-2">
+                    {% for tech in project.get_technologies_list %}
+                    <span
+                        class="text-xs bg-gradient-to-r from-cyan-500 to-blue-500 py-1 px-3 rounded-full"
+                        >{{ tech }}</span
+                    >
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %} {% if project.github_link or project.demo_link %}
+            <div class="flex flex-wrap gap-3 mt-6">
+                {% if project.github_link %}
+                <a
+                    href="{{ project.github_link }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-ghost w-[116px] px-2 py-2 text-[13px]"
+                >
+                    <i class="bi bi-github text-sm"></i> GitHub
+                </a>
+                {% endif %} {% if project.demo_link %}
+                <a
+                    href="{{ project.demo_link }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary w-[116px] px-2 py-2 text-[13px]"
+                >
+                    Live site <i class="bi bi-box-arrow-up-right text-xs"></i>
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
     </div>
-  </div>
-  {% endfor %}
-  {% else %}
-  <p class='text-center text-gray-400 py-10'>No projects available yet.</p>
-  {% endif %}
+    {% endfor %} {% else %}
+    <p class="text-center text-gray-400 py-10">No projects available yet.</p>
+    {% endif %}
 </div>
 {% endblock %}
