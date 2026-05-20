@@ -5,233 +5,378 @@
 {% block title %}Home{% endblock title %}
 
 {% block meta %}
-<meta name="description"
-    content="Personal website of Ozodbek Bosimov — software developer sharing projects, technical articles, and ideas about building software and learning new things.">
-<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Ozodbek Bosimov">
-<meta property="og:locale" content="en_US">
-<meta property="og:title" content="Ozodbek Bosimov — Software Engineer & Personal Blog">
-<meta property="og:description"
-    content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
-<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}">
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Ozodbek Bosimov — Software Engineer & Personal Blog">
-<meta name="twitter:description"
-    content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning.">
-<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
-{% endblock meta %}
-
-{% block content %}
+<meta
+    name="description"
+    content="Personal website of Ozodbek Bosimov — software developer sharing projects, technical articles, and ideas about building software and learning new things."
+/>
+<link
+    rel="canonical"
+    href="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}"
+/>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Ozodbek Bosimov" />
+<meta property="og:locale" content="en_US" />
+<meta
+    property="og:title"
+    content="Ozodbek Bosimov — Software Engineer & Personal Blog"
+/>
+<meta
+    property="og:description"
+    content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning."
+/>
+<meta
+    property="og:url"
+    content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}"
+/>
+<meta
+    property="og:image"
+    content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}"
+/>
+<meta name="twitter:card" content="summary" />
+<meta
+    name="twitter:title"
+    content="Ozodbek Bosimov — Software Engineer & Personal Blog"
+/>
+<meta
+    name="twitter:description"
+    content="Personal website of Ozodbek Bosimov. A space where I share notes on software engineering, current projects, and practical experiences from daily life and learning."
+/>
+<meta
+    name="twitter:image"
+    content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}"
+/>
+{% endblock meta %} {% block content %}
 <!-- Canvas dot grid background for the entire page -->
-<canvas id="hero-grid" class="fixed inset-0 w-full h-full pointer-events-none" style="z-index: 0;"></canvas>
+<canvas
+    id="hero-grid"
+    class="fixed inset-0 w-full h-full pointer-events-none"
+    style="z-index: 0"
+></canvas>
 
 <div
-    class='hero-section relative overflow-hidden bg-transparent text-white flex flex-col justify-center items-center min-h-[550px] md:min-h-[580px] lg:min-h-[600px] py-12'>
-
+    class="hero-section relative overflow-hidden bg-transparent text-white flex flex-col justify-center items-center min-h-[550px] md:min-h-[580px] lg:min-h-[600px] py-12"
+>
     <!-- Main content -->
-    <div class='relative z-10 w-full max-w-5xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-8 lg:gap-12'>
-
+    <div
+        class="relative z-10 w-full max-w-5xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-8 lg:gap-12"
+    >
         <!-- Left: Text content -->
-        <div class='flex-1 text-left'>
-
-            <div class='text-center lg:text-left mb-3'>
-                <h1 class='inline-block text-left text-3xl md:text-4xl lg:text-[2.75rem] font-extrabold leading-tight'>
+        <div class="flex-1 text-left">
+            <div class="text-center lg:text-left mb-3">
+                <h1
+                    class="inline-block text-left text-3xl md:text-4xl lg:text-[2.75rem] font-extrabold leading-tight"
+                >
                     Welcome to my
-                    <span class='block ml-10 md:ml-20 lg:ml-32 pb-2 w-max bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 text-transparent'>Digital Space</span>
+                    <span
+                        class="block ml-10 md:ml-20 lg:ml-32 pb-2 w-max bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 text-transparent"
+                        >Digital Space</span
+                    >
                 </h1>
             </div>
 
-            <div class='text-base md:text-lg text-gray-400 mb-6 h-7 font-light'>
+            <div class="text-base md:text-lg text-gray-400 mb-6 h-7 font-light">
                 <span class="text-gray-500 font-mono text-sm mr-1">&gt;</span>
-                <span id='hero-typed'></span><span class='hero-caret'>_</span>
+                <span id="hero-typed"></span><span class="hero-caret">_</span>
             </div>
 
-            <p class="text-sm md:text-base text-gray-400 leading-relaxed mb-8 max-w-lg">
-                An archive of my projects, writing, and mental notes. This space 
-                serves as a quiet place to organize my thoughts, log interesting 
+            <p
+                class="text-sm md:text-base text-gray-400 leading-relaxed mb-8 max-w-lg"
+            >
+                An archive of my projects, writing, and mental notes. This space
+                serves as a quiet place to organize my thoughts, log interesting
                 discoveries, and reflect on everyday experiences.
             </p>
 
-            <div class='flex flex-wrap items-center content-start justify-center lg:justify-start gap-3 md:gap-4 mt-8'>
-                <a href='{% url "about" %}'
-                    class='btn-hero-primary group'>
+            <div
+                class="flex flex-wrap items-center content-start justify-center lg:justify-start gap-3 md:gap-4 mt-8"
+            >
+                <a href='{% url "about" %}' class="btn-hero-primary group">
                     <i class="bi bi-person"></i> About me
                 </a>
-                <a {% if about_me.effective_resume %}href='{{ about_me.effective_resume }}' target='_blank'{% else %}href='javascript:void(0)'{% endif %}
-                    class='btn-hero-ghost {% if not about_me.effective_resume %}opacity-70 cursor-default hover:-translate-y-0{% endif %}'>
+                {% if about_me.effective_resume %}
+                <a
+                    href="{{ about_me.effective_resume }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-hero-ghost"
+                >
                     <i class="bi bi-download"></i> Resume
                 </a>
-                <a href='{% url "projects" %}'
-                    class='btn-hero-ghost'>
+                {% else %}
+                <a
+                    href="javascript:void(0)"
+                    class="btn-hero-ghost opacity-70 cursor-default hover:-translate-y-0"
+                >
+                    <i class="bi bi-download"></i> Resume
+                </a>
+                {% endif %}
+                <a href='{% url "projects" %}' class="btn-hero-ghost">
                     <i class="bi bi-code-slash"></i> View projects
                 </a>
             </div>
         </div>
 
         <!-- Right: AboutMe hero imagery -->
-        <div class='hidden lg:block w-full max-w-[420px]'>
+        <div class="hidden lg:block w-full max-w-[420px]">
             <div
-                class='relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-gray-900/50 shadow-2xl shadow-black/40'>
-                <div class='relative h-[380px] sm:h-[460px] lg:h-[520px] overflow-hidden'>
-                    <img src="{{ hero_bg_image }}" alt="Hero background"
-                        style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0;">
+                class="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-gray-900/50 shadow-2xl shadow-black/40"
+            >
+                <div
+                    class="relative h-[380px] sm:h-[460px] lg:h-[520px] overflow-hidden"
+                >
+                    <img
+                        src="{{ hero_bg_image }}"
+                        alt="Hero background"
+                        style="
+                            position: absolute;
+                            inset: 0;
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            object-position: center;
+                            z-index: 0;
+                        "
+                    />
                     <div
-                        style="position:absolute; inset:0; background:linear-gradient(to top, rgba(3,7,18,0.38), rgba(3,7,18,0.12), rgba(3,7,18,0)); z-index:1;">
-                    </div>
-
-
+                        style="
+                            position: absolute;
+                            inset: 0;
+                            background: linear-gradient(
+                                to top,
+                                rgba(3, 7, 18, 0.38),
+                                rgba(3, 7, 18, 0.12),
+                                rgba(3, 7, 18, 0)
+                            );
+                            z-index: 1;
+                        "
+                    ></div>
                 </div>
-
-
             </div>
         </div>
     </div>
 
     <!-- Bottom stats bar -->
-    <div class='relative z-10 w-full max-w-5xl mx-auto px-6 mt-20 md:mt-24 lg:mt-12'>
-        <div class='flex justify-center lg:justify-start gap-8 md:gap-12 text-center'>
+    <div
+        class="relative z-10 w-full max-w-5xl mx-auto px-6 mt-20 md:mt-24 lg:mt-12"
+    >
+        <div
+            class="flex justify-center lg:justify-start gap-8 md:gap-12 text-center"
+        >
             <div>
-                <div class='text-xl md:text-2xl font-bold text-white'>{{ total_blogs|default:"10" }}<span
-                        class='text-cyan-400'>+</span></div>
-                <div class='text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5'>Articles</div>
+                <div class="text-xl md:text-2xl font-bold text-white">
+                    {{ total_blogs|default:"10" }}<span class="text-cyan-400"
+                        >+</span
+                    >
+                </div>
+                <div
+                    class="text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5"
+                >
+                    Articles
+                </div>
             </div>
-            <div class='w-px bg-gray-700'></div>
+            <div class="w-px bg-gray-700"></div>
             <div>
-                <div class='text-xl md:text-2xl font-bold text-white'>{{ total_categories|default:"4" }}<span
-                        class='text-cyan-400'>+</span></div>
-                <div class='text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5'>Topics</div>
+                <div class="text-xl md:text-2xl font-bold text-white">
+                    {{ total_categories|default:"4" }}<span
+                        class="text-cyan-400"
+                        >+</span
+                    >
+                </div>
+                <div
+                    class="text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5"
+                >
+                    Topics
+                </div>
             </div>
-            <div class='w-px bg-gray-700'></div>
+            <div class="w-px bg-gray-700"></div>
             <div>
-                <div class='text-xl md:text-2xl font-bold text-white'>{{ total_projects|default:"5" }}<span
-                        class='text-cyan-400'>+</span></div>
-                <div class='text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5'>Projects</div>
+                <div class="text-xl md:text-2xl font-bold text-white">
+                    {{ total_projects|default:"5" }}<span class="text-cyan-400"
+                        >+</span
+                    >
+                </div>
+                <div
+                    class="text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5"
+                >
+                    Projects
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class='blog-section text-white overflow-hidden relative z-10'>
+<div class="blog-section text-white overflow-hidden relative z-10">
     <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-10">
-        <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+        <h1
+            class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
+        >
             Checkout my latest posts
         </h1>
         <div class="h-px bg-gray-700 w-full"></div>
     </div>
-    <div class='blogs blog-cards-grid my-5 grid gap-6 px-4 md:grid-cols-3'>
+    <div class="blogs blog-cards-grid my-5 grid gap-6 px-4 md:grid-cols-3">
         {% for blog in latest_blogs %}
-        <div class='blog-card-item glass-card solid-content-card p-5 h-auto'>
+        <div class="blog-card-item glass-card solid-content-card p-5 h-auto">
             <a href='{% url "blogpost" blog.slug %}'>
                 {% if blog.effective_thumbnail %}
-                <div class="w-full overflow-hidden rounded-lg mb-4" style="aspect-ratio: 16/9;">
-                    <img class='w-full h-full object-cover' src="{{ blog.effective_thumbnail }}" alt="{{ blog.title }}">
+                <div
+                    class="w-full overflow-hidden rounded-lg mb-4"
+                    style="aspect-ratio: 16/9"
+                >
+                    <img
+                        class="w-full h-full object-cover"
+                        src="{{ blog.effective_thumbnail }}"
+                        alt="{{ blog.title }}"
+                    />
                 </div>
                 {% endif %}
             </a>
-            <a class='text-blue-100 hover:text-cyan-400 transition duration-300'
-                href='{% url "blogpost" blog.slug %}'><span
-                    class='text-xl font-bold'>{{blog.title|slice:80}}</span></a><br>
-            <p class='my-3 break-words text-sm md:text-base leading-relaxed text-gray-100' style='overflow-wrap: anywhere;'>{{blog.meta|truncatechars:200}}</p>
-            <div class='post-meta text-gray-400'>
-                <span><i class="bi bi-calendar4-event"></i> {{blog.time|date:"M j, Y"}}</span>
+            <a
+                class="text-blue-100 hover:text-cyan-400 transition duration-300"
+                href='{% url "blogpost" blog.slug %}'
+                ><span class="text-xl font-bold"
+                    >{{ blog.title|truncatechars:80 }}</span
+                ></a
+            ><br />
+            <p
+                class="my-3 break-words text-sm md:text-base leading-relaxed text-gray-100"
+                style="overflow-wrap: anywhere"
+            >
+                {{blog.meta|truncatechars:200}}
+            </p>
+            <div class="post-meta text-gray-400">
+                <span>
+                    <i class="bi bi-calendar4-event"></i> {{ blog.time|date:"M j, Y" }}
+                </span>
                 <i class="bi bi-dot"></i>
-                <span><i class="bi bi-clock"></i> {{ blog.content|reading_time }} min read</span>
+                <span
+                    ><i class="bi bi-clock"></i> {{ blog.reading_time_minutes }}
+                    min read</span
+                >
             </div>
-            <a href='{% url "blogpost" blog.slug %}'
-                class='btn-primary px-4 py-2 my-3 whitespace-nowrap'>Read more <i class="bi bi-arrow-right"></i></a>
+            <a
+                href='{% url "blogpost" blog.slug %}'
+                class="btn-primary px-4 py-2 my-3 whitespace-nowrap"
+                >Read more <i class="bi bi-arrow-right"></i
+            ></a>
         </div>
         {% endfor %}
     </div>
-    <div class='text-center mt-12 mb-10'>
-        <a href='{% url "blog" %}' class='btn-primary px-6 py-2.5'>View all posts <i class="bi bi-arrow-right"></i></a>
+    <div class="text-center mt-12 mb-10">
+        <a href='{% url "blog" %}' class="btn-primary px-6 py-2.5"
+            >View all posts <i class="bi bi-arrow-right"></i
+        ></a>
     </div>
 </div>
 
-{% endblock %}
-
-{% block extra_scripts %}
+{% endblock %} {% block extra_scripts %}
 <script>
-// ── Hero Interactive Dot Grid ────────────────────────────────────
-(function () {
-  const canvas = document.getElementById("hero-grid");
-  if (!canvas) return;
+    // ── Hero Interactive Dot Grid ────────────────────────────────────
+    (function () {
+        const canvas = document.getElementById("hero-grid");
+        if (!canvas) return;
 
-  const ctx = canvas.getContext("2d");
-  let w, h, cols, rows, offsetX, offsetY;
-  const gap = 32;
-  const dotBase = 0.4;
-  const mouse = { x: -1000, y: -1000 };
-  const radius = 120;
+        const ctx = canvas.getContext("2d");
+        let w, h, cols, rows, offsetX, offsetY;
+        const gap = 32;
+        const dotBase = 0.4;
+        const mouse = { x: -1000, y: -1000 };
+        const radius = 120;
 
-  function resize() {
-    w = canvas.width = window.innerWidth * devicePixelRatio;
-    h = canvas.height = window.innerHeight * devicePixelRatio;
-    canvas.style.width = window.innerWidth + "px";
-    canvas.style.height = window.innerHeight + "px";
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(devicePixelRatio, devicePixelRatio);
-    cols = Math.floor(window.innerWidth / gap) + 1;
-    rows = Math.floor(window.innerHeight / gap) + 1;
-    const gridWidth = (cols - 1) * gap;
-    const gridHeight = (rows - 1) * gap;
-    offsetX = (window.innerWidth - gridWidth) / 2;
-    offsetY = (window.innerHeight - gridHeight) / 2;
-  }
-
-  resize();
-  window.addEventListener("resize", resize);
-  window.addEventListener("mousemove", (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-  window.addEventListener("mouseleave", () => { mouse.x = -1000; mouse.y = -1000; });
-  window.addEventListener("scroll", () => { mouse.x = -1000; mouse.y = -1000; }, { passive: true });
-
-  function draw() {
-    ctx.clearRect(0, 0, w / devicePixelRatio, h / devicePixelRatio);
-    for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
-        const x = offsetX + i * gap;
-        const y = offsetY + j * gap;
-        const dx = mouse.x - x;
-        const dy = mouse.y - y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const intensity = Math.max(0, 1 - dist / radius);
-        ctx.beginPath();
-        ctx.arc(x, y, dotBase + intensity * 2, 0, Math.PI * 2);
-        if (intensity > 0) {
-          ctx.fillStyle = `rgba(103, 232, 249, ${0.08 + intensity * 0.7})`;
-        } else {
-          ctx.fillStyle = "rgba(156, 163, 175, 0)";
+        function resize() {
+            w = canvas.width = window.innerWidth * devicePixelRatio;
+            h = canvas.height = window.innerHeight * devicePixelRatio;
+            canvas.style.width = window.innerWidth + "px";
+            canvas.style.height = window.innerHeight + "px";
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(devicePixelRatio, devicePixelRatio);
+            cols = Math.floor(window.innerWidth / gap) + 1;
+            rows = Math.floor(window.innerHeight / gap) + 1;
+            const gridWidth = (cols - 1) * gap;
+            const gridHeight = (rows - 1) * gap;
+            offsetX = (window.innerWidth - gridWidth) / 2;
+            offsetY = (window.innerHeight - gridHeight) / 2;
         }
-        ctx.fill();
-      }
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
 
-// ── Hero Typing Effect ───────────────────────────────────────────
-(function () {
-  const el = document.getElementById("hero-typed");
-  if (!el) return;
-  const phrases = ["Sharing what I learn", "Documenting the journey", "Exploring new ideas", "Thinking out loud"];
-  let pi = 0, ci = 0, deleting = false;
-  function tick() {
-    const phrase = phrases[pi];
-    if (!deleting) {
-      el.textContent = phrase.slice(0, ci + 1);
-      ci++;
-      if (ci === phrase.length) { deleting = true; return setTimeout(tick, 2200); }
-      return setTimeout(tick, 55);
-    } else {
-      el.textContent = phrase.slice(0, ci - 1);
-      ci--;
-      if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; return setTimeout(tick, 350); }
-      return setTimeout(tick, 30);
-    }
-  }
-  setTimeout(tick, 600);
-})();
+        resize();
+        window.addEventListener("resize", resize);
+        window.addEventListener("mousemove", (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        window.addEventListener("mouseleave", () => {
+            mouse.x = -1000;
+            mouse.y = -1000;
+        });
+        window.addEventListener(
+            "scroll",
+            () => {
+                mouse.x = -1000;
+                mouse.y = -1000;
+            },
+            { passive: true },
+        );
+
+        function draw() {
+            ctx.clearRect(0, 0, w / devicePixelRatio, h / devicePixelRatio);
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    const x = offsetX + i * gap;
+                    const y = offsetY + j * gap;
+                    const dx = mouse.x - x;
+                    const dy = mouse.y - y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const intensity = Math.max(0, 1 - dist / radius);
+                    ctx.beginPath();
+                    ctx.arc(x, y, dotBase + intensity * 2, 0, Math.PI * 2);
+                    if (intensity > 0) {
+                        ctx.fillStyle = `rgba(103, 232, 249, ${0.08 + intensity * 0.7})`;
+                    } else {
+                        ctx.fillStyle = "rgba(156, 163, 175, 0)";
+                    }
+                    ctx.fill();
+                }
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+
+    // ── Hero Typing Effect ───────────────────────────────────────────
+    (function () {
+        const el = document.getElementById("hero-typed");
+        if (!el) return;
+        const phrases = [
+            "Sharing what I learn",
+            "Documenting the journey",
+            "Exploring new ideas",
+            "Thinking out loud",
+        ];
+        let pi = 0,
+            ci = 0,
+            deleting = false;
+        function tick() {
+            const phrase = phrases[pi];
+            if (!deleting) {
+                el.textContent = phrase.slice(0, ci + 1);
+                ci++;
+                if (ci === phrase.length) {
+                    deleting = true;
+                    return setTimeout(tick, 2200);
+                }
+                return setTimeout(tick, 55);
+            } else {
+                el.textContent = phrase.slice(0, ci - 1);
+                ci--;
+                if (ci === 0) {
+                    deleting = false;
+                    pi = (pi + 1) % phrases.length;
+                    return setTimeout(tick, 350);
+                }
+                return setTimeout(tick, 30);
+            }
+        }
+        setTimeout(tick, 600);
+    })();
 </script>
 {% endblock extra_scripts %}

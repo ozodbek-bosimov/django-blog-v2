@@ -1,17 +1,17 @@
 import re
 from datetime import timedelta
 
-from django.contrib import admin
-from django.contrib import messages
-from django.contrib.admin.models import LogEntry
 from django import forms
 from django.conf import settings
+from django.contrib import admin, messages
+from django.contrib.admin.models import LogEntry
 from django.shortcuts import redirect
 from django.urls import path, reverse
 from django.utils import timezone
-from home.models import Blog, AboutMe, Skill, Project
-from django.utils.html import format_html, escape
+from django.utils.html import escape, format_html
 from django_ckeditor_5.widgets import CKEditor5Widget
+
+from home.models import AboutMe, Blog, Experience, Project, Skill
 
 
 def _sanitize_youtube_embeds(html_content):
@@ -26,7 +26,7 @@ def _sanitize_youtube_embeds(html_content):
         time_str = time_str.strip()
         if time_str.isdigit():
             return int(time_str)
-        match = re.match(r'(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$', time_str)
+        match = re.match(r"(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$", time_str)
         if not match:
             return None
         hours = int(match.group(1) or 0)
@@ -43,111 +43,117 @@ def _sanitize_youtube_embeds(html_content):
         return f"{base}?start={start_seconds}"
 
     def add_rel_param(url):
-        if 'rel=' in url:
+        if "rel=" in url:
             return url
-        separator = '&' if '?' in url else '?'
+        separator = "&" if "?" in url else "?"
         return f"{url}{separator}rel=0"
 
     def ensure_iframe_attr(tag, attr, value=None):
-        if attr == 'allowfullscreen':
-            if re.search(r'\ballowfullscreen\b', tag, re.IGNORECASE):
+        if attr == "allowfullscreen":
+            if re.search(r"\ballowfullscreen\b", tag, re.IGNORECASE):
                 return tag
-            return tag[:-1] + ' allowfullscreen>'
-        if re.search(rf'\b{attr}\s*=', tag, re.IGNORECASE):
+            return tag[:-1] + " allowfullscreen>"
+        if re.search(rf"\b{attr}\s*=", tag, re.IGNORECASE):
             return tag
         return tag[:-1] + f' {attr}="{value}">'
 
     # Convert watch URLs to embed URLs (for media plugin)
     html_content = re.sub(
-        r'https://www\.youtube\.com/watch\?v=([a-zA-Z0-9_-]+)(?:&t=([0-9hms]+))?',
+        r"https://www\.youtube\.com/watch\?v=([a-zA-Z0-9_-]+)(?:&t=([0-9hms]+))?",
         lambda match: build_embed_url(match.group(1), match.group(2)),
-        html_content
+        html_content,
     )
 
     # Also handle youtu.be short URLs
     html_content = re.sub(
-        r'https://youtu\.be/([a-zA-Z0-9_-]+)(?:\?t=([0-9hms]+))?',
+        r"https://youtu\.be/([a-zA-Z0-9_-]+)(?:\?t=([0-9hms]+))?",
         lambda match: build_embed_url(match.group(1), match.group(2)),
-        html_content
+        html_content,
     )
 
     # Normalize embed URLs that use ?t=
     html_content = re.sub(
-        r'https://www\.youtube\.com/embed/([a-zA-Z0-9_-]+)\?t=([0-9hms]+)',
+        r"https://www\.youtube\.com/embed/([a-zA-Z0-9_-]+)\?t=([0-9hms]+)",
         lambda match: build_embed_url(match.group(1), match.group(2)),
-        html_content
+        html_content,
     )
 
     # Ensure rel=0 for YouTube embed URLs
     html_content = re.sub(
         r'https://www\.youtube\.com/embed/[a-zA-Z0-9_-]+(?:\?[^"\s>]*)?',
         lambda match: add_rel_param(match.group(0)),
-        html_content
+        html_content,
     )
 
     # Ensure iframe attributes needed for YouTube playback
     def augment_iframe(match):
         tag = match.group(0)
-        if 'youtube.com/embed' not in tag:
+        if "youtube.com/embed" not in tag:
             return tag
         tag = ensure_iframe_attr(
             tag,
-            'allow',
-            'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+            "allow",
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
         )
-        tag = ensure_iframe_attr(tag, 'referrerpolicy', 'strict-origin-when-cross-origin')
-        tag = ensure_iframe_attr(tag, 'title', 'YouTube video player')
-        tag = ensure_iframe_attr(tag, 'frameborder', '0')
-        tag = ensure_iframe_attr(tag, 'allowfullscreen')
+        tag = ensure_iframe_attr(
+            tag, "referrerpolicy", "strict-origin-when-cross-origin"
+        )
+        tag = ensure_iframe_attr(tag, "title", "YouTube video player")
+        tag = ensure_iframe_attr(tag, "frameborder", "0")
+        tag = ensure_iframe_attr(tag, "allowfullscreen")
         return tag
 
-    html_content = re.sub(r'<iframe[^>]*>', augment_iframe, html_content, flags=re.IGNORECASE)
+    html_content = re.sub(
+        r"<iframe[^>]*>", augment_iframe, html_content, flags=re.IGNORECASE
+    )
     return html_content
 
 
 # Register your models here.
 class BlogAdminForm(forms.ModelForm):
-    content = forms.CharField(widget=CKEditor5Widget(config_name='default'))
+    content = forms.CharField(widget=CKEditor5Widget(config_name="default"))
     meta = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 3, 'style': 'width:100%; resize:vertical;', 'maxlength': 600}),
+        widget=forms.Textarea(
+            attrs={"rows": 3, "style": "width:100%; resize:vertical;", "maxlength": 600}
+        ),
         max_length=600,
-        help_text='Max 600 characters. This text appears in search results and social media previews.',
+        help_text="Max 600 characters. This text appears in search results and social media previews.",
     )
 
     class Meta:
         model = Blog
         fields = "__all__"
-    
+
     def clean_thumbnail_img(self):
-        img = self.cleaned_data.get('thumbnail_img')
-        if img and hasattr(img, 'size') and img.size > 10 * 1024 * 1024:
+        img = self.cleaned_data.get("thumbnail_img")
+        if img and hasattr(img, "size") and img.size > 10 * 1024 * 1024:
             size_mb = img.size / (1024 * 1024)
             raise forms.ValidationError(
-                f'Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. '
-                'Please choose a smaller file.'
+                f"Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. "
+                "Please choose a smaller file."
             )
         return img
 
     def clean_content(self):
         """Convert YouTube watch URLs to embed URLs and ensure proper iframe format"""
-        content = self.cleaned_data.get('content', '')
+        content = self.cleaned_data.get("content", "")
 
         # Check content size - 5MB limit
-        content_size_bytes = len(content.encode('utf-8'))
+        content_size_bytes = len(content.encode("utf-8"))
         max_size_bytes = 5 * 1024 * 1024  # 5MB
         if content_size_bytes > max_size_bytes:
             size_mb = content_size_bytes / (1024 * 1024)
             raise forms.ValidationError(
-                f'Blog post content is too large ({size_mb:.1f} MB). '
-                'Maximum allowed size is 5 MB. Please reduce the content size.'
+                f"Blog post content is too large ({size_mb:.1f} MB). "
+                "Maximum allowed size is 5 MB. Please reduce the content size."
             )
 
         return _sanitize_youtube_embeds(content)
 
     def clean_meta(self):
-        meta = (self.cleaned_data.get('meta') or '').strip()
+        meta = (self.cleaned_data.get("meta") or "").strip()
         if len(meta) > 600:
-            raise forms.ValidationError('Meta text can be at most 600 characters.')
+            raise forms.ValidationError("Meta text can be at most 600 characters.")
         return meta
 
 
@@ -155,35 +161,45 @@ class BlogAdmin(admin.ModelAdmin):
     form = BlogAdminForm
 
     class Media:
-        js = ('js/admin_thumbnail.js', 'js/admin_ckeditor_fix.js')
-    list_display = ['title', 'category', 'created_at_display', 'slug']
-    list_filter = ['category']
-    search_fields = ['title', 'category', 'slug']
-    readonly_fields = ('thumbnail_preview',)
+        js = ("js/admin_thumbnail.js", "js/admin_ckeditor_fix.js")
+
+    list_display = ["title", "category", "created_at_display", "slug"]
+    list_filter = ["category"]
+    search_fields = ["title", "category", "slug"]
+    readonly_fields = ("thumbnail_preview",)
     fieldsets = (
-        (None, {'fields': ('title', 'meta', 'content', 'category', 'slug')}),
-        ('Meta', {'fields': ('time',)}),
-        ('Thumbnail', {'fields': ('thumbnail_img', 'thumbnail_url', 'thumbnail_preview')}),
+        (None, {"fields": ("title", "meta", "content", "category", "slug")}),
+        ("Meta", {"fields": ("time",)}),
+        (
+            "Thumbnail",
+            {"fields": ("thumbnail_img", "thumbnail_url", "thumbnail_preview")},
+        ),
     )
 
-    @admin.display(description='Created', ordering='time')
+    @admin.display(description="Created", ordering="time")
     def created_at_display(self, obj):
-        from django.utils import timezone
-        return timezone.localtime(obj.time).strftime('%Y-%m-%d  %H:%M')
+        return timezone.localtime(obj.time).strftime("%Y-%m-%d  %H:%M")
 
-    @admin.display(description='Current thumbnail')
+    @admin.display(description="Current thumbnail")
     def thumbnail_preview(self, obj):
         if obj.thumbnail_img:
-            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', escape(obj.thumbnail_img.url))
+            return format_html(
+                '<img src="{}" style="max-width: 200px; height: auto;" />',
+                escape(obj.thumbnail_img.url),
+            )
         elif obj.thumbnail_url:
-            return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', escape(obj.thumbnail_url))
-        return '(No image)'
+            return format_html(
+                '<img src="{}" style="max-width: 200px; height: auto;" />',
+                escape(obj.thumbnail_url),
+            )
+        return "(No image)"
+
 
 admin.site.register(Blog, BlogAdmin)
 
 
 class AboutMeAdminForm(forms.ModelForm):
-    bio = forms.CharField(widget=CKEditor5Widget(config_name='default'))
+    bio = forms.CharField(widget=CKEditor5Widget(config_name="default"))
 
     class Meta:
         model = AboutMe
@@ -191,53 +207,71 @@ class AboutMeAdminForm(forms.ModelForm):
 
     def clean_bio(self):
         """Check bio content size limit and sanitize YouTube embeds"""
-        bio = self.cleaned_data.get('bio', '')
-        bio_size_bytes = len(bio.encode('utf-8'))
+        bio = self.cleaned_data.get("bio", "")
+        bio_size_bytes = len(bio.encode("utf-8"))
         max_size_bytes = 5 * 1024 * 1024  # 5MB
         if bio_size_bytes > max_size_bytes:
             size_mb = bio_size_bytes / (1024 * 1024)
             raise forms.ValidationError(
-                f'Bio content is too large ({size_mb:.1f} MB). '
-                'Maximum allowed size is 5 MB. Please reduce the content size.'
+                f"Bio content is too large ({size_mb:.1f} MB). "
+                "Maximum allowed size is 5 MB. Please reduce the content size."
             )
         return _sanitize_youtube_embeds(bio)
 
     def clean_profile_img(self):
-        img = self.cleaned_data.get('profile_img')
-        if img and hasattr(img, 'size') and img.size > 10 * 1024 * 1024:
+        img = self.cleaned_data.get("profile_img")
+        if img and hasattr(img, "size") and img.size > 10 * 1024 * 1024:
             size_mb = img.size / (1024 * 1024)
             raise forms.ValidationError(
-                f'Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. '
-                'Please choose a smaller file.'
+                f"Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. "
+                "Please choose a smaller file."
             )
         return img
 
     def clean_hero_img(self):
-        img = self.cleaned_data.get('hero_img')
-        if img and hasattr(img, 'size') and img.size > 10 * 1024 * 1024:
+        img = self.cleaned_data.get("hero_img")
+        if img and hasattr(img, "size") and img.size > 10 * 1024 * 1024:
             size_mb = img.size / (1024 * 1024)
             raise forms.ValidationError(
-                f'Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. '
-                'Please choose a smaller file.'
+                f"Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. "
+                "Please choose a smaller file."
             )
         return img
 
 
 class AboutMeAdmin(admin.ModelAdmin):
     """Admin for singleton AboutMe model"""
+
     form = AboutMeAdminForm
 
     class Media:
-        js = ('js/admin_ckeditor_fix.js',)
+        js = ("js/admin_ckeditor_fix.js",)
 
-    readonly_fields = ('profile_image_preview', 'hero_image_preview')
+    readonly_fields = ("profile_image_preview", "hero_image_preview")
     fieldsets = (
-        ('Personal Info', {'fields': ('name', 'profession', 'email', 'phone')}),
-        ('About', {'fields': ('bio',)}),
-        ('Resume', {'fields': ('resume_file', 'resume_url')}),
-        ('Profile Image', {'fields': ('profile_img', 'profile_image_url', 'profile_image_preview')}),
-        ('Hero Background', {'fields': ('hero_img', 'hero_image_url', 'hero_image_preview')}),
-        ('Social Links', {'fields': ('linkedin_url', 'github_url', 'telegram_url', 'x_url', 'leetcode_url')}),
+        ("Personal Info", {"fields": ("name", "profession", "email", "phone")}),
+        ("About", {"fields": ("bio",)}),
+        ("Resume", {"fields": ("resume_file", "resume_url")}),
+        (
+            "Profile Image",
+            {"fields": ("profile_img", "profile_image_url", "profile_image_preview")},
+        ),
+        (
+            "Hero Background",
+            {"fields": ("hero_img", "hero_image_url", "hero_image_preview")},
+        ),
+        (
+            "Social Links",
+            {
+                "fields": (
+                    "linkedin_url",
+                    "github_url",
+                    "telegram_url",
+                    "x_url",
+                    "leetcode_url",
+                )
+            },
+        ),
     )
 
     def has_add_permission(self, request):
@@ -246,38 +280,45 @@ class AboutMeAdmin(admin.ModelAdmin):
             return False
         return super().has_add_permission(request)
 
-    @admin.display(description='Profile Image Preview')
+    @admin.display(description="Profile Image Preview")
     def profile_image_preview(self, obj):
         if obj:
             url = obj.effective_profile_image
             if url:
-                return format_html('<img src="{}" style="max-width: 200px; height: auto; border-radius: 50%;" />', escape(url))
-        return '(No image)'
+                return format_html(
+                    '<img src="{}" style="max-width: 200px; height: auto; border-radius: 50%;" />',
+                    escape(url),
+                )
+        return "(No image)"
 
-    @admin.display(description='Hero Background Preview')
+    @admin.display(description="Hero Background Preview")
     def hero_image_preview(self, obj):
         if obj:
             url = obj.effective_hero_image
             if url:
-                return format_html('<img src="{}" style="max-width: 320px; width: 100%; height: auto; border-radius: 16px;" />', escape(url))
-        return '(No image)'
+                return format_html(
+                    '<img src="{}" style="max-width: 320px; width: 100%; height: auto; border-radius: 16px;" />',
+                    escape(url),
+                )
+        return "(No image)"
 
 
 class SkillAdmin(admin.ModelAdmin):
     """Admin for Skill model"""
+
     class SkillAdminForm(forms.ModelForm):
         class Meta:
             model = Skill
             fields = "__all__"
             help_texts = {
-                'percentage': '0-19% → Familiar, 20-39% → Basic, 40-69% → Working Knowledge, 70-89% → Advanced, 90-100% → Expert',
+                "percentage": "0-19% → Familiar, 20-39% → Basic, 40-69% → Working Knowledge, 70-89% → Advanced, 90-100% → Expert",
             }
 
     form = SkillAdminForm
-    list_display = ['name', 'percentage', 'order']
-    list_editable = ['order']
-    list_filter = ['percentage']
-    search_fields = ['name']
+    list_display = ["name", "percentage", "order"]
+    list_editable = ["order"]
+    list_filter = ["percentage"]
+    search_fields = ["name"]
 
 
 class ProjectAdminForm(forms.ModelForm):
@@ -286,38 +327,45 @@ class ProjectAdminForm(forms.ModelForm):
         fields = "__all__"
 
     def clean_thumbnail_img(self):
-        img = self.cleaned_data.get('thumbnail_img')
-        if img and hasattr(img, 'size') and img.size > 10 * 1024 * 1024:
+        img = self.cleaned_data.get("thumbnail_img")
+        if img and hasattr(img, "size") and img.size > 10 * 1024 * 1024:
             size_mb = img.size / (1024 * 1024)
             raise forms.ValidationError(
-                f'Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. '
-                'Please choose a smaller file.'
+                f"Image size is {size_mb:.1f} MB — maximum allowed size is 10 MB. "
+                "Please choose a smaller file."
             )
         return img
 
 
 class ProjectAdmin(admin.ModelAdmin):
     """Admin for Project model"""
-    form = ProjectAdminForm
-    list_display = ['title', 'order', 'created_at']
-    list_editable = ['order']
-    readonly_fields = ('thumbnail_preview', 'created_at')
-    fieldsets = (
-        ('Basic Info', {'fields': ('title', 'description')}),
-        ('Thumbnail', {'fields': ('thumbnail_img', 'thumbnail_url', 'thumbnail_preview')}),
-        ('Links', {'fields': ('github_link', 'demo_link')}),
-        ('Technical', {'fields': ('technologies',)}),
-        ('Meta', {'fields': ('order', 'created_at')}),
-    )
-    search_fields = ['title', 'description', 'technologies']
 
-    @admin.display(description='Thumbnail Preview')
+    form = ProjectAdminForm
+    list_display = ["title", "order", "created_at"]
+    list_editable = ["order"]
+    readonly_fields = ("thumbnail_preview", "created_at")
+    fieldsets = (
+        ("Basic Info", {"fields": ("title", "description")}),
+        (
+            "Thumbnail",
+            {"fields": ("thumbnail_img", "thumbnail_url", "thumbnail_preview")},
+        ),
+        ("Links", {"fields": ("github_link", "demo_link")}),
+        ("Technical", {"fields": ("technologies",)}),
+        ("Meta", {"fields": ("order", "created_at")}),
+    )
+    search_fields = ["title", "description", "technologies"]
+
+    @admin.display(description="Thumbnail Preview")
     def thumbnail_preview(self, obj):
         if obj:
             url = obj.effective_thumbnail
             if url:
-                return format_html('<img src="{}" style="max-width: 200px; height: auto;" />', escape(url))
-        return '(No image)'
+                return format_html(
+                    '<img src="{}" style="max-width: 200px; height: auto;" />',
+                    escape(url),
+                )
+        return "(No image)"
 
 
 class LogEntryAdmin(admin.ModelAdmin):
@@ -379,7 +427,9 @@ class LogEntryAdmin(admin.ModelAdmin):
                 )
                 return redirect(self._changelist_url())
         else:
-            retention_days = max(int(getattr(settings, "ADMIN_LOG_RETENTION_DAYS", 90)), 1)
+            retention_days = max(
+                int(getattr(settings, "ADMIN_LOG_RETENTION_DAYS", 90)), 1
+            )
 
         cutoff = timezone.now() - timedelta(days=retention_days)
         deleted_count, _ = LogEntry.objects.filter(action_time__lt=cutoff).delete()
@@ -392,7 +442,24 @@ class LogEntryAdmin(admin.ModelAdmin):
         return redirect(self._changelist_url())
 
 
+class ExperienceAdmin(admin.ModelAdmin):
+    """Admin for Experience model"""
+
+    list_display = ["position", "company", "work_type", "start_date", "is_current", "order"]
+    list_editable = ["order"]
+    list_filter = ["is_current", "work_type"]
+    search_fields = ["company", "position", "location"]
+    fieldsets = (
+        ("Position", {"fields": ("position", "company", "company_url")}),
+        ("Work Details", {"fields": ("work_type", "location")}),
+        ("Duration", {"fields": ("start_date", "end_date", "is_current")}),
+        ("Details", {"fields": ("description",)}),
+        ("Ordering", {"fields": ("order",)}),
+    )
+
+
 admin.site.register(AboutMe, AboutMeAdmin)
 admin.site.register(Skill, SkillAdmin)
+admin.site.register(Experience, ExperienceAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(LogEntry, LogEntryAdmin)
