@@ -1,13 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
   /* ── Lazy-load iframes (YouTube, Spotify, etc.) ────────────────── */
-  /* Prevents all embeds from loading simultaneously on page load,   */
-  /* which caused the page to stall/freeze, especially on mobile.    */
-  /*                                                                  */
-  /* Strategy:                                                        */
+  /* The server-side `lazy_iframes` template filter already delivers  */
+  /* iframes with data-src instead of src, so the browser never       */
+  /* eagerly loads them. This JS restores src when appropriate:        */
   /*   Desktop → IntersectionObserver with queued concurrent loading  */
   /*   Mobile  → click-to-load facades (tap the ▶ to load)           */
   (function lazyLoadIframes() {
-    var iframes = document.querySelectorAll(".blog-content iframe, .ck-content iframe");
+    var iframes = document.querySelectorAll("iframe.lazy-iframe[data-src]");
     if (!iframes.length) return;
 
     var isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -16,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var activeLoads = 0;
     var loadQueue = [];
 
-    // Extract YouTube video ID from various YouTube URL formats
+    // Extract YouTube video ID from various URL formats
     function getYouTubeId(url) {
       if (!url) return null;
       var m = url.match(/(?:youtube\.com\/embed\/|youtu\.be\/|youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/);
@@ -35,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
         function () {
           iframe.classList.remove("lazy-iframe");
           iframe.classList.add("lazy-iframe--loaded");
-          // Remove facade overlay if present
           var facade = iframe.parentElement &&
             iframe.parentElement.querySelector(".lazy-iframe-facade");
           if (facade) facade.remove();
@@ -51,10 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function drainQueue() {
       while (loadQueue.length > 0 && activeLoads < MAX_CONCURRENT) {
         var next = loadQueue.shift();
-        // Only load if it still has data-src (wasn't loaded some other way)
-        if (next.getAttribute("data-src")) {
-          startLoad(next);
-        }
+        if (next.getAttribute("data-src")) startLoad(next);
       }
     }
 
@@ -67,20 +62,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // ── Prepare all iframes: strip src, add placeholder styling ──
-    iframes.forEach(function (iframe) {
-      var src = iframe.getAttribute("src");
-      if (!src) return;
-
-      iframe.setAttribute("data-src", src);
-      iframe.removeAttribute("src");
-      iframe.classList.add("lazy-iframe");
-      iframe.setAttribute("loading", "lazy");
-
-      // On mobile: wrap iframe in a facade with a play button
-      if (isMobile) {
+    // ── Mobile: add click-to-load facades ──
+    if (isMobile) {
+      iframes.forEach(function (iframe) {
         var wrapper = iframe.parentElement;
-        // Make sure the parent is position-relative for the overlay
         if (wrapper && getComputedStyle(wrapper).position === "static") {
           wrapper.style.position = "relative";
         }
@@ -88,8 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var facade = document.createElement("div");
         facade.className = "lazy-iframe-facade";
 
-        // For YouTube: show the video thumbnail as background
-        var ytId = getYouTubeId(src);
+        var ytId = getYouTubeId(iframe.getAttribute("data-src"));
         if (ytId) {
           facade.style.backgroundImage =
             "url(https://img.youtube.com/vi/" + ytId + "/hqdefault.jpg)";
@@ -97,16 +81,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         facade.innerHTML = '<div class="lazy-iframe-facade__play">&#9654;</div>';
-
         facade.addEventListener("click", function () {
           facade.remove();
           enqueueLoad(iframe);
         });
 
-        // Insert facade right before the iframe
         iframe.parentNode.insertBefore(facade, iframe);
-      }
-    });
+      });
+    }
 
     // ── Desktop: auto-load via IntersectionObserver with queue ──
     if (!isMobile && "IntersectionObserver" in window) {
@@ -122,9 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       iframes.forEach(function (iframe) {
-        if (iframe.getAttribute("data-src")) {
-          observer.observe(iframe);
-        }
+        observer.observe(iframe);
       });
     } else if (!isMobile) {
       // Fallback for desktop without IntersectionObserver
@@ -132,7 +112,6 @@ document.addEventListener("DOMContentLoaded", function () {
         enqueueLoad(iframe);
       });
     }
-    // Mobile: iframes are loaded only on tap (facade click handler above)
   })();
 
   /* ── Reading Progress Bar ─────────────────────────────────────── */

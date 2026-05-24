@@ -93,7 +93,7 @@
 
     <!-- Blog Content -->
     <div class="blog-content ck-content leading-relaxed mt-2">
-        {{ blog.content|safe }}
+        {{ blog.content|lazy_iframes|safe }}
     </div>
 
     <!-- Social Share Buttons -->
