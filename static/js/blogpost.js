@@ -1,19 +1,88 @@
 document.addEventListener("DOMContentLoaded", function () {
+  /* ── Lazy-load iframes (YouTube, Spotify, etc.) ────────────────── */
+  /* Prevents all embeds from loading simultaneously on page load,   */
+  /* which was causing the page to stall for 7+ seconds on posts     */
+  /* with many media embeds (e.g. /blog/my-musics/).                 */
+  (function lazyLoadIframes() {
+    const iframes = document.querySelectorAll(".blog-content iframe, .ck-content iframe");
+    if (!iframes.length) return;
+
+    iframes.forEach(function (iframe) {
+      const src = iframe.getAttribute("src");
+      if (!src) return;
+
+      // Move real src to data-src so the browser doesn't fetch it yet
+      iframe.setAttribute("data-src", src);
+      iframe.removeAttribute("src");
+
+      // Mark as not-yet-loaded for CSS placeholder styling
+      iframe.classList.add("lazy-iframe");
+
+      // Also add native lazy-loading as a progressive enhancement
+      iframe.setAttribute("loading", "lazy");
+    });
+
+    // Use IntersectionObserver to load iframes as they approach the viewport
+    if ("IntersectionObserver" in window) {
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+
+            var iframe = entry.target;
+            var dataSrc = iframe.getAttribute("data-src");
+            if (dataSrc) {
+              iframe.setAttribute("src", dataSrc);
+              iframe.removeAttribute("data-src");
+              iframe.addEventListener(
+                "load",
+                function () {
+                  iframe.classList.remove("lazy-iframe");
+                  iframe.classList.add("lazy-iframe--loaded");
+                  // Recalculate progress bar after iframe loads (height changes)
+                  if (typeof window.updateProgressBar === "function") window.updateProgressBar();
+                },
+                { once: true },
+              );
+            }
+            observer.unobserve(iframe);
+          });
+        },
+        { rootMargin: "200px 0px" },
+      );
+
+      iframes.forEach(function (iframe) {
+        observer.observe(iframe);
+      });
+    } else {
+      // Fallback: load all iframes immediately if IntersectionObserver is unavailable
+      iframes.forEach(function (iframe) {
+        var dataSrc = iframe.getAttribute("data-src");
+        if (dataSrc) {
+          iframe.setAttribute("src", dataSrc);
+          iframe.removeAttribute("data-src");
+          iframe.classList.remove("lazy-iframe");
+        }
+      });
+    }
+  })();
+
   /* ── Reading Progress Bar ─────────────────────────────────────── */
   const progressBar = document.getElementById("reading-progress-bar");
 
   if (progressBar) {
-    function updateProgressBar() {
+    // Expose updateProgressBar so lazy-loaded iframes can trigger a recalc
+    window.updateProgressBar = function updateProgressBar() {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const docHeight =
         document.documentElement.scrollHeight -
         document.documentElement.clientHeight;
       const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
       progressBar.style.width = Math.min(progress, 100) + "%";
-    }
+    };
 
-    window.addEventListener("scroll", updateProgressBar, { passive: true });
-    updateProgressBar();
+    window.addEventListener("scroll", window.updateProgressBar, { passive: true });
+    window.updateProgressBar();
   }
 
   /* ── Copy Link Button ─────────────────────────────────────────── */
