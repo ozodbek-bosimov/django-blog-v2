@@ -1,135 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
-  /* ── Lazy-load iframes (YouTube, Spotify, etc.) ────────────────── */
-  /* The server-side `lazy_iframes` template filter already delivers  */
-  /* iframes with data-src instead of src, so the browser never       */
-  /* eagerly loads them. This JS restores src when appropriate:        */
-  /*   Desktop → IntersectionObserver with queued concurrent loading  */
-  /*   Mobile  → click-to-load facades (tap the ▶ to load)           */
-  (function lazyLoadIframes() {
-    var iframes = document.querySelectorAll("iframe.lazy-iframe[data-src]");
-    if (!iframes.length) return;
-
-    var isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-    var MAX_CONCURRENT = isMobile ? 1 : 2;
-    var MARGIN = isMobile ? "50px 0px" : "200px 0px";
-    var activeLoads = 0;
-    var loadQueue = [];
-
-    // Extract YouTube video ID from various URL formats
-    function getYouTubeId(url) {
-      if (!url) return null;
-      var m = url.match(/(?:youtube\.com\/embed\/|youtu\.be\/|youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/);
-      return m ? m[1] : null;
-    }
-
-    // Actually start loading one iframe
-    function startLoad(iframe) {
-      var dataSrc = iframe.getAttribute("data-src");
-      if (!dataSrc) return;
-      activeLoads++;
-      iframe.setAttribute("src", dataSrc);
-      iframe.removeAttribute("data-src");
-      iframe.addEventListener(
-        "load",
-        function () {
-          iframe.classList.remove("lazy-iframe");
-          iframe.classList.add("lazy-iframe--loaded");
-          var facade = iframe.parentElement &&
-            iframe.parentElement.querySelector(".lazy-iframe-facade");
-          if (facade) facade.remove();
-          activeLoads--;
-          drainQueue();
-          if (typeof window.updateProgressBar === "function") window.updateProgressBar();
-        },
-        { once: true },
-      );
-    }
-
-    // Process the next queued iframe if we have capacity
-    function drainQueue() {
-      while (loadQueue.length > 0 && activeLoads < MAX_CONCURRENT) {
-        var next = loadQueue.shift();
-        if (next.getAttribute("data-src")) startLoad(next);
-      }
-    }
-
-    // Enqueue an iframe for loading (respects concurrency limit)
-    function enqueueLoad(iframe) {
-      if (activeLoads < MAX_CONCURRENT) {
-        startLoad(iframe);
-      } else {
-        loadQueue.push(iframe);
-      }
-    }
-
-    // ── Mobile: add click-to-load facades ──
-    if (isMobile) {
-      iframes.forEach(function (iframe) {
-        var wrapper = iframe.parentElement;
-        if (wrapper && getComputedStyle(wrapper).position === "static") {
-          wrapper.style.position = "relative";
-        }
-
-        var facade = document.createElement("div");
-        facade.className = "lazy-iframe-facade";
-
-        var ytId = getYouTubeId(iframe.getAttribute("data-src"));
-        if (ytId) {
-          facade.style.backgroundImage =
-            "url(https://img.youtube.com/vi/" + ytId + "/hqdefault.jpg)";
-          facade.classList.add("lazy-iframe-facade--yt");
-        }
-
-        facade.innerHTML = '<div class="lazy-iframe-facade__play">&#9654;</div>';
-        facade.addEventListener("click", function () {
-          facade.remove();
-          enqueueLoad(iframe);
-        });
-
-        iframe.parentNode.insertBefore(facade, iframe);
-      });
-    }
-
-    // ── Desktop: auto-load via IntersectionObserver with queue ──
-    if (!isMobile && "IntersectionObserver" in window) {
-      var observer = new IntersectionObserver(
-        function (entries) {
-          entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
-            observer.unobserve(entry.target);
-            enqueueLoad(entry.target);
-          });
-        },
-        { rootMargin: MARGIN },
-      );
-
-      iframes.forEach(function (iframe) {
-        observer.observe(iframe);
-      });
-    } else if (!isMobile) {
-      // Fallback for desktop without IntersectionObserver
-      iframes.forEach(function (iframe) {
-        enqueueLoad(iframe);
-      });
-    }
-  })();
-
   /* ── Reading Progress Bar ─────────────────────────────────────── */
   const progressBar = document.getElementById("reading-progress-bar");
 
   if (progressBar) {
-    // Expose updateProgressBar so lazy-loaded iframes can trigger a recalc
-    window.updateProgressBar = function updateProgressBar() {
+    function updateProgressBar() {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const docHeight =
         document.documentElement.scrollHeight -
         document.documentElement.clientHeight;
       const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
       progressBar.style.width = Math.min(progress, 100) + "%";
-    };
+    }
 
-    window.addEventListener("scroll", window.updateProgressBar, { passive: true });
-    window.updateProgressBar();
+    window.addEventListener("scroll", updateProgressBar, { passive: true });
+    updateProgressBar();
   }
 
   /* ── Copy Link Button ─────────────────────────────────────────── */
