@@ -96,6 +96,33 @@
         {{ blog.content|lazy_iframes|safe }}
     </div>
 
+    <!-- Inline lazy-load: no external JS dependency, no cache issues -->
+    <script>
+    (function(){
+        var iframes = document.querySelectorAll("iframe.lazy-iframe-custom[data-src]");
+        if (!iframes.length) return;
+
+        function load(iframe) {
+            var s = iframe.getAttribute("data-src");
+            if (!s) return;
+            iframe.src = s;
+            iframe.removeAttribute("data-src");
+            iframe.addEventListener("load", function(){ iframe.classList.add("loaded"); }, {once:true});
+        }
+
+        if ("IntersectionObserver" in window) {
+            var obs = new IntersectionObserver(function(entries){
+                entries.forEach(function(e){
+                    if (e.isIntersecting) { obs.unobserve(e.target); load(e.target); }
+                });
+            }, {rootMargin: "200px 0px"});
+            iframes.forEach(function(f){ obs.observe(f); });
+        } else {
+            iframes.forEach(load);
+        }
+    })();
+    </script>
+
     <!-- Social Share Buttons -->
     <div class="share-section mt-10 pt-6 border-t border-gray-700">
         <p
