@@ -11,6 +11,35 @@
     box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
 }
 
+/* ── Lazy-loaded iframe placeholder ─────────────────────────────── */
+/* Shows a skeleton shimmer while the iframe is deferred.           */
+iframe.lazy-iframe {
+    background: linear-gradient(
+        110deg,
+        rgba(31, 41, 55, 0.9) 35%,
+        rgba(55, 65, 81, 0.6) 50%,
+        rgba(31, 41, 55, 0.9) 65%
+    );
+    background-size: 200% 100%;
+    animation: lazy-iframe-shimmer 1.5s ease-in-out infinite;
+    border: 1px solid rgba(103, 232, 249, 0.08);
+}
+
+iframe.lazy-iframe--loaded {
+    animation: none;
+    background: transparent;
+    border-color: transparent;
+}
+
+@keyframes lazy-iframe-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
 /* ── Copy Link Button — Copied State ────────────────────────────── */
 #copy-link-btn.copied {
     background-color: rgba(20, 83, 45, 0.5);
