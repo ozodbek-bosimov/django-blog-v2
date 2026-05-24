@@ -40,6 +40,55 @@ iframe.lazy-iframe--loaded {
     }
 }
 
+/* ── Mobile click-to-load facade ────────────────────────────────── */
+/* On mobile, an overlay with ▶ sits on top of the iframe.          */
+/* The user taps it to start loading the embed (saves bandwidth).   */
+.lazy-iframe-facade {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+
+    /* Default dark placeholder */
+    background-color: rgba(17, 24, 39, 0.85);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* YouTube facade: thumbnail is set as inline background-image via JS */
+.lazy-iframe-facade--yt {
+    background-color: #000;
+}
+
+/* Play button circle */
+.lazy-iframe-facade__play {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: rgba(6, 182, 212, 0.85);
+    color: #fff;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 4px; /* visually center the triangle */
+    box-shadow:
+        0 0 0 4px rgba(6, 182, 212, 0.2),
+        0 8px 24px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.lazy-iframe-facade:active .lazy-iframe-facade__play {
+    transform: scale(0.9);
+    background: rgba(6, 182, 212, 1);
+}
+
 /* ── Copy Link Button — Copied State ────────────────────────────── */
 #copy-link-btn.copied {
     background-color: rgba(20, 83, 45, 0.5);
