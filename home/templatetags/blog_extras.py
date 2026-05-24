@@ -25,22 +25,29 @@ def reading_time(content):
 
 @register.filter(name="lazy_iframes")
 def lazy_iframes(content):
-    """Add loading="lazy" to every <iframe> so the browser defers off-screen ones.
-
-    This is a simple, native-browser solution. The browser will only load
-    iframes that are near the viewport and defer the rest automatically.
-    No JavaScript required.
+    """Transform iframes to use data-src instead of src.
+    
+    This completely prevents the browser from making eager network requests,
+    which is crucial for performance on mobile devices with many embeds.
+    JS will handle IntersectionObserver to load them on demand.
     """
     if not content or "<iframe" not in content.lower():
         return content
 
     def _process(match):
         full_tag = match.group(0)
-        # Skip if already has loading attribute
-        if re.search(r'\bloading\s*=', full_tag, re.IGNORECASE):
-            return full_tag
-        # Insert loading="lazy" right after "<iframe"
-        return "<iframe" + ' loading="lazy"' + full_tag[7:]
+        
+        # Add class for our custom JS and CSS to target
+        if 'class="' in full_tag:
+            full_tag = re.sub(r'class="([^"]*)"', r'class="\1 lazy-iframe-custom"', full_tag, 1)
+        else:
+            full_tag = full_tag.replace('<iframe', '<iframe class="lazy-iframe-custom"', 1)
+            
+        # Replace src="..." with data-src="..." (but not data-src or other *-src)
+        full_tag = re.sub(r'(?<![a-zA-Z-])src\s*=\s*(["\'])(.*?)\1', r'data-src="\2"', full_tag, flags=re.IGNORECASE)
+        
+        return full_tag
 
     result = re.sub(r"<iframe\b[^>]*>", _process, content, flags=re.IGNORECASE)
     return mark_safe(result)
+
