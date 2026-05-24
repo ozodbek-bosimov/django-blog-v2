@@ -1,4 +1,50 @@
 document.addEventListener("DOMContentLoaded", function () {
+  /* ── True Lazy Loading with IntersectionObserver ──────────────── */
+  /* Iframes are initially rendered with data-src. This completely   */
+  /* stops the browser from downloading them on page load. When the  */
+  /* user scrolls near them, we swap data-src to src to load them.   */
+  var iframes = document.querySelectorAll("iframe.lazy-iframe-custom");
+  
+  if ("IntersectionObserver" in window) {
+    var observer = new IntersectionObserver(
+      function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            var iframe = entry.target;
+            var dataSrc = iframe.getAttribute("data-src");
+            if (dataSrc) {
+              // Listen for the actual load to stop the shimmer effect
+              iframe.addEventListener("load", function () {
+                iframe.classList.add("loaded");
+              }, { once: true });
+              
+              iframe.src = dataSrc;
+              iframe.removeAttribute("data-src");
+            }
+            observer.unobserve(iframe);
+          }
+        });
+      },
+      { rootMargin: "300px 0px" } // Load slightly before it enters screen
+    );
+
+    iframes.forEach(function (iframe) {
+      observer.observe(iframe);
+    });
+  } else {
+    // Fallback if IntersectionObserver is not supported
+    iframes.forEach(function (iframe) {
+      var dataSrc = iframe.getAttribute("data-src");
+      if (dataSrc) {
+        iframe.src = dataSrc;
+        iframe.removeAttribute("data-src");
+      }
+      iframe.addEventListener("load", function () {
+        iframe.classList.add("loaded");
+      }, { once: true });
+    });
+  }
+
   /* ── Reading Progress Bar ─────────────────────────────────────── */
   const progressBar = document.getElementById("reading-progress-bar");
 
