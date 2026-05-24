@@ -96,29 +96,32 @@
         {{ blog.content|lazy_iframes|safe }}
     </div>
 
-    <!-- Inline lazy-load: no external JS dependency, no cache issues -->
+    <!-- Inline lazy-load: clones iframes from <template> when scrolled into view -->
     <script>
     (function(){
-        var iframes = document.querySelectorAll("iframe.lazy-iframe-custom[data-src]");
-        if (!iframes.length) return;
+        var phs = document.querySelectorAll(".lazy-iframe-ph");
+        if (!phs.length) return;
 
-        function load(iframe) {
-            var s = iframe.getAttribute("data-src");
-            if (!s) return;
-            iframe.src = s;
-            iframe.removeAttribute("data-src");
-            iframe.addEventListener("load", function(){ iframe.classList.add("loaded"); }, {once:true});
+        function loadIframe(ph) {
+            var tpl = ph.nextElementSibling;
+            if (!tpl || tpl.tagName !== "TEMPLATE") return;
+            // Clone the original iframe from the template
+            var iframe = tpl.content.firstElementChild.cloneNode(true);
+            // Insert the real iframe and remove placeholder + template
+            ph.parentNode.insertBefore(iframe, ph);
+            ph.remove();
+            tpl.remove();
         }
 
         if ("IntersectionObserver" in window) {
             var obs = new IntersectionObserver(function(entries){
                 entries.forEach(function(e){
-                    if (e.isIntersecting) { obs.unobserve(e.target); load(e.target); }
+                    if (e.isIntersecting) { obs.unobserve(e.target); loadIframe(e.target); }
                 });
             }, {rootMargin: "200px 0px"});
-            iframes.forEach(function(f){ obs.observe(f); });
+            phs.forEach(function(ph){ obs.observe(ph); });
         } else {
-            iframes.forEach(load);
+            phs.forEach(loadIframe);
         }
     })();
     </script>

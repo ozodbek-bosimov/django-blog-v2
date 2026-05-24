@@ -23,31 +23,37 @@ def reading_time(content):
     return minutes
 
 
+# Matches an entire <iframe ...>...</iframe> element (with optional closing tag)
+_IFRAME_RE = re.compile(
+    r"(<iframe\b[^>]*>)(</iframe>)?",
+    re.IGNORECASE,
+)
+
+
 @register.filter(name="lazy_iframes")
 def lazy_iframes(content):
-    """Transform iframes to use data-src instead of src.
-    
-    This completely prevents the browser from making eager network requests,
-    which is crucial for performance on mobile devices with many embeds.
-    JS will handle IntersectionObserver to load them on demand.
+    """Replace iframes with placeholder + <template> for true lazy loading.
+
+    The <template> element is inert — its content is NOT parsed, rendered,
+    or loaded by the browser. When IntersectionObserver fires, we clone the
+    template content and insert the ORIGINAL iframe into the DOM as a fresh
+    element. This avoids Safari's Error 153 (caused by dynamically setting
+    iframe.src via JS) because the cloned iframe has src set from birth.
     """
     if not content or "<iframe" not in content.lower():
         return content
 
     def _process(match):
-        full_tag = match.group(0)
-        
-        # Add class for our custom JS and CSS to target
-        if 'class="' in full_tag:
-            full_tag = re.sub(r'class="([^"]*)"', r'class="\1 lazy-iframe-custom"', full_tag, 1)
-        else:
-            full_tag = full_tag.replace('<iframe', '<iframe class="lazy-iframe-custom"', 1)
-            
-        # Replace src="..." with data-src="..." (but not data-src or other *-src)
-        full_tag = re.sub(r'(?<![a-zA-Z-])src\s*=\s*(["\'])(.*?)\1', r'data-src="\2"', full_tag, flags=re.IGNORECASE)
-        
-        return full_tag
+        iframe_open = match.group(1)   # <iframe ...>
+        iframe_close = match.group(2) or "</iframe>"  # </iframe>
+        original = iframe_open + iframe_close
 
-    result = re.sub(r"<iframe\b[^>]*>", _process, content, flags=re.IGNORECASE)
+        return (
+            '<div class="lazy-iframe-ph"></div>'
+            '<template class="lazy-tpl">'
+            + original
+            + "</template>"
+        )
+
+    result = _IFRAME_RE.sub(_process, content)
     return mark_safe(result)
-

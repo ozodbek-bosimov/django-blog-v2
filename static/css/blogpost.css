@@ -13,8 +13,15 @@
 
 
 /* ── Iframe Skeleton Placeholder ────────────────────────────────── */
-/* Shimmer effect shown while each iframe is still loading.         */
-.blog-content iframe.lazy-iframe-custom:not(.loaded) {
+/* Visible placeholder shown while the real iframe is deferred      */
+/* inside a <template> element. Removed when the iframe loads.      */
+.lazy-iframe-ph {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
     background: linear-gradient(
         110deg,
         rgba(31, 41, 55, 1) 30%,
