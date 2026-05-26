@@ -119,16 +119,6 @@
     margin: 0 0 0.2rem 0;
 }
 
-.timeline-company a {
-    color: #cbd5e1;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.timeline-company a:hover {
-    color: #67e8f9;
-}
-
 /* Meta line (date + duration, location + work type) */
 .timeline-meta {
     font-size: 0.82rem;
@@ -192,16 +182,24 @@
     color: inherit;
 }
 
-/* ── Multi-role: grouped by company ────────────────────────────────── */
-.timeline-position a {
-    color: #f1f5f9;
+/* ── Company header link (wraps logo + name + meta, no hover effects) ──── */
+.timeline-header-link {
+    display: block;
+    color: inherit;
     text-decoration: none;
-    transition: color 0.2s ease;
 }
 
-.timeline-position a:hover {
-    color: #67e8f9;
+.timeline-header-link .timeline-position,
+.timeline-header-link .timeline-company,
+.timeline-header-link .timeline-role-title {
+    color: inherit;
 }
+
+.timeline-header-link .timeline-meta {
+    color: #64748b;
+}
+
+/* ── Multi-role: grouped by company ────────────────────────────────── */
 
 .timeline-roles {
     position: relative;
