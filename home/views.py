@@ -4,11 +4,11 @@ from functools import reduce
 
 from django.core.cache import cache
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.shortcuts import render
 from django.templatetags.static import static
 
-from home.models import AboutMe, Blog, Experience, Project, Skill
+from home.models import AboutMe, Blog, Experience, ExperienceRole, Project, Skill
 
 # Sentinel: distinguishes "key not in cache" from "key cached with value None".
 # cache.get() returns None in both cases, so we pass this as the default instead.
@@ -91,7 +91,13 @@ def about(request):
     # Experience entries — cache for 24 hours.
     experiences = cache.get_or_set(
         "all_experiences",
-        lambda: list(Experience.objects.prefetch_related("roles").all()),
+        lambda: list(
+            Experience.objects.filter(roles__isnull=False)
+            .distinct()
+            .prefetch_related(
+                Prefetch("roles", queryset=ExperienceRole.objects.order_by("-start_date"))
+            )
+        ),
         86400,
     )
 

@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -29,6 +30,17 @@ def _compress_and_rename_image(image_field, max_size=(1000, 1000), quality=80):
     if getattr(image_field, "_committed", True):
         return image_field
 
+    # Smart check: If the uploaded file is already extremely small (less than 20 KB)
+    # AND its dimensions are within max_size, we avoid re-compressing it.
+    # This prevents huge but low-byte-size images (like simple vector line art) from skipping resize.
+    try:
+        if hasattr(image_field, "size") and image_field.size < 20 * 1024:
+            with Image.open(image_field) as img:
+                if img.width <= max_size[0] and img.height <= max_size[1]:
+                    return image_field
+    except Exception:
+        pass
+
     try:
         # Reset file pointer — critical for files that have been partially
         # read during Django's upload validation / CKEditor processing.
@@ -36,7 +48,12 @@ def _compress_and_rename_image(image_field, max_size=(1000, 1000), quality=80):
             image_field.seek(0)
 
         img = Image.open(image_field)
-        img.thumbnail(max_size, Image.Resampling.LANCZOS)
+        # If the image dimensions are already smaller than the max_size,
+        # we don't upscale or force resize it.
+        if img.width <= max_size[0] and img.height <= max_size[1]:
+            pass
+        else:
+            img.thumbnail(max_size, Image.Resampling.LANCZOS)
 
         # Decide whether to keep alpha channel
         has_alpha = img.mode in ("RGBA", "LA") or (
@@ -242,9 +259,29 @@ class Experience(models.Model):
         ("remote", "Remote"),
     ]
 
+    EMPLOYMENT_TYPE_CHOICES = [
+        ("full-time", "Full-time"),
+        ("part-time", "Part-time"),
+        ("self-employed", "Self-employed"),
+        ("freelance", "Freelance"),
+        ("contract", "Contract"),
+        ("internship", "Internship"),
+        ("apprenticeship", "Apprenticeship"),
+        ("seasonal", "Seasonal"),
+    ]
+
     company = models.CharField(max_length=200)
     company_url = models.URLField(
         blank=True, help_text="Company website URL (opens in new tab)"
+    )
+    company_logo = models.ImageField(
+        upload_to="companies/",
+        blank=True,
+        help_text="Company logo image (will be compressed to WebP)",
+    )
+    company_logo_url = models.URLField(
+        blank=True,
+        help_text="External URL for company logo (used if no file uploaded)",
     )
     # Single-position fields (used when no ExperienceRole children exist)
     position = models.CharField(max_length=200, blank=True)
@@ -269,6 +306,22 @@ class Experience(models.Model):
     order = models.IntegerField(
         default=0, help_text="Display order (lower numbers first)"
     )
+
+    @property
+    def logo_url(self):
+        """Return the best available logo URL, or None for the SVG fallback."""
+        if self.company_logo:
+            return self.company_logo.url
+        if self.company_logo_url:
+            return self.company_logo_url
+        return None
+
+    def save(self, *args, **kwargs):
+        if self.company_logo:
+            self.company_logo = _compress_and_rename_image(
+                self.company_logo, max_size=(128, 128), quality=95
+            )
+        super().save(*args, **kwargs)
 
     @staticmethod
     def _compute_duration(start_date, end_date, is_current):
@@ -354,7 +407,8 @@ class Experience(models.Model):
                 status = self.end_date.strftime("%m/%Y")
             else:
                 status = "Present"
-            return f"{self.position} @ {self.company} ({self.start_date.strftime('%m/%Y') if self.start_date else '?'} – {status})"
+            start = self.start_date.strftime('%m/%Y') if self.start_date else '?'
+            return f"{self.position} @ {self.company} ({start} – {status})"
         return self.company
 
     class Meta:
@@ -373,6 +427,11 @@ class ExperienceRole(models.Model):
         Experience, on_delete=models.CASCADE, related_name="roles"
     )
     position = models.CharField(max_length=200)
+    employment_type = models.CharField(
+        max_length=20,
+        choices=Experience.EMPLOYMENT_TYPE_CHOICES,
+        default="full-time",
+    )
     work_type = models.CharField(
         max_length=10,
         choices=Experience.WORK_TYPE_CHOICES,
@@ -389,9 +448,6 @@ class ExperienceRole(models.Model):
     description = models.TextField(
         blank=True,
         help_text="Each line becomes a bullet point.",
-    )
-    order = models.IntegerField(
-        default=0, help_text="Display order (lower numbers first)"
     )
 
     @property
@@ -410,11 +466,18 @@ class ExperienceRole(models.Model):
             if line.strip()
         ]
 
+    def clean(self):
+        super().clean()
+        if self.is_current and self.end_date:
+            raise ValidationError("A current role should not have an end date.")
+        if not self.is_current and not self.end_date:
+            raise ValidationError("Please provide an end date or mark the role as current.")
+
     def __str__(self):
         return f"{self.position} @ {self.experience.company}"
 
     class Meta:
-        ordering = ["order", "-start_date"]
+        ordering = ["-start_date"]
         verbose_name = "Experience Role"
         verbose_name_plural = "Experience Roles"
 
@@ -488,7 +551,7 @@ def _extract_media_paths_from_html(html_content):
     for raw_url in re.findall(r'(?:src|href)=["\']([^"\']+)["\']', html_content):
         parsed_path = urlparse(raw_url).path
         if parsed_path.startswith(media_url):
-            relative_path = parsed_path[len(media_url) :].lstrip("/")
+            relative_path = parsed_path[len(media_url):].lstrip("/")
             if relative_path:
                 paths.add(relative_path)
     return paths
@@ -611,15 +674,27 @@ def cleanup_project_thumbnail_on_save(sender, instance, **kwargs):
         old = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
         return
-    if old.thumbnail_img and old.thumbnail_img != instance.thumbnail_img:
-        old.thumbnail_img.delete(save=False)
+
+    old_thumb = old.thumbnail_img.name if old.thumbnail_img else None
+    new_thumb = instance.thumbnail_img.name if instance.thumbnail_img else None
+
+    if old_thumb and old_thumb != new_thumb:
+        try:
+            if default_storage.exists(old_thumb):
+                default_storage.delete(old_thumb)
+        except Exception:
+            pass
 
 
 @receiver(post_delete, sender=Project)
 def cleanup_project_thumbnail_on_delete(sender, instance, **kwargs):
     """Delete thumbnail file when Project is deleted."""
-    if instance.thumbnail_img:
-        instance.thumbnail_img.delete(save=False)
+    if instance.thumbnail_img and instance.thumbnail_img.name:
+        try:
+            if default_storage.exists(instance.thumbnail_img.name):
+                default_storage.delete(instance.thumbnail_img.name)
+        except Exception:
+            pass
 
 
 @receiver([post_save, post_delete], sender=Project)
@@ -632,6 +707,38 @@ def invalidate_project_cache(sender, instance, **kwargs):
 def invalidate_skill_cache(sender, instance, **kwargs):
     """Invalidate skills cache when a Skill is created, updated, or deleted."""
     cache.delete("all_skills")
+
+
+@receiver(pre_save, sender=Experience)
+def cleanup_experience_logo_on_save(sender, instance, **kwargs):
+    """Delete old company logo when it is changed or replaced."""
+    if not instance.pk:
+        return
+    try:
+        old = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+
+    old_logo = old.company_logo.name if old.company_logo else None
+    new_logo = instance.company_logo.name if instance.company_logo else None
+
+    if old_logo and old_logo != new_logo:
+        try:
+            if default_storage.exists(old_logo):
+                default_storage.delete(old_logo)
+        except Exception:
+            pass
+
+
+@receiver(post_delete, sender=Experience)
+def cleanup_experience_logo_on_delete(sender, instance, **kwargs):
+    """Delete company logo file when Experience is deleted."""
+    if instance.company_logo and instance.company_logo.name:
+        try:
+            if default_storage.exists(instance.company_logo.name):
+                default_storage.delete(instance.company_logo.name)
+        except Exception:
+            pass
 
 
 @receiver([post_save, post_delete], sender=Experience)
