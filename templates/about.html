@@ -192,6 +192,7 @@
                 <div class="timeline-dot"></div>
 
                 <div class="timeline-card">
+                    {% if exp.company_url %}<a href="{{ exp.company_url }}" target="_blank" rel="noopener noreferrer" class="timeline-header-link">{% endif %}
                     <div class="timeline-card-header">
                         {# Company logo #}
                         <div class="timeline-logo">
@@ -214,16 +215,11 @@
                         </div>
                         <div class="timeline-card-info">
                             {# Company header #}
-                            <h3 class="timeline-position">
-                                {% if exp.company_url %}
-                                <a href="{{ exp.company_url }}" target="_blank" rel="noopener noreferrer">{{ exp.company }}</a>
-                                {% else %}
-                                {{ exp.company }}
-                                {% endif %}
-                            </h3>
+                            <h3 class="timeline-position">{{ exp.company }}</h3>
                             <p class="timeline-meta">{{ exp.total_duration_display }}</p>
                         </div>
                     </div>
+                    {% if exp.company_url %}</a>{% endif %}
 
                     {# Sub-roles #}
                     <div class="timeline-roles">
@@ -231,6 +227,7 @@
                         <div class="timeline-role">
                             <div class="timeline-role-dot"></div>
                             <div class="timeline-role-content">
+                                {% if exp.company_url %}<a href="{{ exp.company_url }}" target="_blank" rel="noopener noreferrer" class="timeline-header-link">{% endif %}
                                 <h4 class="timeline-role-title">{{ role.position }}</h4>
                                 <p class="timeline-meta">
                                     {{ role.start_date|date:"M Y" }} –
@@ -248,19 +245,20 @@
                                     <span class="timeline-sep">·</span>
                                     {{ role.get_work_type_display }}
                                 </p>
+                                {% if exp.company_url %}</a>{% endif %}
                                 {% if role.description_lines %}
                                 <ul class="timeline-bullets" id="bullets-role-{{ role.id }}">
                                     {% for line in role.description_lines %}
-                                        {% if forloop.counter == 3 and role.description_lines|length > 3 %}
+                                        {% if forloop.counter == 2 and role.description_lines|length > 2 %}
                                         <li>
                                             {{ line }}<button type="button" class="timeline-inline-more" onclick="toggleBullets('bullets-role-{{ role.id }}')"><span class="timeline-ellipsis">... </span>more</button>
                                         </li>
-                                        {% elif forloop.last and role.description_lines|length > 3 %}
+                                        {% elif forloop.last and role.description_lines|length > 2 %}
                                         <li class="hidden-bullet">
                                             {{ line }}<button type="button" class="timeline-inline-less" onclick="toggleBullets('bullets-role-{{ role.id }}')">less</button>
                                         </li>
                                         {% else %}
-                                        <li class="{% if forloop.counter > 3 %}hidden-bullet{% endif %}">{{ line }}</li>
+                                        <li class="{% if forloop.counter > 2 %}hidden-bullet{% endif %}">{{ line }}</li>
                                         {% endif %}
                                     {% endfor %}
                                 </ul>
@@ -279,6 +277,7 @@
                 <div class="timeline-dot"></div>
 
                 <div class="timeline-card">
+                    {% if exp.company_url %}<a href="{{ exp.company_url }}" target="_blank" rel="noopener noreferrer" class="timeline-header-link">{% endif %}
                     <div class="timeline-card-header">
                         {# Company logo #}
                         <div class="timeline-logo">
@@ -301,13 +300,7 @@
                         </div>
                         <div class="timeline-card-info">
                             <h3 class="timeline-position">{{ role.position }}</h3>
-                            <p class="timeline-company">
-                                {% if exp.company_url %}
-                                <a href="{{ exp.company_url }}" target="_blank" rel="noopener noreferrer">{{ exp.company }}</a>
-                                {% else %}
-                                {{ exp.company }}
-                                {% endif %}
-                            </p>
+                            <p class="timeline-company">{{ exp.company }}</p>
                         </div>
                     </div>
                     {% if role.start_date %}
@@ -328,19 +321,20 @@
                         <span class="timeline-sep">·</span>
                         {{ role.get_work_type_display }}
                     </p>
+                    {% if exp.company_url %}</a>{% endif %}
                     {% if role.description_lines %}
                     <ul class="timeline-bullets" id="bullets-single-{{ role.id }}">
                         {% for line in role.description_lines %}
-                            {% if forloop.counter == 3 and role.description_lines|length > 3 %}
+                            {% if forloop.counter == 2 and role.description_lines|length > 2 %}
                             <li>
                                 {{ line }}<button type="button" class="timeline-inline-more" onclick="toggleBullets('bullets-single-{{ role.id }}')"><span class="timeline-ellipsis">... </span>more</button>
                             </li>
-                            {% elif forloop.last and role.description_lines|length > 3 %}
+                            {% elif forloop.last and role.description_lines|length > 2 %}
                             <li class="hidden-bullet">
                                 {{ line }}<button type="button" class="timeline-inline-less" onclick="toggleBullets('bullets-single-{{ role.id }}')">less</button>
                             </li>
                             {% else %}
-                            <li class="{% if forloop.counter > 3 %}hidden-bullet{% endif %}">{{ line }}</li>
+                            <li class="{% if forloop.counter > 2 %}hidden-bullet{% endif %}">{{ line }}</li>
                             {% endif %}
                         {% endfor %}
                     </ul>
