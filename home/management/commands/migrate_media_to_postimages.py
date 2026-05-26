@@ -65,14 +65,14 @@ class Command(BaseCommand):
         if files_to_move:
             self.stdout.write(
                 self.style.WARNING(
-                    f"\n📁 {len(files_to_move)} ta rasm media/ root'ida topildi:"
+                    f"\n📁 Found {len(files_to_move)} image(s) in media/ root:"
                 )
             )
             for f in sorted(files_to_move):
                 self.stdout.write(f"   media/{f}  →  media/postimages/{f}")
         else:
             self.stdout.write(
-                self.style.SUCCESS("\n✅ media/ root'ida ko'chiriladigan rasm yo'q.")
+                self.style.SUCCESS("\n✅ No images to move in media/ root.")
             )
 
         # ------------------------------------------------------------------
@@ -86,8 +86,8 @@ class Command(BaseCommand):
                 if os.path.exists(dst):
                     self.stdout.write(
                         self.style.WARNING(
-                            f"   ⚠️  {f} allaqachon postimages/ da bor — "
-                            f"faqat root'dan o'chiriladi"
+                            f"   ⚠️  {f} already exists in postimages/ — "
+                            "deleting only from root"
                         )
                     )
                     os.remove(src)
@@ -95,7 +95,9 @@ class Command(BaseCommand):
                     shutil.move(src, dst)
                 moved_count += 1
             self.stdout.write(
-                self.style.SUCCESS(f"\n✅ {moved_count} ta fayl media/ root'dan ko'chirildi.")
+                self.style.SUCCESS(
+                    f"\n✅ {moved_count} file(s) moved from media/ root."
+                )
             )
 
         # ------------------------------------------------------------------
@@ -115,7 +117,7 @@ class Command(BaseCommand):
         if images_files:
             self.stdout.write(
                 self.style.WARNING(
-                    f"\n📁 {len(images_files)} ta rasm media/images/ da topildi:"
+                    f"\n📁 Found {len(images_files)} image(s) in media/images/:"
                 )
             )
             for f in sorted(images_files):
@@ -123,7 +125,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 self.style.SUCCESS(
-                    "\n✅ media/images/ da ko'chiriladigan rasm yo'q."
+                    "\n✅ No images to move in media/images/."
                 )
             )
 
@@ -135,8 +137,8 @@ class Command(BaseCommand):
                 if os.path.exists(dst):
                     self.stdout.write(
                         self.style.WARNING(
-                            f"   ⚠️  {f} allaqachon postimages/ da bor — "
-                            f"faqat images/ dan o'chiriladi"
+                            f"   ⚠️  {f} already exists in postimages/ — "
+                            "deleting only from images/"
                         )
                     )
                     os.remove(src)
@@ -145,14 +147,14 @@ class Command(BaseCommand):
                 images_moved += 1
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"\n✅ {images_moved} ta fayl media/images/ dan ko'chirildi."
+                    f"\n✅ {images_moved} file(s) moved from media/images/."
                 )
             )
             # Remove empty images/ directory
             try:
                 os.rmdir(images_dir)
                 self.stdout.write(
-                    self.style.SUCCESS("   📂 Bo'sh media/images/ papkasi o'chirildi.")
+                    self.style.SUCCESS("   📂 Removed empty media/images/ folder.")
                 )
             except OSError:
                 pass  # directory not empty (has non-image files)
@@ -178,8 +180,8 @@ class Command(BaseCommand):
 
         def replace_refs(html):
             """Replace /media/file.jpg and /media/images/file.jpg → /media/postimages/file.jpg"""
-            html = pattern_images.sub(rf"\1postimages/\2", html)
-            html = pattern_root.sub(rf"\1postimages/\2", html)
+            html = pattern_images.sub(r"\1postimages/\2", html)
+            html = pattern_root.sub(r"\1postimages/\2", html)
             return html
 
         # --- Blog.content ---
@@ -197,26 +199,23 @@ class Command(BaseCommand):
                 aboutme_updates.append((about, new_bio))
 
         if blog_updates or aboutme_updates:
-            self.stdout.write(
-                self.style.WARNING(
-                    f"\n📝 DB yangilanishlari: "
-                    f"{len(blog_updates)} blog post, "
-                    f"{len(aboutme_updates)} aboutme"
-                )
-            )
+            msg = (
+                "\n📝 DB updates: {} blog post(s), {} aboutme"
+            ).format(len(blog_updates), len(aboutme_updates))
+            self.stdout.write(self.style.WARNING(msg))
             for blog, new_content in blog_updates:
                 self.stdout.write(
-                    f"   Blog #{blog.sno} [{blog.title[:40]}]: reference yangilanadi"
+                    f"   Blog #{blog.sno} [{blog.title[:40]}]: reference will be updated"
                 )
 
             for about, new_bio in aboutme_updates:
                 self.stdout.write(
-                    f"   AboutMe [{about.name[:40]}]: reference yangilanadi"
+                    f"   AboutMe [{about.name[:40]}]: reference will be updated"
                 )
         else:
             self.stdout.write(
                 self.style.SUCCESS(
-                    "\n✅ DB'da yangilanishi kerak bo'lgan reference yo'q."
+                    "\n✅ No DB references to update."
                 )
             )
 
@@ -233,7 +232,7 @@ class Command(BaseCommand):
                 AboutMe.objects.filter(pk=about.pk).update(bio=new_bio)
 
             self.stdout.write(
-                self.style.SUCCESS("✅ DB referencelar yangilandi.")
+                self.style.SUCCESS("✅ DB references updated.")
             )
 
         # ------------------------------------------------------------------
@@ -243,9 +242,9 @@ class Command(BaseCommand):
         if not apply and has_work:
             self.stdout.write(
                 self.style.NOTICE(
-                    "\n⚡ Bu dry-run edi. Haqiqatdan bajarish uchun:\n"
+                    "\n⚡ This was a dry run. To apply changes:\n"
                     "   python manage.py migrate_media_to_postimages --apply\n"
                 )
             )
         elif apply:
-            self.stdout.write(self.style.SUCCESS("\n🎉 Hammasi tayyor!"))
+            self.stdout.write(self.style.SUCCESS("\n🎉 All done!"))

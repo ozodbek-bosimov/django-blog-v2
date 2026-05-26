@@ -26,13 +26,12 @@
     content: "";
     position: absolute;
     left: 0;
-    top: 0;
+    top: 0.6rem;
     bottom: -2rem;
     width: 1px;
     background: linear-gradient(to bottom,
-            transparent,
-            rgba(34, 211, 238, 0.25) 15%,
-            rgba(34, 211, 238, 0.12) 85%,
+            rgba(34, 211, 238, 0.25) 0%,
+            rgba(34, 211, 238, 0.15) 80%,
             transparent);
 }
 
@@ -75,9 +74,38 @@
     padding-bottom: 0;
 }
 
+/* Card header with logo */
+.timeline-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.timeline-logo {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 0.1rem;
+}
+
+.timeline-logo img,
+.timeline-logo svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.timeline-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
 /* Position title */
 .timeline-position {
-    font-size: 1.05rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #f1f5f9;
     margin: 0 0 0.15rem 0;
@@ -86,7 +114,7 @@
 
 /* Company name */
 .timeline-company {
-    font-size: 0.92rem;
+    font-size: 1.1rem;
     color: #cbd5e1;
     margin: 0 0 0.2rem 0;
 }
@@ -117,16 +145,51 @@
 
 /* Bullet-pointed achievements */
 .timeline-bullets {
-    list-style: none;
-    padding: 0;
+    list-style-type: none;
+    padding-left: 0;
     margin: 0.65rem 0 0 0;
 }
 
 .timeline-bullets li {
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     color: #e2e8f0;
-    line-height: 1.65;
-    margin-bottom: 0.25rem;
+    line-height: 1.4;
+    margin-bottom: 0.18rem;
+    padding-left: 0;
+}
+
+.timeline-bullets li.hidden-bullet {
+    display: none;
+}
+
+/* Inline more/less buttons */
+.timeline-inline-more,
+.timeline-inline-less {
+    background: none;
+    border: none;
+    color: #64748b; /* meta data color */
+    font-size: 0.95rem;
+    font-family: inherit;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s;
+    display: inline;
+}
+
+.timeline-inline-less {
+    margin-left: 0.45rem;
+}
+
+.timeline-inline-more:hover,
+.timeline-inline-less:hover {
+    color: #94a3b8;
+    text-decoration: underline;
+}
+
+.timeline-ellipsis {
+    color: inherit;
 }
 
 /* ── Multi-role: grouped by company ────────────────────────────────── */
@@ -186,7 +249,7 @@
 }
 
 .timeline-role-title {
-    font-size: 0.98rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: #e2e8f0;
     margin: 0 0 0.1rem 0;
@@ -215,7 +278,12 @@
     }
 
     .timeline-position {
-        font-size: 0.98rem;
+        font-size: 1.15rem;
+    }
+
+    .timeline-logo {
+        width: 34px;
+        height: 34px;
     }
 
     .timeline-roles {
@@ -234,6 +302,6 @@
     }
 
     .timeline-role-title {
-        font-size: 0.92rem;
+        font-size: 1.05rem;
     }
 }

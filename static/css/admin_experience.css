@@ -1,0 +1,25 @@
+/* Make each inline role stand out with a distinct card-like appearance */
+.inline-group .inline-related {
+    background-color: var(--body-bg, #121212);
+    border: 1px solid var(--border-color, #444);
+    border-radius: 6px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Distinct header color for each role to clearly mark where a new role begins */
+.inline-group .inline-related > h3 {
+    background-color: #1e3a4c !important; /* a distinct subtle blue shade */
+    color: #e2e8f0 !important;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom: 1px solid var(--border-color, #444);
+    padding: 8px 12px;
+    margin-bottom: 15px;
+}
+
+/* Add some padding to the form fields inside the role */
+.inline-group .inline-related fieldset {
+    padding-left: 15px;
+    padding-right: 15px;
+}

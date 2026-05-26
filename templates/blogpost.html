@@ -96,33 +96,54 @@
         {{ blog.content|lazy_iframes|safe }}
     </div>
 
-    <!-- Inline lazy-load: clones iframes from <template> when scrolled into view -->
+    <!-- Inline lazy-load: progressive background loading + scroll-triggered -->
     <script>
     (function(){
         var phs = document.querySelectorAll(".lazy-iframe-ph");
         if (!phs.length) return;
 
+        var queue = [];  // iframes waiting to be loaded
+
         function loadIframe(ph) {
+            if (ph._loaded) return;  // already loaded (guard against double-fire)
+            ph._loaded = true;
             var tpl = ph.nextElementSibling;
             if (!tpl || tpl.tagName !== "TEMPLATE") return;
-            // Clone the original iframe from the template
-            var iframe = tpl.content.firstElementChild.cloneNode(true);
-            // Insert the real iframe and remove placeholder + template
+            var el = tpl.content.firstElementChild;
+            if (!el) return;
+            var iframe = el.cloneNode(true);
             ph.parentNode.insertBefore(iframe, ph);
             ph.remove();
             tpl.remove();
         }
 
+        // 1) IntersectionObserver: load immediately when user scrolls near
         if ("IntersectionObserver" in window) {
             var obs = new IntersectionObserver(function(entries){
                 entries.forEach(function(e){
-                    if (e.isIntersecting) { obs.unobserve(e.target); loadIframe(e.target); }
+                    if (e.isIntersecting) {
+                        obs.unobserve(e.target);
+                        loadIframe(e.target);
+                    }
                 });
-            }, {rootMargin: "200px 0px"});
-            phs.forEach(function(ph){ obs.observe(ph); });
+            }, {rootMargin: "300px 0px"});
+            phs.forEach(function(ph){ obs.observe(ph); queue.push(ph); });
         } else {
             phs.forEach(loadIframe);
+            return;
         }
+
+        // 2) Background: after 2s, load remaining one by one every 1.5s
+        setTimeout(function tick(){
+            // Skip already-loaded placeholders
+            while (queue.length && queue[0]._loaded) queue.shift();
+            if (!queue.length) return;
+            var ph = queue.shift();
+            obs.unobserve(ph);
+            loadIframe(ph);
+            // Continue with remaining
+            if (queue.length) setTimeout(tick, 1500);
+        }, 2000);
     })();
     </script>
 

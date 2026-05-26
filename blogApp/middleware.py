@@ -132,7 +132,7 @@ class AdminSessionTimeoutMiddleware:
         if last_run_ts and now_ts - float(last_run_ts) < self.SESSION_CLEANUP_INTERVAL_SECONDS:
             return
 
-        # Double check lock is not needed for a light operation like session cleanup 
+        # Double check lock is not needed for a light operation like session cleanup
         # but we use a simple flag to avoid multiple runs in same process.
         from django.core.management import call_command
         try:
