@@ -4,45 +4,25 @@
 {% block title %}Projects{% endblock title %}
 
 {% block meta %}
-<meta
-    name="description"
-    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments."
-/>
-<link
-    rel="canonical"
-    href="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}"
-/>
+<meta name="description"
+    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments." />
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Ozodbek Bosimov" />
 <meta property="og:locale" content="en_US" />
 <meta property="og:title" content="Projects — Ozodbek Bosimov" />
-<meta
-    property="og:description"
-    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments."
-/>
-<meta
-    property="og:url"
-    content="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}"
-/>
-<meta
-    property="og:image"
-    content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}"
-/>
+<meta property="og:description"
+    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments." />
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'projects' %}" />
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Projects — Ozodbek Bosimov" />
-<meta
-    name="twitter:description"
-    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments."
-/>
-<meta
-    name="twitter:image"
-    content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}"
-/>
+<meta name="twitter:description"
+    content="Portfolio and ongoing projects by Ozodbek Bosimov. Showcasing software applications, open-source work, and other personal experiments." />
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}" />
 {% endblock meta %} {% block content %}
 <div class="px-4 sm:px-6 md:px-20 w-full mt-6 md:mt-8 mb-0 reveal">
-    <h1
-        class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
-    >
+    <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
         Projects
     </h1>
     <div class="h-px bg-gray-700/50 w-full"></div>
@@ -51,15 +31,10 @@
 <div class="list-container">
     {% if projects %} {% for project in projects %}
     <div
-        class="blog-list-card glass-card solid-content-card flex flex-col gap-5 p-5 md:p-6 mb-6 overflow-hidden reveal"
-    >
+        class="blog-list-card glass-card solid-content-card flex flex-col gap-5 p-5 md:p-6 mb-6 overflow-hidden reveal">
         <div class="blog-list-thumb">
-            <img
-                class="w-full h-full object-cover"
-                src="{{ project.effective_thumbnail }}"
-                alt="{{ project.title }}"
-                loading="lazy"
-            />
+            <img class="w-full h-full object-cover" src="{{ project.effective_thumbnail }}" alt="{{ project.title }}"
+                loading="lazy" />
         </div>
 
         <div class="flex-1 min-w-0">
@@ -67,45 +42,29 @@
                 {{ project.title }}
             </p>
 
-            <p
-                class="text-sm md:text-base leading-relaxed mb-4 break-words text-gray-100 line-clamp-3"
-            >
+            <p class="text-sm md:text-base leading-relaxed mb-4 break-words text-gray-100 line-clamp-3">
                 {{ project.description }}
             </p>
 
             {% if project.technologies %}
             <div class="mb-4">
-                <span
-                    class="text-xs md:text-sm font-bold text-gray-400 block mb-2"
-                    >Technologies used</span
-                >
+                <span class="text-xs md:text-sm font-bold text-gray-400 block mb-2">Technologies used</span>
                 <div class="flex flex-wrap gap-2">
                     {% for tech in project.get_technologies_list %}
-                    <span
-                        class="text-xs text-white bg-gradient-to-r from-cyan-500 to-blue-500 py-1 px-3 rounded-full"
-                        >{{ tech }}</span
-                    >
+                    <span class="tech-chip">{{ tech }}</span>
                     {% endfor %}
                 </div>
             </div>
             {% endif %} {% if project.github_link or project.demo_link %}
             <div class="flex flex-wrap gap-3 mt-6">
                 {% if project.github_link %}
-                <a
-                    href="{{ project.github_link }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn-ghost w-[116px] px-2 py-2 text-[13px]"
-                >
+                <a href="{{ project.github_link }}" target="_blank" rel="noopener noreferrer"
+                    class="btn-ghost w-[116px] px-2 py-2 text-[13px]">
                     <i class="bi bi-github text-sm"></i> GitHub
                 </a>
                 {% endif %} {% if project.demo_link %}
-                <a
-                    href="{{ project.demo_link }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn-primary w-[116px] px-2 py-2 text-[13px]"
-                >
+                <a href="{{ project.demo_link }}" target="_blank" rel="noopener noreferrer"
+                    class="btn-primary w-[116px] px-2 py-2 text-[13px]">
                     Live site <i class="bi bi-box-arrow-up-right text-xs"></i>
                 </a>
                 {% endif %}

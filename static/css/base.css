@@ -369,6 +369,26 @@ body {
         0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
+/* Project technology chips — matches footer category pill style */
+.tech-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: #d1d5db;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (min-width: 768px) {
+    .tech-chip {
+        font-size: 0.75rem;
+    }
+}
+
 /* Layout Helpers */
 .blog-cards-grid {
     max-width: 365px;
