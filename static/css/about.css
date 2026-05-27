@@ -326,8 +326,10 @@
     container-type: inline-size;
     --accent: #22d3ee;
     border-radius: 0.75rem;
-    background: rgba(17, 24, 33, 0.85);
-    border: 1px solid rgba(148, 163, 184, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 1.25rem;
     padding-top: 0.25rem; /* Reduced to compensate for internal SVG/Top-section padding */
     overflow: hidden;
@@ -465,11 +467,8 @@
 }
 
 .profile-panel {
-    background: rgba(15, 23, 42, 0.35);
-    border: 1px solid rgba(148, 163, 184, 0.1);
     border-radius: 0.5rem;
-    padding: 0.75rem;
-    overflow: hidden;
+    padding: 0;
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
@@ -525,7 +524,7 @@
 /* ── SVG rect-based heatmap colors ────────────────────────────── */
 .calendar-graph rect[fill="#ebedf0"],
 .calendar-graph rect[data-level="0"] {
-    fill: #161b22 !important;
+    fill: #2d3748 !important;
 }
 
 .calendar-graph rect[fill="#c6e48b"],
@@ -555,7 +554,7 @@
 }
 
 #github-calendar-container .ContributionCalendar-day {
-    background-color: #1e293b !important;
+    background-color: #2d3748 !important;
     border-radius: 25% !important;
     aspect-ratio: 1 / 1 !important;
     outline: none !important;
@@ -625,13 +624,29 @@
 }
 
 #github-calendar-container .ContributionCalendar-label {
-    padding-left: 0.35rem !important;
-    padding-right: 1.5rem !important;
+    padding: 0.125em 0.5em 0.125em 0;
+    font-size: 12px;
+    font-weight: normal;
+    color: #c9d1d9;
+    text-align: left;
+    fill: #c9d1d9;
+}
+
+#github-calendar-container {
+    opacity: 0;
+}
+
+.github-img-hidden {
+    opacity: 0;
+}
+
+.github-img-show {
+    animation: fadeIn 0.4s ease-out forwards;
 }
 
 /* Contrib legend overrides */
 .contrib-legend .legend li[style*="background-color: #ebedf0"] {
-    background-color: #1e293b !important;
+    background-color: #2d3748 !important;
 }
 
 .contrib-legend .legend li[style*="background-color: #c6e48b"] {
@@ -666,7 +681,7 @@
 @media (min-width: 640px) {
     .profile-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1.31fr 1fr;
         gap: 0.75rem;
     }
 

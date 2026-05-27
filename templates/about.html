@@ -50,7 +50,7 @@
     >
         About Me
     </h1>
-    <div class="h-px bg-gray-700 w-full"></div>
+    <div class="h-px bg-gray-700/50 w-full"></div>
 </div>
 
 <div class="text-white p-6 md:p-8 flex flex-col max-w-3xl mx-auto w-full">
@@ -186,7 +186,7 @@
         <h2 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
             Experience
         </h2>
-        <div class="h-px bg-gray-700/50 w-full mb-10"></div>
+        <div class="h-px bg-gray-700/50 w-full mb-5 md:mb-8"></div>
 
         <div class="experience-timeline">
             {% for exp in experiences %}
@@ -361,7 +361,7 @@
         <h2 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
             Profiles & Stats
         </h2>
-        <div class="h-px bg-gray-700/50 w-full mb-10"></div>
+        <div class="h-px bg-gray-700/50 w-full mb-5 md:mb-8"></div>
         <div class="profiles-section">
             <div class="profiles-grid" id="profiles-container">
             {% if about_me.leetcode_url %}
@@ -381,9 +381,9 @@
             {% endif %}
 
             {% if about_me.github_url %}
-            <article class="profile-card profile-card--github">
-                <div class="profile-card__top" style="padding-left: 5cqw; padding-top: 5.4cqw; margin-bottom: 3.2cqw;">
-                    <a href="{{ about_me.github_url }}" target="_blank" rel="noopener noreferrer" class="flex items-center text-gray-200" style="gap: 1.8cqw;">
+            <article class="profile-card profile-card--github transition-opacity hover:opacity-95 cursor-pointer relative" onclick="window.open('{{ about_me.github_url|escapejs }}', '_blank')">
+                <div class="profile-card__top" style="padding-left: 5cqw; padding-top: 3cqw; margin-bottom: 1.5cqw;">
+                    <div class="flex items-center text-gray-200" style="gap: 1.8cqw;">
                         <i class="bi bi-github" style="font-size: 4.4cqw; color: #f0f0f0;"></i>
                         <h3 class="font-semibold tracking-wide" style="font-size: 3.2cqw; color: #f0f0f0; margin-top: 0.2cqw;">
                             {% if about_me.github_url %}
@@ -392,7 +392,7 @@
                                 ozodbek-bosimov
                             {% endif %}
                         </h3>
-                    </a>
+                    </div>
                 </div>
 
                 <div class="profile-card__body">
@@ -402,7 +402,8 @@
                             <img
                                 id="github-stats-img"
                                 alt="GitHub Stats"
-                                class="profile-panel__img"
+                                class="profile-panel__img github-img-hidden"
+                                style="margin-top: 3px;"
                             />
                         </div>
                         <div class="profile-panel">
@@ -410,19 +411,23 @@
                             <img
                                 id="github-langs-img"
                                 alt="Top Languages"
-                                class="profile-panel__img"
+                                class="profile-panel__img github-img-hidden"
                             />
                         </div>
                         <div class="profile-panel profile-panel--full">
                             <p class="profile-panel__label">Streak</p>
-                            <img
-                                id="github-streak-img"
-                                alt="GitHub Streak"
-                                class="profile-panel__img"
-                            />
+                            <div class="flex justify-center w-full">
+                                <img
+                                    id="github-streak-img"
+                                    alt="GitHub Streak"
+                                    class="profile-panel__img github-img-hidden"
+                                    style="max-width: 65%;"
+                                />
+                            </div>
                         </div>
                         <div class="profile-panel profile-panel--full">
                             <p class="profile-panel__label">Contribution calendar</p>
+                            <hr style="border: none; border-top: 1px solid #2d3748; margin-top: 1.5rem; margin-bottom: 1.5rem; width: 100%;" />
                             <div id="github-calendar-container" class="calendar-shell">
                                 <!-- Calendar injected by github-calendar library -->
                             </div>
@@ -441,82 +446,139 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const githubUrl = "{{ about_me.github_url|escapejs }}";
-            if (githubUrl) {
-                const match = githubUrl.match(/github\.com\/([a-zA-Z0-9_-]+)/);
-                if (match && match[1]) {
-                    const username = match[1];
+            const initGithubStats = function() {
+                const githubUrl = "{{ about_me.github_url|escapejs }}";
+                if (githubUrl) {
+                    const match = githubUrl.match(/github\.com\/([a-zA-Z0-9_-]+)/);
+                    if (match && match[1]) {
+                        const username = match[1];
 
-                    const statsImg = document.getElementById('github-stats-img');
-                    if (statsImg) statsImg.src = `https://github-readme-stats-eight-theta.vercel.app/api?username=${username}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=1e2329&hide_border=true&include_all_commits=true&count_private=true`;
+                        const cb = Date.now();
+                        const statsImg = document.getElementById('github-stats-img');
+                        const langsImg = document.getElementById('github-langs-img');
+                        const streakImg = document.getElementById('github-streak-img');
+                        const container = document.getElementById('github-calendar-container');
 
-                    const langsImg = document.getElementById('github-langs-img');
-                    if (langsImg) langsImg.src = `https://github-readme-stats-eight-theta.vercel.app/api/top-langs/?username=${username}&title_color=67e8f9&text_color=c9d1d9&bg_color=1e2329&hide_border=true&layout=compact`;
-
-                    const streakImg = document.getElementById('github-streak-img');
-                    if (streakImg) streakImg.src = `https://streak-stats.demolab.com/?user=${username}&theme=dark&hide_border=true&background=1e2329&ring=06b6d4&fire=67e8f9`;
-
-                    // Initialize GitHub Contribution Calendar
-                    const container = document.getElementById('github-calendar-container');
-                    if (container && typeof GitHubCalendar !== 'undefined') {
-                        GitHubCalendar("#github-calendar-container", username, {
-                            responsive: true,
-                            tooltips: true
-                        }).then(() => {
-                            // Find all valid cells
-                            const cells = document.querySelectorAll('#github-calendar-container .ContributionCalendar-day');
-                            const validCells = Array.from(cells).filter(c => c.hasAttribute('data-date') && c.getAttribute('data-level') !== null);
-                            
-                            if (validCells.length > 0) {
-                                // 1. Highlight today's cell (the most recent date available in the calendar)
-                                // Sort by data-date to find the absolute latest date, ignoring DOM layout order
-                                validCells.sort((a, b) => a.getAttribute('data-date').localeCompare(b.getAttribute('data-date')));
-                                const lastCell = validCells[validCells.length - 1];
+                        // Strict sequential loading to guarantee perfect animation order regardless of network speed
+                        if (statsImg) {
+                            statsImg.onload = () => {
+                                statsImg.classList.replace('github-img-hidden', 'github-img-show');
                                 
-                                lastCell.style.boxShadow = 'inset 0 0 0 1px #d97706'; // orange edge
-                                lastCell.style.boxSizing = 'border-box';
-                                lastCell.style.backgroundColor = 'transparent'; // match LeetCode's hollow today cell
-                                
-                                // 2. Add start and end dates at the bottom
-                                const firstDate = validCells[0].getAttribute('data-date').replace(/-/g, '.');
-                                const lastDate = lastCell.getAttribute('data-date').replace(/-/g, '.');
-                                
-                                const graphContainer = document.querySelector('#github-calendar-container .calendar-graph');
-                                if (graphContainer) {
-                                    const datesDiv = document.createElement('div');
-                                    datesDiv.style.display = 'flex';
-                                    datesDiv.style.justifyContent = 'space-between';
-                                    datesDiv.style.fontSize = '0.75rem';
-                                    datesDiv.style.color = '#f8fafc';
-                                    datesDiv.style.marginTop = '0.4rem';
-                                    datesDiv.style.fontFamily = 'monospace, sans-serif';
-                                    
-                                    const firstSpan = document.createElement('span');
-                                    firstSpan.textContent = firstDate;
-                                    const lastSpan = document.createElement('span');
-                                    lastSpan.textContent = lastDate;
-                                    
-                                    datesDiv.appendChild(firstSpan);
-                                    datesDiv.appendChild(lastSpan);
-                                    graphContainer.appendChild(datesDiv);
-                                }
-                            }
-                        }).catch(e => console.error("GitHub Calendar error:", e));
+                                // 2. Top languages (start fetching 600ms after first is fully loaded)
+                                setTimeout(() => {
+                                    if (langsImg) {
+                                        langsImg.onload = () => {
+                                            langsImg.classList.replace('github-img-hidden', 'github-img-show');
+                                            
+                                            // 3. Streak (start fetching 600ms after second is loaded)
+                                            setTimeout(() => {
+                                                if (streakImg) {
+                                                    streakImg.onload = () => {
+                                                        streakImg.classList.replace('github-img-hidden', 'github-img-show');
+                                                        
+                                                        // 4. Grid (start fetching 600ms after third is loaded)
+                                                        setTimeout(() => {
+                                                            if (container && typeof GitHubCalendar !== 'undefined') {
+                                                                GitHubCalendar("#github-calendar-container", username, {
+                                                                    responsive: true,
+                                                                    tooltips: true
+                                                                }).then(() => {
+                                                                    // Trigger the CSS animation to fade in the grid
+                                                                    setTimeout(() => {
+                                                                        container.style.opacity = '1';
+                                                                        container.style.animation = 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                                                                    }, 100);
+                                                                    
+                                                                    // Automatically scroll to the right (latest days)
+                                                                    setTimeout(() => {
+                                                                        const allDivs = document.querySelectorAll('#github-calendar-container, #github-calendar-container div');
+                                                                        allDivs.forEach(div => {
+                                                                            const style = window.getComputedStyle(div);
+                                                                            if (style.overflowX === 'auto' || style.overflowX === 'scroll' || style.overflowX === 'overlay') {
+                                                                                div.scrollLeft = 999999;
+                                                                            }
+                                                                        });
+                                                                    }, 500);
+
+                                                                    // Find all valid cells
+                                                                    const cells = document.querySelectorAll('#github-calendar-container .ContributionCalendar-day');
+                                                                    const validCells = Array.from(cells).filter(c => c.hasAttribute('data-date') && c.getAttribute('data-level') !== null);
+                                                                    
+                                                                    if (validCells.length > 0) {
+                                                                        // 1. Highlight today's cell (the most recent date available in the calendar)
+                                                                        validCells.sort((a, b) => a.getAttribute('data-date').localeCompare(b.getAttribute('data-date')));
+                                                                        const lastCell = validCells[validCells.length - 1];
+                                                                        
+                                                                        lastCell.style.boxShadow = 'inset 0 0 0 1px #ffa116';
+                                                                        lastCell.style.boxSizing = 'border-box';
+                                                                        lastCell.style.backgroundColor = 'transparent';
+                                                                        
+                                                                        // 2. Add start and end dates at the bottom
+                                                                        const firstDate = validCells[0].getAttribute('data-date').replace(/-/g, '.');
+                                                                        const lastDate = lastCell.getAttribute('data-date').replace(/-/g, '.');
+                                                                        
+                                                                        const graphContainer = document.querySelector('#github-calendar-container .calendar-graph');
+                                                                        if (graphContainer) {
+                                                                            const datesDiv = document.createElement('div');
+                                                                            datesDiv.style.display = 'flex';
+                                                                            datesDiv.style.justifyContent = 'space-between';
+                                                                            datesDiv.style.fontSize = '0.75rem';
+                                                                            datesDiv.style.color = '#f8fafc';
+                                                                            datesDiv.style.marginTop = '0.4rem';
+                                                                            datesDiv.style.fontFamily = 'monospace, sans-serif';
+                                                                            
+                                                                            const firstSpan = document.createElement('span');
+                                                                            firstSpan.textContent = firstDate;
+                                                                            const lastSpan = document.createElement('span');
+                                                                            lastSpan.textContent = lastDate;
+                                                                            
+                                                                            datesDiv.appendChild(firstSpan);
+                                                                            datesDiv.appendChild(lastSpan);
+                                                                            graphContainer.appendChild(datesDiv);
+                                                                        }
+                                                                    }
+                                                                }).catch(e => console.error("GitHub Calendar error:", e));
+                                                            }
+                                                        }, 600); // Wait for streak animation
+                                                    };
+                                                    streakImg.src = `https://streak-stats.demolab.com/?user=${username}&theme=dark&hide_border=true&background=00000000&ring=06b6d4&fire=67e8f9&v=${cb}`;
+                                                }
+                                            }, 600); // Wait for languages animation
+                                        };
+                                        langsImg.src = `https://github-readme-stats-eight-theta.vercel.app/api/top-langs/?username=${username}&title_color=67e8f9&text_color=c9d1d9&bg_color=00000000&hide_border=true&layout=compact&v=${cb}`;
+                                    }
+                                }, 600); // Wait for stats animation
+                            };
+                            // 1. Overview (starts immediately)
+                            statsImg.src = `https://github-readme-stats-eight-theta.vercel.app/api?username=${username}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&include_all_commits=true&count_private=true&v=${cb}`;
+                        }
                     }
                 }
+            };
+
+            const ghContainer = document.querySelector('.profile-card--github');
+            if (ghContainer && ('IntersectionObserver' in window)) {
+                const ghObserver = new IntersectionObserver((entries, obs) => {
+                    if (entries[0].isIntersecting || entries[0].boundingClientRect.top < window.innerHeight) {
+                        obs.disconnect();
+                        initGithubStats();
+                    }
+                }, { rootMargin: '50px', threshold: 0.1 });
+                ghObserver.observe(ghContainer);
+            } else {
+                initGithubStats();
             }
 
-            const leetcodeUrl = "{{ about_me.leetcode_url|escapejs }}";
+            const initLeetcodeStats = function() {
+                const leetcodeUrl = "{{ about_me.leetcode_url|escapejs }}";
             if (leetcodeUrl) {
                 const match = leetcodeUrl.match(/leetcode\.com\/(?:u\/)?([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
                     const username = match[1];
                     const lcWrapper = document.getElementById('leetcode-stats-wrapper');
                     if (lcWrapper) {
-                        // Use default dark theme for original colorful progress bars
                         const lcUrl = `https://leetcard.jacoblin.cool/${username}?theme=dark&font=Poppins&ext=heatmap&border=0&radius=0`;
                         
-                        // Fetch SVG to inline it, allowing CSS styling of the heatmap
                         fetch(lcUrl)
                             .then(res => {
                                 if (!res.ok) throw new Error('Network error');
@@ -524,15 +586,14 @@
                             })
                             .then(svgText => {
                                 if (svgText.includes('<svg')) {
-                                    // Inject our custom CSS directly into the SVG string
                                     const customStyles = `
                                         <style>
                                             #background, #total-solved-bg, #total-solved-ring { fill: transparent !important; }
+                                            #total-solved-bg, #easy-solved-bg, #medium-solved-bg, #hard-solved-bg, line:not([id*="-solved-"]) { stroke: #2d3748 !important; }
                                             rect[class^="ext-heatmap-"] { rx: 2px !important; ry: 2px !important; }
-                                            rect.ext-heatmap-0 { fill: #1e293b !important; opacity: 1 !important; }
+                                            rect.ext-heatmap-0 { fill: #2d3748 !important; opacity: 1 !important; }
                                             rect[class^="ext-heatmap-"]:not(.ext-heatmap-0) { fill: #06b6d4 !important; }
                                             
-                                            /* Restore custom scaled-down fonts */
                                             #username-text, #username { font-size: 16px !important; }
                                             #ranking { font-size: 12px !important; }
                                             #total-solved-text { font-size: 20px !important; }
@@ -543,12 +604,12 @@
                                     `;
                                     const modifiedSvg = svgText.replace('</svg>', customStyles + '</svg>');
                                     
-                                    // Convert to a Blob URL to render via an <img> tag. 
-                                    // This isolates the SVG from Safari's buggy inline layout engine, preventing distortion on zoom.
                                     const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });
                                     const blobUrl = URL.createObjectURL(blob);
                                     
-                                    lcWrapper.innerHTML = `<img src="${blobUrl}" id="leetcode-stats-svg" class="profile-media__img" alt="LeetCode Stats">`;
+                                    lcWrapper.innerHTML = `<img src="${blobUrl}" id="leetcode-stats-svg" class="profile-media__img github-img-hidden" alt="LeetCode Stats">`;
+                                    const lcImg = document.getElementById('leetcode-stats-svg');
+                                    lcImg.onload = () => lcImg.classList.replace('github-img-hidden', 'github-img-show');
                                 } else {
                                     throw new Error('Invalid SVG');
                                 }
@@ -560,6 +621,20 @@
                     }
                 }
             }
+        };
+
+            const lcContainer = document.querySelector('.profile-card--leetcode');
+            if (lcContainer && ('IntersectionObserver' in window)) {
+                const observer = new IntersectionObserver((entries, obs) => {
+                    if (entries[0].isIntersecting || entries[0].boundingClientRect.top < window.innerHeight) {
+                        obs.disconnect();
+                        initLeetcodeStats();
+                    }
+                }, { rootMargin: '50px', threshold: 0.1 });
+                observer.observe(lcContainer);
+            } else {
+                initLeetcodeStats();
+            }
         });
     </script>
 
@@ -570,7 +645,7 @@
         >
             Skills
         </h2>
-        <div class="h-px bg-gray-700/50 w-full mb-8 reveal"></div>
+        <div class="h-px bg-gray-700/50 w-full mb-5 md:mb-8 reveal"></div>
         {% if skills %}
         <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10">
             {% for skill in skills %}

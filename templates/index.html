@@ -200,15 +200,15 @@
 </div>
 
 <div class="blog-section text-white overflow-hidden relative z-10">
-    <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-10 reveal">
+    <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-0 reveal">
         <h1
-            class="text-xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
+            class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
         >
             Check out my latest posts
         </h1>
-        <div class="h-px bg-gray-700 w-full"></div>
+        <div class="h-px bg-gray-700/50 w-full"></div>
     </div>
-    <div class="blogs blog-cards-grid my-5 grid gap-6 px-4 md:grid-cols-3 reveal-stagger">
+    <div class="blogs blog-cards-grid mt-8 mb-8 grid gap-6 px-4 md:grid-cols-3 reveal-stagger">
         {% for blog in latest_blogs %}
         <div class="blog-card-item glass-card solid-content-card p-5 h-auto reveal">
             {% if blog.effective_thumbnail %}
