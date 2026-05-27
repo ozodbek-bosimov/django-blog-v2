@@ -485,7 +485,7 @@
                     const username = match[1];
                     const lcImg = document.getElementById('leetcode-stats-img');
                     if (lcImg) {
-                        lcImg.src = `https://leetcard.jacoblin.cool/${username}?theme=chartreuse&font=Outfit&ext=heatmap&bg=1e2329&border=0&radius=0`;
+                        lcImg.src = `https://leetcard.jacoblin.cool/${username}?font=Poppins&colors=1e2329,2a303c,67e8f9,c9d1d9,06b6d4,22c55e,eab308,ef4444&ext=heatmap`;
                         lcImg.onerror = function() {
                             if (!this.retried) {
                                 this.retried = true;
