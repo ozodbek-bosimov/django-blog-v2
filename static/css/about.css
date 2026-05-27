@@ -310,3 +310,392 @@
         font-size: 1.05rem;
     }
 }
+
+/* ── Profiles & Stats ─────────────────────────────────────────── */
+.profiles-section {
+    width: 100%;
+}
+
+.profiles-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.profile-card {
+    container-type: inline-size;
+    --accent: #22d3ee;
+    border-radius: 0.75rem;
+    background: rgba(17, 24, 33, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    padding: 1.25rem;
+    padding-top: 0.25rem; /* Reduced to compensate for internal SVG/Top-section padding */
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-card--leetcode {
+    --accent: #f59e0b;
+}
+
+/* ── Card Top (brand + link) ──────────────────────────────────── */
+.profile-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.profile-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.profile-brand__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    flex-shrink: 0;
+}
+
+.profile-brand__icon i {
+    font-size: 1.35rem;
+    color: #e2e8f0;
+}
+
+.profile-brand__icon--leetcode {
+    border-color: rgba(245, 158, 11, 0.25);
+}
+
+.profile-brand__img {
+    width: 1.4rem;
+    height: 1.4rem;
+    filter: invert(1);
+}
+
+.profile-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    line-height: 1.3;
+}
+
+.profile-subtitle {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin-top: 0.1rem;
+}
+
+.profile-link {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #94a3b8;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 0.4rem;
+    background: transparent;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.profile-link:hover {
+    color: #e2e8f0;
+    border-color: rgba(148, 163, 184, 0.4);
+}
+
+/* ── Card Body ────────────────────────────────────────────────── */
+.profile-card__body {
+    margin-top: 0;
+}
+
+/* ── LeetCode Media (single wide image) ───────────────────────── */
+.profile-media {
+    overflow: hidden;
+    background: transparent;
+    width: 100%;
+    margin: 0 auto 0.5rem auto;
+    display: flex;
+    justify-content: center;
+}
+
+.profile-media__img {
+    width: 100%;
+    max-width: 100%; /* Allow SVG to stretch so heatmap cells match GitHub's 11px size */
+    height: auto;
+    display: block;
+}
+
+/* Safari Intrinsic Ratio (Padding) Hack - Bulletproof for all versions */
+#leetcode-stats-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 64%; /* 320 / 500 = 64% aspect ratio */
+    height: 0;
+    overflow: hidden;
+    display: block; /* Override flex */
+}
+
+#leetcode-stats-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 500 / 320;
+}
+
+
+
+
+
+/* ── GitHub Stats Grid ────────────────────────────────────────── */
+.profile-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.profile-panel {
+    background: rgba(15, 23, 42, 0.35);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    overflow: hidden;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-panel__label {
+    display: none !important;
+}
+
+.profile-panel__img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.35rem;
+}
+
+/* ── Calendar Panel ───────────────────────────────────────────── */
+.calendar-shell {
+    width: 100%;
+    max-width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   GitHub Calendar Library — Dark Theme Overrides
+   The library injects its own DOM. We override colors here.
+   ───────────────────────────────────────────────────────────────── */
+
+/* Top-level .calendar container — override library defaults */
+.calendar {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #c9d1d9;
+    background: transparent !important;
+    border: none !important;
+    min-height: auto !important;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* SVG text labels (day-of-week, month) */
+.calendar-graph text.wday,
+.calendar-graph text.month {
+    fill: #8b949e;
+    font-size: 10px;
+}
+
+/* ── SVG rect-based heatmap colors ────────────────────────────── */
+.calendar-graph rect[fill="#ebedf0"],
+.calendar-graph rect[data-level="0"] {
+    fill: #161b22 !important;
+}
+
+.calendar-graph rect[fill="#c6e48b"],
+.calendar-graph rect[data-level="1"] {
+    fill: #083344 !important;
+}
+
+.calendar-graph rect[fill="#7bc96f"],
+.calendar-graph rect[data-level="2"] {
+    fill: #0e7490 !important;
+}
+
+.calendar-graph rect[fill="#239a3b"],
+.calendar-graph rect[data-level="3"] {
+    fill: #06b6d4 !important;
+}
+
+.calendar-graph rect[fill="#196127"],
+.calendar-graph rect[data-level="4"] {
+    fill: #67e8f9 !important;
+}
+
+/* ── DIV-based calendar (ContributionCalendar) ────────────────── */
+#github-calendar-container .ContributionCalendar {
+    color: #c9d1d9 !important;
+    max-width: 100%;
+}
+
+#github-calendar-container .ContributionCalendar-day {
+    background-color: #1e293b !important;
+    border-radius: 25% !important;
+    aspect-ratio: 1 / 1 !important;
+    outline: none !important;
+}
+
+#github-calendar-container .ContributionCalendar-day[data-level="1"] {
+    background-color: rgba(6, 182, 212, 0.4) !important;
+}
+
+#github-calendar-container .ContributionCalendar-day[data-level="2"] {
+    background-color: rgba(6, 182, 212, 0.6) !important;
+}
+
+#github-calendar-container .ContributionCalendar-day[data-level="3"] {
+    background-color: rgba(6, 182, 212, 0.8) !important;
+}
+
+#github-calendar-container .ContributionCalendar-day[data-level="4"] {
+    background-color: rgba(6, 182, 212, 1) !important;
+}
+
+#github-calendar-container .border {
+    border: none !important;
+}
+
+#github-calendar-container .calendar .position-relative > a,
+#github-calendar-container .contrib-footer a,
+#github-calendar-container a,
+#github-calendar-container .sr-only,
+#github-calendar-container .color-bg-default {
+    display: none !important;
+}
+
+/* Stats columns rendered by the library (Broken due to GitHub HTML changes, hiding them) */
+#github-calendar-container .contrib-column {
+    display: none !important;
+}
+
+/* Ensure SVG graph doesn't overflow */
+#github-calendar-container .js-calendar-graph {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+}
+
+#github-calendar-container .calendar-graph {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+#github-calendar-container .calendar-graph svg,
+#github-calendar-container .js-calendar-graph svg {
+    max-width: 100%;
+    height: auto;
+}
+
+#github-calendar-container table.ContributionCalendar-grid {
+    width: max-content !important;
+    max-width: 100%;
+    border-spacing: 1px !important;
+    border-collapse: separate !important;
+}
+
+#github-calendar-container .graph-before-activity-overview {
+    padding: 0.35rem 0.5rem !important;
+}
+
+#github-calendar-container .ContributionCalendar-label {
+    padding-left: 0.35rem !important;
+    padding-right: 1.5rem !important;
+}
+
+/* Contrib legend overrides */
+.contrib-legend .legend li[style*="background-color: #ebedf0"] {
+    background-color: #1e293b !important;
+}
+
+.contrib-legend .legend li[style*="background-color: #c6e48b"] {
+    background-color: rgba(6, 182, 212, 0.4) !important;
+}
+
+.contrib-legend .legend li[style*="background-color: #7bc96f"] {
+    background-color: rgba(6, 182, 212, 0.6) !important;
+}
+
+.contrib-legend .legend li[style*="background-color: #239a3b"] {
+    background-color: rgba(6, 182, 212, 0.8) !important;
+}
+
+.contrib-legend .legend li[style*="background-color: #196127"] {
+    background-color: rgba(6, 182, 212, 1) !important;
+}
+
+.text-muted {
+    color: #8b949e !important;
+}
+
+.contrib-column {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.contrib-number {
+    color: #c9d1d9 !important;
+}
+
+/* ── Responsive: 2-column stats grid on wider screens ─────────── */
+@media (min-width: 640px) {
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .profile-panel--full {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ── Mobile ───────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .profile-card {
+        padding: 1rem;
+    }
+
+    .profile-card__top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-brand__icon {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .profile-title {
+        font-size: 1rem;
+    }
+
+    .profile-subtitle {
+        font-size: 0.78rem;
+    }
+}
