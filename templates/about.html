@@ -372,7 +372,7 @@
                             <img
                                 id="leetcode-stats-img"
                                 alt="LeetCode Stats"
-                                class="profile-media__img"
+                                class="profile-media__img github-img-hidden"
                             />
                         </div>
                     </a>
@@ -381,7 +381,7 @@
             {% endif %}
 
             {% if about_me.github_url %}
-            <article class="profile-card profile-card--github transition-opacity hover:opacity-95 cursor-pointer relative" onclick="window.open('{{ about_me.github_url|escapejs }}', '_blank')">
+            <article class="profile-card profile-card--github transition-opacity hover:opacity-95 cursor-pointer relative" onclick="window.open('{{ about_me.github_url|escapejs }}', '_blank')" title="View GitHub Profile">
                 <div class="profile-card__top" style="padding-left: 5cqw; padding-top: 3cqw; margin-bottom: 1.5cqw;">
                     <div class="flex items-center text-gray-200" style="gap: 1.8cqw;">
                         <i class="bi bi-github" style="font-size: 4.4cqw; color: #f0f0f0;"></i>
@@ -427,7 +427,7 @@
                         </div>
                         <div class="profile-panel profile-panel--full">
                             <p class="profile-panel__label">Contribution calendar</p>
-                            <hr style="border: none; border-top: 1px solid #2d3748; margin-top: 1.5rem; margin-bottom: 1.5rem; width: 100%;" />
+                            <hr style="border: none; border-top: 1.5px solid #2d3748; margin: 1.5rem auto 1.2rem auto; width: 96%;" />
                             <div id="github-calendar-container" class="calendar-shell">
                                 <!-- Calendar injected by github-calendar library -->
                             </div>
@@ -479,15 +479,27 @@
                                                         // 4. Grid (start fetching 600ms after third is loaded)
                                                         setTimeout(() => {
                                                             if (container && typeof GitHubCalendar !== 'undefined') {
-                                                                GitHubCalendar("#github-calendar-container", username, {
-                                                                    responsive: true,
-                                                                    tooltips: true
-                                                                }).then(() => {
+                                                                const revealCalendar = () => {
+                                                                    if (container.dataset.revealed) return;
+                                                                    container.dataset.revealed = 'true';
+                                                                    
                                                                     // Trigger the CSS animation to fade in the grid
                                                                     setTimeout(() => {
                                                                         container.style.opacity = '1';
                                                                         container.style.animation = 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
                                                                     }, 100);
+
+                                                                    // Hide the extra stats and footer link below the calendar
+                                                                    const contribColumns = document.querySelectorAll('#github-calendar-container .contrib-column');
+                                                                    contribColumns.forEach(el => {
+                                                                        if (el.parentElement && el.parentElement.className.includes('flex-wrap')) {
+                                                                            el.parentElement.style.display = 'none';
+                                                                        }
+                                                                        el.style.display = 'none';
+                                                                    });
+                                                                    
+                                                                    const textMuted = document.querySelectorAll('#github-calendar-container .text-muted');
+                                                                    textMuted.forEach(el => el.style.display = 'none');
                                                                     
                                                                     // Automatically scroll to the right (latest days)
                                                                     setTimeout(() => {
@@ -499,49 +511,69 @@
                                                                             }
                                                                         });
                                                                     }, 500);
+                                                                };
 
-                                                                    // Find all valid cells
+                                                                const enhanceCalendar = () => {
                                                                     const cells = document.querySelectorAll('#github-calendar-container .ContributionCalendar-day');
                                                                     const validCells = Array.from(cells).filter(c => c.hasAttribute('data-date') && c.getAttribute('data-level') !== null);
-                                                                    
-                                                                    if (validCells.length > 0) {
-                                                                        // 1. Highlight today's cell (the most recent date available in the calendar)
-                                                                        validCells.sort((a, b) => a.getAttribute('data-date').localeCompare(b.getAttribute('data-date')));
-                                                                        const lastCell = validCells[validCells.length - 1];
-                                                                        
-                                                                        lastCell.style.boxShadow = 'inset 0 0 0 1px #ffa116';
-                                                                        lastCell.style.boxSizing = 'border-box';
-                                                                        lastCell.style.backgroundColor = 'transparent';
-                                                                        
-                                                                        // 2. Add start and end dates at the bottom
+                                                                    if (!validCells.length) return false;
+
+                                                                    revealCalendar();
+
+                                                                    validCells.sort((a, b) => a.getAttribute('data-date').localeCompare(b.getAttribute('data-date')));
+                                                                    const lastCell = validCells[validCells.length - 1];
+
+                                                                    lastCell.style.boxShadow = 'inset 0 0 0 1px #ffa116';
+                                                                    lastCell.style.boxSizing = 'border-box';
+                                                                    lastCell.style.backgroundColor = 'transparent';
+
+                                                                    const graphContainer = document.querySelector('#github-calendar-container .calendar-graph');
+                                                                    if (graphContainer && !graphContainer.querySelector('.calendar-range-labels')) {
                                                                         const firstDate = validCells[0].getAttribute('data-date').replace(/-/g, '.');
                                                                         const lastDate = lastCell.getAttribute('data-date').replace(/-/g, '.');
-                                                                        
-                                                                        const graphContainer = document.querySelector('#github-calendar-container .calendar-graph');
-                                                                        if (graphContainer) {
-                                                                            const datesDiv = document.createElement('div');
-                                                                            datesDiv.style.display = 'flex';
-                                                                            datesDiv.style.justifyContent = 'space-between';
-                                                                            datesDiv.style.fontSize = '0.75rem';
-                                                                            datesDiv.style.color = '#f8fafc';
-                                                                            datesDiv.style.marginTop = '0.4rem';
-                                                                            datesDiv.style.fontFamily = 'monospace, sans-serif';
-                                                                            
-                                                                            const firstSpan = document.createElement('span');
-                                                                            firstSpan.textContent = firstDate;
-                                                                            const lastSpan = document.createElement('span');
-                                                                            lastSpan.textContent = lastDate;
-                                                                            
-                                                                            datesDiv.appendChild(firstSpan);
-                                                                            datesDiv.appendChild(lastSpan);
-                                                                            graphContainer.appendChild(datesDiv);
-                                                                        }
+
+                                                                        const datesDiv = document.createElement('div');
+                                                                        datesDiv.className = 'calendar-range-labels';
+                                                                        datesDiv.style.display = 'flex';
+                                                                        datesDiv.style.justifyContent = 'space-between';
+                                                                        datesDiv.style.fontSize = '0.75rem';
+                                                                        datesDiv.style.color = '#f8fafc';
+                                                                        datesDiv.style.marginTop = '0.4rem';
+                                                                        datesDiv.style.fontFamily = 'monospace, sans-serif';
+
+                                                                        const firstSpan = document.createElement('span');
+                                                                        firstSpan.textContent = firstDate;
+                                                                        const lastSpan = document.createElement('span');
+                                                                        lastSpan.textContent = lastDate;
+
+                                                                        datesDiv.appendChild(firstSpan);
+                                                                        datesDiv.appendChild(lastSpan);
+                                                                        graphContainer.appendChild(datesDiv);
                                                                     }
-                                                                }).catch(e => console.error("GitHub Calendar error:", e));
+                                                                    return true;
+                                                                };
+
+                                                                const waitForCalendar = (attempt = 0) => {
+                                                                    if (enhanceCalendar()) return;
+                                                                    if (attempt < 20) {
+                                                                        setTimeout(() => waitForCalendar(attempt + 1), 150);
+                                                                    }
+                                                                };
+
+                                                                const initResult = GitHubCalendar("#github-calendar-container", username, {
+                                                                    responsive: true,
+                                                                    tooltips: true
+                                                                });
+
+                                                                if (initResult && typeof initResult.then === 'function') {
+                                                                    initResult.then(() => waitForCalendar()).catch(e => console.error("GitHub Calendar error:", e));
+                                                                } else {
+                                                                    waitForCalendar();
+                                                                }
                                                             }
                                                         }, 600); // Wait for streak animation
                                                     };
-                                                    streakImg.src = `https://streak-stats.demolab.com/?user=${username}&theme=dark&hide_border=true&background=00000000&ring=06b6d4&fire=67e8f9&v=${cb}`;
+                                                    streakImg.src = `https://streak-stats.demolab.com/?user=${username}&theme=dark&hide_border=true&background=00000000&stroke=334155&ring=06b6d4&fire=67e8f9&v=${cb}`;
                                                 }
                                             }, 600); // Wait for languages animation
                                         };
@@ -607,9 +639,10 @@
                                     const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });
                                     const blobUrl = URL.createObjectURL(blob);
                                     
-                                    lcWrapper.innerHTML = `<img src="${blobUrl}" id="leetcode-stats-svg" class="profile-media__img github-img-hidden" alt="LeetCode Stats">`;
+                                    lcWrapper.innerHTML = `<img id="leetcode-stats-svg" class="profile-media__img github-img-hidden" alt="LeetCode Stats">`;
                                     const lcImg = document.getElementById('leetcode-stats-svg');
                                     lcImg.onload = () => lcImg.classList.replace('github-img-hidden', 'github-img-show');
+                                    lcImg.src = blobUrl;
                                 } else {
                                     throw new Error('Invalid SVG');
                                 }
