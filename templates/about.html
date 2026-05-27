@@ -368,7 +368,7 @@
             <article class="profile-card profile-card--leetcode transition-opacity hover:opacity-95">
                 <div class="profile-card__body p-0">
                     <a href="{{ about_me.leetcode_url }}" target="_blank" rel="noopener noreferrer" class="block cursor-pointer" title="View LeetCode Profile">
-                        <div class="profile-media" id="leetcode-stats-wrapper">
+                        <div class="profile-media skeleton-loader" id="leetcode-stats-wrapper">
                             <img
                                 id="leetcode-stats-img"
                                 alt="LeetCode Stats"
@@ -399,6 +399,7 @@
                     <div class="profile-grid">
                         <div class="profile-panel">
                             <p class="profile-panel__label">Overview</p>
+                            <div id="github-stats-skeleton" class="skeleton-loader" style="aspect-ratio: 495/195; margin-top: 3px;"></div>
                             <img
                                 id="github-stats-img"
                                 alt="GitHub Stats"
@@ -408,6 +409,7 @@
                         </div>
                         <div class="profile-panel">
                             <p class="profile-panel__label">Top languages</p>
+                            <div id="github-langs-skeleton" class="skeleton-loader" style="aspect-ratio: 300/200;"></div>
                             <img
                                 id="github-langs-img"
                                 alt="Top Languages"
@@ -417,6 +419,7 @@
                         <div class="profile-panel profile-panel--full">
                             <p class="profile-panel__label">Streak</p>
                             <div class="flex justify-center w-full">
+                                <div id="github-streak-skeleton" class="skeleton-loader" style="aspect-ratio: 495/195; max-width: 65%;"></div>
                                 <img
                                     id="github-streak-img"
                                     alt="GitHub Streak"
@@ -446,40 +449,163 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const githubUrl = "{{ about_me.github_url|escapejs }}";
+            let ghUsername = null;
+            if (githubUrl) {
+                const match = githubUrl.match(/github\.com\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) ghUsername = match[1];
+            }
+            
+            const cbStr = Date.now().toString();
+            let statsUrl = "", langsUrl = "", streakUrl = "";
+            
+            if (ghUsername) {
+                statsUrl = `https://github-readme-stats-eight-theta.vercel.app/api?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&include_all_commits=true&count_private=true&v=${cbStr}`;
+                langsUrl = `https://github-readme-stats-eight-theta.vercel.app/api/top-langs/?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&bg_color=00000000&hide_border=true&layout=compact&v=${cbStr}`;
+                streakUrl = `https://streak-stats.demolab.com/?user=${ghUsername}&theme=dark&hide_border=true&background=00000000&stroke=334155&ring=06b6d4&fire=67e8f9&v=${cbStr}`;
+                
+                // Secretly preload early in the background
+                setTimeout(() => {
+                    (new Image()).src = statsUrl;
+                    (new Image()).src = langsUrl;
+                    (new Image()).src = streakUrl;
+                }, 50);
+            }
+            
+            // LeetCode preload in background
+            let leetcodePromise = null;
+            const leetcodeUrl = "{{ about_me.leetcode_url|escapejs }}";
+            if (leetcodeUrl) {
+                const match = leetcodeUrl.match(/leetcode\.com\/(?:u\/)?([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    const lcUsername = match[1];
+                    const lcUrl = `https://leetcard.jacoblin.cool/${lcUsername}?theme=dark&font=Poppins&ext=heatmap&border=0&radius=0`;
+                    
+                    leetcodePromise = fetch(lcUrl)
+                        .then(res => {
+                            if (!res.ok) throw new Error('Network error');
+                            return res.text();
+                        })
+                        .then(svgText => {
+                            if (svgText.includes('<svg')) {
+                                const customStyles = `
+                                    <style>
+                                        #background, #total-solved-bg, #total-solved-ring { fill: transparent !important; }
+                                        #total-solved-bg, #easy-solved-bg, #medium-solved-bg, #hard-solved-bg, line:not([id*="-solved-"]) { stroke: #2d3748 !important; }
+                                        rect[class^="ext-heatmap-"] { rx: 2px !important; ry: 2px !important; }
+                                        rect.ext-heatmap-0 { fill: #2d3748 !important; opacity: 1 !important; }
+                                        rect[class^="ext-heatmap-"]:not(.ext-heatmap-0) { fill: #06b6d4 !important; }
+                                        
+                                        #username-text, #username { font-size: 16px !important; }
+                                        #ranking { font-size: 12px !important; }
+                                        #total-solved-text { font-size: 20px !important; }
+                                        #easy-solved-type, #medium-solved-type, #hard-solved-type { font-size: 11px !important; }
+                                        #easy-solved-count, #medium-solved-count, #hard-solved-count { font-size: 12px !important; }
+                                        #ext-heatmap-from, #ext-heatmap-to { font-size: 8px !important; }
+                                    </style>
+                                `;
+                                const modifiedSvg = svgText.replace('</svg>', customStyles + '</svg>');
+                                const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });
+                                return URL.createObjectURL(blob);
+                            }
+                            throw new Error('Invalid SVG');
+                        })
+                        .catch(() => lcUrl); // Fallback to raw URL on failure
+                }
+            }
+
             const initGithubStats = function() {
-                const githubUrl = "{{ about_me.github_url|escapejs }}";
-                if (githubUrl) {
-                    const match = githubUrl.match(/github\.com\/([a-zA-Z0-9_-]+)/);
-                    if (match && match[1]) {
-                        const username = match[1];
+                if (ghUsername) {
+                    const username = ghUsername;
+                    const statsImg = document.getElementById('github-stats-img');
+                    const langsImg = document.getElementById('github-langs-img');
+                    const streakImg = document.getElementById('github-streak-img');
+                    const container = document.getElementById('github-calendar-container');
 
-                        const cb = Date.now();
-                        const statsImg = document.getElementById('github-stats-img');
-                        const langsImg = document.getElementById('github-langs-img');
-                        const streakImg = document.getElementById('github-streak-img');
-                        const container = document.getElementById('github-calendar-container');
+                    // Best-effort sequential loading with per-item timeouts
+                    const items = [
+                        { id: 'stats', el: statsImg, skel: 'github-stats-skeleton' },
+                        { id: 'langs', el: langsImg, skel: 'github-langs-skeleton' },
+                        { id: 'streak', el: streakImg, skel: 'github-streak-skeleton' },
+                        { id: 'cal', isCal: true }
+                        ];
 
-                        // Strict sequential loading to guarantee perfect animation order regardless of network speed
-                        if (statsImg) {
-                            statsImg.onload = () => {
-                                statsImg.classList.replace('github-img-hidden', 'github-img-show');
+                        let calTurnReached = false;
+                        let calReadyToReveal = false;
+                        let revealCalendarFn = null;
+
+                        const tryRevealCal = () => {
+                            if (calTurnReached && calReadyToReveal && revealCalendarFn) {
+                                revealCalendarFn();
+                            }
+                        };
+
+                        const initCal = () => {
+                            calTurnReached = true;
+                            tryRevealCal();
+                        };
+
+                        const showImg = (img, skelId) => {
+                            if (!img) return;
+                            const skel = document.getElementById(skelId);
+                            if (skel) skel.style.display = 'none';
+                            img.classList.replace('github-img-hidden', 'github-img-show');
+                        };
+
+                        const startTurn = (index) => {
+                            if (index >= items.length) return;
+                            const item = items[index];
+                            item.isMyTurn = true;
+
+                            if (item.isCal) {
+                                initCal();
+                                return;
+                            }
+
+                            if (item.loaded) {
+                                showImg(item.el, item.skel);
+                                item.shown = true;
+                                setTimeout(() => startTurn(index + 1), 500);
+                            } else {
+                                item.timeout = setTimeout(() => {
+                                    item.timedOut = true;
+                                    startTurn(index + 1);
+                                }, 2000);
+                            }
+                        };
+
+                        const handleLoad = (index) => {
+                            const item = items[index];
+                            item.loaded = true;
+                            
+                            if (item.isMyTurn && !item.shown) {
+                                showImg(item.el, item.skel);
+                                item.shown = true;
                                 
-                                // 2. Top languages (start fetching 600ms after first is fully loaded)
-                                setTimeout(() => {
-                                    if (langsImg) {
-                                        langsImg.onload = () => {
-                                            langsImg.classList.replace('github-img-hidden', 'github-img-show');
-                                            
-                                            // 3. Streak (start fetching 600ms after second is loaded)
-                                            setTimeout(() => {
-                                                if (streakImg) {
-                                                    streakImg.onload = () => {
-                                                        streakImg.classList.replace('github-img-hidden', 'github-img-show');
-                                                        
-                                                        // 4. Grid (start fetching 600ms after third is loaded)
-                                                        setTimeout(() => {
-                                                            if (container && typeof GitHubCalendar !== 'undefined') {
-                                                                const revealCalendar = () => {
+                                if (!item.timedOut) {
+                                    clearTimeout(item.timeout);
+                                    setTimeout(() => startTurn(index + 1), 500);
+                                }
+                            }
+                        };
+
+                        if (statsImg) {
+                            statsImg.onload = () => handleLoad(0);
+                            statsImg.src = statsUrl;
+                        } else items[0].loaded = true;
+
+                        if (langsImg) {
+                            langsImg.onload = () => handleLoad(1);
+                            langsImg.src = langsUrl;
+                        } else items[1].loaded = true;
+
+                        if (streakImg) {
+                            streakImg.onload = () => handleLoad(2);
+                            streakImg.src = streakUrl;
+                        } else items[2].loaded = true;
+
+                        if (container && typeof GitHubCalendar !== 'undefined') {
+                                                                revealCalendarFn = () => {
                                                                     if (container.dataset.revealed) return;
                                                                     container.dataset.revealed = 'true';
                                                                     
@@ -518,8 +644,6 @@
                                                                     const validCells = Array.from(cells).filter(c => c.hasAttribute('data-date') && c.getAttribute('data-level') !== null);
                                                                     if (!validCells.length) return false;
 
-                                                                    revealCalendar();
-
                                                                     validCells.sort((a, b) => a.getAttribute('data-date').localeCompare(b.getAttribute('data-date')));
                                                                     const lastCell = validCells[validCells.length - 1];
 
@@ -550,6 +674,8 @@
                                                                         datesDiv.appendChild(lastSpan);
                                                                         graphContainer.appendChild(datesDiv);
                                                                     }
+                                                                    calReadyToReveal = true;
+                                                                    tryRevealCal();
                                                                     return true;
                                                                 };
 
@@ -570,22 +696,9 @@
                                                                 } else {
                                                                     waitForCalendar();
                                                                 }
-                                                            }
-                                                        }, 600); // Wait for streak animation
-                                                    };
-                                                    streakImg.src = `https://streak-stats.demolab.com/?user=${username}&theme=dark&hide_border=true&background=00000000&stroke=334155&ring=06b6d4&fire=67e8f9&v=${cb}`;
-                                                }
-                                            }, 600); // Wait for languages animation
-                                        };
-                                        langsImg.src = `https://github-readme-stats-eight-theta.vercel.app/api/top-langs/?username=${username}&title_color=67e8f9&text_color=c9d1d9&bg_color=00000000&hide_border=true&layout=compact&v=${cb}`;
-                                    }
-                                }, 600); // Wait for stats animation
-                            };
-                            // 1. Overview (starts immediately)
-                            statsImg.src = `https://github-readme-stats-eight-theta.vercel.app/api?username=${username}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&include_all_commits=true&count_private=true&v=${cb}`;
-                        }
+                                                        }
+                        startTurn(0);
                     }
-                }
             };
 
             const ghContainer = document.querySelector('.profile-card--github');
@@ -602,59 +715,20 @@
             }
 
             const initLeetcodeStats = function() {
-                const leetcodeUrl = "{{ about_me.leetcode_url|escapejs }}";
-            if (leetcodeUrl) {
-                const match = leetcodeUrl.match(/leetcode\.com\/(?:u\/)?([a-zA-Z0-9_-]+)/);
-                if (match && match[1]) {
-                    const username = match[1];
-                    const lcWrapper = document.getElementById('leetcode-stats-wrapper');
-                    if (lcWrapper) {
-                        const lcUrl = `https://leetcard.jacoblin.cool/${username}?theme=dark&font=Poppins&ext=heatmap&border=0&radius=0`;
-                        
-                        fetch(lcUrl)
-                            .then(res => {
-                                if (!res.ok) throw new Error('Network error');
-                                return res.text();
-                            })
-                            .then(svgText => {
-                                if (svgText.includes('<svg')) {
-                                    const customStyles = `
-                                        <style>
-                                            #background, #total-solved-bg, #total-solved-ring { fill: transparent !important; }
-                                            #total-solved-bg, #easy-solved-bg, #medium-solved-bg, #hard-solved-bg, line:not([id*="-solved-"]) { stroke: #2d3748 !important; }
-                                            rect[class^="ext-heatmap-"] { rx: 2px !important; ry: 2px !important; }
-                                            rect.ext-heatmap-0 { fill: #2d3748 !important; opacity: 1 !important; }
-                                            rect[class^="ext-heatmap-"]:not(.ext-heatmap-0) { fill: #06b6d4 !important; }
-                                            
-                                            #username-text, #username { font-size: 16px !important; }
-                                            #ranking { font-size: 12px !important; }
-                                            #total-solved-text { font-size: 20px !important; }
-                                            #easy-solved-type, #medium-solved-type, #hard-solved-type { font-size: 11px !important; }
-                                            #easy-solved-count, #medium-solved-count, #hard-solved-count { font-size: 12px !important; }
-                                            #ext-heatmap-from, #ext-heatmap-to { font-size: 8px !important; }
-                                        </style>
-                                    `;
-                                    const modifiedSvg = svgText.replace('</svg>', customStyles + '</svg>');
-                                    
-                                    const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });
-                                    const blobUrl = URL.createObjectURL(blob);
-                                    
-                                    lcWrapper.innerHTML = `<img id="leetcode-stats-svg" class="profile-media__img github-img-hidden" alt="LeetCode Stats">`;
-                                    const lcImg = document.getElementById('leetcode-stats-svg');
-                                    lcImg.onload = () => lcImg.classList.replace('github-img-hidden', 'github-img-show');
-                                    lcImg.src = blobUrl;
-                                } else {
-                                    throw new Error('Invalid SVG');
-                                }
-                            })
-                            .catch(err => {
-                                // Fallback to img tag
-                                lcWrapper.innerHTML = `<img src="${lcUrl}" alt="LeetCode Stats" class="profile-media__img" />`;
-                            });
-                    }
-                }
-            }
-        };
+                if (!leetcodePromise) return;
+                const lcWrapper = document.getElementById('leetcode-stats-wrapper');
+                if (!lcWrapper) return;
+                
+                leetcodePromise.then(finalUrl => {
+                    lcWrapper.innerHTML = `<img id="leetcode-stats-svg" class="profile-media__img github-img-hidden" alt="LeetCode Stats">`;
+                    const lcImg = document.getElementById('leetcode-stats-svg');
+                    lcImg.onload = () => {
+                        lcWrapper.classList.remove('skeleton-loader');
+                        lcImg.classList.replace('github-img-hidden', 'github-img-show');
+                    };
+                    lcImg.src = finalUrl;
+                });
+            };
 
             const lcContainer = document.querySelector('.profile-card--leetcode');
             if (lcContainer && ('IntersectionObserver' in window)) {
