@@ -44,19 +44,19 @@
 />
 {% endblock meta %} {% block content %}
 
-<div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-2">
+<div class="px-4 sm:px-6 md:px-20 w-full mt-6 md:mt-8 mb-2 reveal">
     <h1
-        class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
+        class="text-3xl md:text-5xl lg:text-[2.75rem] font-bold text-gray-100 tracking-tight leading-tight mb-4 text-center"
     >
         About Me
     </h1>
     <div class="h-px bg-gray-700 w-full"></div>
 </div>
 
-<div class="text-white p-6 md:p-8 flex flex-col max-w-3xl mx-auto w-full">
+<div class="text-white p-4 sm:p-6 md:p-8 flex flex-col max-w-3xl mx-auto w-full">
     {% if about_me %}
 
-    <div class="flex flex-col md:flex-row gap-6 md:gap-8 my-6 mx-6">
+    <div class="flex flex-col md:flex-row gap-6 md:gap-8 my-6 mx-6 reveal">
         <div class="flex justify-center md:justify-start shrink-0">
             <img
                 src="{{ about_me.effective_profile_image }}"
@@ -70,7 +70,7 @@
         >
             <div class="mb-4 flex flex-col items-center md:items-start w-full">
                 <div class="text-center md:text-left">
-                    <h2 class="text-2xl md:text-3xl font-bold text-cyan-200">
+                    <h2 class="text-xl md:text-3xl font-bold text-cyan-200">
                         {{ about_me.name }}
                     </h2>
                     <p class="text-lg md:text-xl text-gray-300 mb-3">
@@ -112,6 +112,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn-social hover:bg-white hover:text-black hover:border-white"
+                    aria-label="GitHub profile"
                 >
                     <i class="bi bi-github text-xl"></i>
                 </a>
@@ -121,6 +122,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn-social hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white"
+                    aria-label="LinkedIn profile"
                 >
                     <i class="bi bi-linkedin text-xl"></i>
                 </a>
@@ -130,6 +132,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn-social hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white"
+                    aria-label="Telegram profile"
                 >
                     <i class="bi bi-telegram text-xl"></i>
                 </a>
@@ -139,6 +142,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn-social hover:bg-black hover:border-black group"
+                    aria-label="X profile"
                 >
                     <img
                         src="{% static 'images/icons/x.svg' %}"
@@ -152,6 +156,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn-social hover:bg-[#FFA116] hover:border-[#FFA116] group"
+                    aria-label="LeetCode profile"
                 >
                     <img
                         src="{% static 'images/icons/leetcode.svg' %}"
@@ -165,7 +170,7 @@
     </div>
 
     <!-- Bio Content -->
-    <div class="blog-content ck-content leading-relaxed mt-2">
+    <div class="blog-content ck-content leading-relaxed mt-2 reveal-fade">
         {{ about_me.bio|safe }}
     </div>
     {% else %}
@@ -174,10 +179,11 @@
     </p>
     {% endif %}
 
+
     <!-- ── Experience Timeline ───────────────────────────────────────── -->
     {% if experiences %}
-    <div class="mt-12 mb-6">
-        <h2 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+    <div class="mt-12 mb-6 reveal">
+        <h2 class="text-xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
             Experience
         </h2>
         <div class="h-px bg-gray-700/50 w-full mb-10"></div>
@@ -350,18 +356,173 @@
     </div>
     {% endif %}
 
+    <!-- ── Profiles & Stats ───────────────────────────────────────── -->
+    <div class="mt-16 mb-6 reveal">
+        <h2 class="text-xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
+            Profiles & Stats
+        </h2>
+        <div class="h-px bg-gray-700/50 w-full mb-10"></div>
+        <div class="flex flex-col w-full gap-8" id="profiles-container">
+            
+            <!-- LeetCode -->
+            {% if about_me.leetcode_url %}
+            <div class="w-full flex flex-col items-center mb-4">
+                <div class="flex items-center gap-3 mb-6">
+                    <img src="{% static 'images/icons/leetcode.svg' %}" alt="LeetCode" class="w-8 h-8 filter invert" />
+                    <h3 class="text-2xl font-bold text-[#FFA116] tracking-wide">LeetCode</h3>
+                </div>
+                <div class="w-full max-w-[800px] border border-gray-700/50 rounded-xl overflow-hidden shadow-lg hover:shadow-cyan-900/20 transition-shadow duration-300">
+                    <img id="leetcode-stats-img" alt="LeetCode Stats" class="w-full h-auto block" />
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- GitHub Unified Box -->
+            {% if about_me.github_url %}
+            <div class="w-full bg-[#1e2329] border border-gray-700/50 rounded-xl p-5 md:p-8 shadow-lg flex flex-col items-center hover:shadow-cyan-900/20 transition-shadow duration-300">
+                <div class="flex items-center gap-3 mb-8 border-b border-gray-700/50 pb-4 w-full justify-center">
+                    <i class="bi bi-github text-3xl text-gray-200"></i>
+                    <h3 class="text-2xl font-bold text-gray-200 tracking-wide">GitHub Activity & Stats</h3>
+                </div>
+                
+                <div class="flex flex-col w-full max-w-[924px] gap-6 overflow-hidden">
+                    <!-- Stats & Languages Row -->
+                    <div class="flex flex-col lg:flex-row gap-6 w-full justify-center items-center">
+                        <img id="github-stats-img" alt="GitHub Stats" class="max-w-full h-auto object-contain hover:scale-[1.02] transition-transform duration-300" />
+                        <img id="github-langs-img" alt="Top Languages" class="max-w-full h-auto object-contain hover:scale-[1.02] transition-transform duration-300" />
+                    </div>
+                    
+                    <!-- Streak -->
+                    <div class="w-full flex justify-center">
+                        <img id="github-streak-img" alt="GitHub Streak" class="max-w-full h-auto object-contain hover:scale-[1.02] transition-transform duration-300" />
+                    </div>
+                    
+                    <!-- Contributions Calendar -->
+                    <div class="w-full flex justify-center mt-2">
+                        <div id="github-calendar-container" class="w-full overflow-hidden hover:scale-[1.02] transition-transform duration-300">
+                            <!-- Calendar will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- GitHub Calendar Library CSS and Overrides -->
+    <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css"/>
+    <style>
+        /* GitHub Calendar Dark Theme Overrides */
+        #github-calendar-container {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            background-color: transparent;
+            padding: 20px 0;
+            transition: transform 0.3s ease;
+        }
+        #github-calendar-container:hover {
+            transform: scale(1.02);
+        }
+        .calendar {
+            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+            color: #c9d1d9;
+        }
+        .calendar-graph text.wday, .calendar-graph text.month {
+            fill: #c9d1d9;
+            font-size: 10px;
+        }
+        
+        /* Cyan Theme Overrides for Heatmap */
+        .contrib-legend .legend li[style*="background-color: #ebedf0"] { background-color: #161b22 !important; }
+        .contrib-legend .legend li[style*="background-color: #c6e48b"] { background-color: #083344 !important; }
+        .contrib-legend .legend li[style*="background-color: #7bc96f"] { background-color: #0e7490 !important; }
+        .contrib-legend .legend li[style*="background-color: #239a3b"] { background-color: #06b6d4 !important; }
+        .contrib-legend .legend li[style*="background-color: #196127"] { background-color: #67e8f9 !important; }
+        
+        .calendar-graph rect[fill="#ebedf0"], .calendar-graph rect[data-level="0"] { fill: #161b22; }
+        .calendar-graph rect[fill="#c6e48b"], .calendar-graph rect[data-level="1"] { fill: #083344; }
+        .calendar-graph rect[fill="#7bc96f"], .calendar-graph rect[data-level="2"] { fill: #0e7490; }
+        .calendar-graph rect[fill="#239a3b"], .calendar-graph rect[data-level="3"] { fill: #06b6d4; }
+        .calendar-graph rect[fill="#196127"], .calendar-graph rect[data-level="4"] { fill: #67e8f9; }
+        
+        .text-muted { color: #8b949e !important; }
+        .contrib-column { border-color: rgba(255,255,255,0.05) !important; }
+        .contrib-number { color: #c9d1d9 !important; }
+    </style>
+    <!-- GitHub Calendar Script -->
+    <script src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const githubUrl = "{{ about_me.github_url|escapejs }}";
+            if (githubUrl) {
+                const match = githubUrl.match(/github\.com\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    const username = match[1];
+                    const statsImg = document.getElementById('github-stats-img');
+                    if (statsImg) statsImg.src = `https://github-readme-stats-eight-theta.vercel.app/api?username=${username}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=1e2329&hide_border=true&include_all_commits=true&count_private=true`;
+                    
+                    const langsImg = document.getElementById('github-langs-img');
+                    if (langsImg) langsImg.src = `https://github-readme-stats-eight-theta.vercel.app/api/top-langs/?username=${username}&title_color=67e8f9&text_color=c9d1d9&bg_color=1e2329&hide_border=true&layout=compact`;
+                    
+                    const streakImg = document.getElementById('github-streak-img');
+                    if (streakImg) streakImg.src = `https://streak-stats.demolab.com/?user=${username}&theme=dark&hide_border=true&background=1e2329&ring=06b6d4&fire=67e8f9`;
+
+                    // Initialize Native GitHub Heatmap Calendar
+                    const container = document.getElementById('github-calendar-container');
+                    if (container && typeof GitHubCalendar !== 'undefined') {
+                        container.innerHTML = '<div class="calendar">Loading GitHub activity...</div>';
+                        GitHubCalendar(".calendar", username, { responsive: true, tooltips: true });
+                    }
+                }
+            }
+
+            const leetcodeUrl = "{{ about_me.leetcode_url|escapejs }}";
+            if (leetcodeUrl) {
+                const match = leetcodeUrl.match(/leetcode\.com\/(?:u\/)?([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    const username = match[1];
+                    const lcImg = document.getElementById('leetcode-stats-img');
+                    if (lcImg) {
+                        lcImg.src = `https://leetcard.jacoblin.cool/${username}?theme=chartreuse&font=Outfit&ext=heatmap&bg=1e2329&border=0&radius=0`;
+                        lcImg.onerror = function() {
+                            if (!this.retried) {
+                                this.retried = true;
+                                // Retry loading the image after 2 seconds by appending a cache-buster
+                                setTimeout(() => {
+                                    this.src = this.src.split('&v=')[0] + '&v=' + new Date().getTime();
+                                }, 2000);
+                            } else {
+                                // If it fails again, hide the broken image icon and show a nice text message
+                                this.style.display = 'none';
+                                const parent = this.parentElement;
+                                if (!parent.querySelector('.lc-error-msg')) {
+                                    const fallbackMsg = document.createElement('p');
+                                    fallbackMsg.className = 'lc-error-msg text-gray-400 text-sm text-center py-8';
+                                    fallbackMsg.innerText = 'LeetCode server is temporarily busy. Please refresh the page later.';
+                                    parent.appendChild(fallbackMsg);
+                                }
+                            }
+                        };
+                    }
+                }
+            }
+        });
+    </script>
+
     <!-- ── Skills ────────────────────────────────────────────────────── -->
     <div class="mt-12 mb-6">
         <h2
-            class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
+            class="text-xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center reveal"
         >
             Skills
         </h2>
-        <div class="h-px bg-gray-700/50 w-full mb-8"></div>
+        <div class="h-px bg-gray-700/50 w-full mb-8 reveal"></div>
         {% if skills %}
         <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10">
             {% for skill in skills %}
-            <div class="my-3">
+            <div class="my-3 skill-item reveal">
                 <div class="flex justify-between items-center mb-2">
                     <p class="text-base font-medium">{{ skill.name }}</p>
                     <span class="text-sm text-cyan-300">
@@ -384,7 +545,6 @@
                     <div
                         class="skill-bar bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.4)]"
                         data-percentage="{{ skill.percentage }}"
-                        style="width: 0%"
                     ></div>
                 </div>
             </div>

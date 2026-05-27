@@ -1,7 +1,10 @@
 /* ── Skill Bar Animation ────────────────────────────────────────── */
-/* JS (about.js) sets --target-width from data-percentage attribute */
 .skill-bar {
-    animation: skill-animation 2s ease-out forwards;
+    width: 0;
+}
+/* JS (about.js) sets --target-width from data-percentage attribute */
+.skill-item.reveal-visible .skill-bar {
+    animation: skill-animation 1.5s ease-out forwards;
 }
 
 @keyframes skill-animation {
@@ -41,7 +44,10 @@
     padding-bottom: 2rem;
     opacity: 0;
     transform: translateY(16px);
-    animation: timeline-reveal 0.5s ease-out forwards;
+}
+
+.reveal-visible .timeline-item {
+    animation: timeline-reveal 0.6s ease-out forwards;
     animation-delay: calc(var(--delay, 0) * 0.12s);
 }
 
@@ -65,7 +71,7 @@
 
 /* Card */
 .timeline-card {
-    padding: 0.3rem 0 1.5rem 0;
+    padding: 0.6rem 0 1.5rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -105,7 +111,7 @@
 
 /* Position title */
 .timeline-position {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: #f1f5f9;
     margin: 0 0 0.15rem 0;
@@ -114,17 +120,17 @@
 
 /* Company name */
 .timeline-company {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     color: #cbd5e1;
     margin: 0 0 0.2rem 0;
 }
 
 /* Meta line (date + duration, location + work type) */
 .timeline-meta {
-    font-size: 0.82rem;
-    color: #64748b;
+    font-size: 0.8rem;
+    color: #94a3b8;
     margin: 0 0 0.1rem 0;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 /* Dot separator */
@@ -143,8 +149,8 @@
 .timeline-bullets li {
     font-size: 0.95rem;
     color: #e2e8f0;
-    line-height: 1.4;
-    margin-bottom: 0.18rem;
+    line-height: 1.55;
+    margin-bottom: 0.3rem;
     padding-left: 0;
 }
 
@@ -158,14 +164,15 @@
     background: none;
     border: none;
     color: #64748b; /* meta data color */
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-family: inherit;
-    padding: 0;
+    padding: 0 0.15rem;
     margin: 0;
     cursor: pointer;
     font-weight: 500;
     transition: color 0.2s;
     display: inline;
+    line-height: 1.4;
 }
 
 .timeline-inline-less {
@@ -247,7 +254,7 @@
 }
 
 .timeline-role-title {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 600;
     color: #e2e8f0;
     margin: 0 0 0.1rem 0;

@@ -61,7 +61,7 @@
         class="relative z-10 w-full max-w-5xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-8 lg:gap-12"
     >
         <!-- Left: Text content -->
-        <div class="flex-1 text-left">
+        <div class="flex-1 text-left reveal">
             <div class="text-center lg:text-left mb-3">
                 <h1
                     class="inline-block text-left text-3xl md:text-4xl lg:text-[2.75rem] font-extrabold leading-tight"
@@ -74,7 +74,7 @@
                 </h1>
             </div>
 
-            <div class="text-base md:text-lg text-gray-400 mb-6 h-7 font-light">
+            <div class="text-base md:text-lg text-gray-400 mb-6 font-light hero-typed-row">
                 <span class="text-gray-500 font-mono text-sm mr-1">&gt;</span>
                 <span id="hero-typed"></span><span class="hero-caret">_</span>
             </div>
@@ -117,7 +117,7 @@
         </div>
 
         <!-- Right: AboutMe hero imagery -->
-        <div class="hidden lg:block w-full max-w-[420px]">
+        <div class="hidden lg:block w-full max-w-[420px] reveal-scale">
             <div
                 class="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-gray-900/50 shadow-2xl shadow-black/40"
             >
@@ -157,7 +157,7 @@
 
     <!-- Bottom stats bar -->
     <div
-        class="relative z-10 w-full max-w-5xl mx-auto px-6 mt-20 md:mt-24 lg:mt-12"
+        class="relative z-10 w-full max-w-5xl mx-auto px-6 mt-20 md:mt-24 lg:mt-12 reveal"
     >
         <div
             class="flex justify-center lg:justify-start gap-8 md:gap-12 text-center"
@@ -168,9 +168,7 @@
                         >+</span
                     >
                 </div>
-                <div
-                    class="text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5"
-                >
+                <div class="text-gray-500 uppercase tracking-wider mt-0.5 stat-label">
                     Articles
                 </div>
             </div>
@@ -182,9 +180,7 @@
                         >+</span
                     >
                 </div>
-                <div
-                    class="text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5"
-                >
+                <div class="text-gray-500 uppercase tracking-wider mt-0.5 stat-label">
                     Topics
                 </div>
             </div>
@@ -195,9 +191,7 @@
                         >+</span
                     >
                 </div>
-                <div
-                    class="text-[11px] md:text-xs text-gray-500 uppercase tracking-wider mt-0.5"
-                >
+                <div class="text-gray-500 uppercase tracking-wider mt-0.5 stat-label">
                     Projects
                 </div>
             </div>
@@ -206,40 +200,32 @@
 </div>
 
 <div class="blog-section text-white overflow-hidden relative z-10">
-    <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-10">
+    <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-10 reveal">
         <h1
-            class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
+            class="text-xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center"
         >
-            Checkout my latest posts
+            Check out my latest posts
         </h1>
         <div class="h-px bg-gray-700 w-full"></div>
     </div>
-    <div class="blogs blog-cards-grid my-5 grid gap-6 px-4 md:grid-cols-3">
+    <div class="blogs blog-cards-grid my-5 grid gap-6 px-4 md:grid-cols-3 reveal-stagger">
         {% for blog in latest_blogs %}
-        <div class="blog-card-item glass-card solid-content-card p-5 h-auto">
-            <a href='{% url "blogpost" blog.slug %}'>
-                {% if blog.effective_thumbnail %}
-                <div
-                    class="w-full overflow-hidden rounded-lg mb-4"
-                    style="aspect-ratio: 16/9"
-                >
-                    <img
-                        class="w-full h-full object-cover"
-                        src="{{ blog.effective_thumbnail }}"
-                        alt="{{ blog.title }}"
-                    />
-                </div>
-                {% endif %}
-            </a>
-            <a
-                class="text-blue-100 hover:text-cyan-400 transition duration-300"
-                href='{% url "blogpost" blog.slug %}'
-                ><span class="text-xl font-bold"
-                    >{{ blog.title|truncatechars:80 }}</span
-                ></a
-            ><br />
+        <div class="blog-card-item glass-card solid-content-card p-5 h-auto reveal">
+            {% if blog.effective_thumbnail %}
+            <div
+                class="w-full overflow-hidden rounded-lg mb-4"
+                style="aspect-ratio: 16/9"
+            >
+                <img
+                    class="w-full h-full object-cover"
+                    src="{{ blog.effective_thumbnail }}"
+                    alt="{{ blog.title }}"
+                />
+            </div>
+            {% endif %}
+            <h3 class="text-xl font-bold text-gray-100 line-clamp-2">{{ blog.title|truncatechars:80 }}</h3>
             <p
-                class="my-3 break-words text-sm md:text-base leading-relaxed text-gray-100"
+                class="my-3 break-words text-sm md:text-base leading-relaxed text-gray-100 line-clamp-3"
                 style="overflow-wrap: anywhere"
             >
                 {{blog.meta|truncatechars:200}}
@@ -262,7 +248,7 @@
         </div>
         {% endfor %}
     </div>
-    <div class="text-center mt-12 mb-10">
+    <div class="text-center mt-12 mb-10 reveal">
         <a href='{% url "blog" %}' class="btn-primary px-6 py-2.5"
             >View all posts <i class="bi bi-arrow-right"></i
         ></a>

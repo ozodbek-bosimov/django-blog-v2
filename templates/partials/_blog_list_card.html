@@ -1,7 +1,7 @@
 {% load blog_extras %}
 
 <div
-    class="blog-list-card glass-card solid-content-card flex flex-col gap-4 md:gap-x-8 p-5 mb-6"
+    class="blog-list-card glass-card solid-content-card flex flex-col gap-5 p-5 md:p-6 mb-6 overflow-hidden reveal"
 >
     {% if blog.effective_thumbnail %}
     <div class="blog-list-thumb">
@@ -12,20 +12,14 @@
         />
     </div>
     {% endif %}
-    <div class="min-w-0">
-        <a
-            class="text-blue-100 hover:text-cyan-400 transition duration-300"
-            href='{% url "blogpost" blog.slug %}'
-            ><span class="text-xl font-bold"
-                >{{ blog.title|truncatechars:80 }}</span
-            ></a
-        ><br />
+    <div class="flex-1 min-w-0">
+        <h3 class="font-bold text-xl md:text-2xl text-gray-100 mb-2 md:mb-3 line-clamp-2">{{ blog.title|truncatechars:80 }}</h3>
         <p
-            class="my-3 break-words text-sm md:text-base leading-relaxed text-gray-100"
+            class="text-sm md:text-base leading-relaxed mb-4 break-words text-gray-100 line-clamp-3"
         >
             {{ blog.meta|truncatechars:200 }}
         </p>
-        <div class="post-meta text-gray-400">
+        <div class="post-meta text-gray-400 mb-4">
             <span
                 ><i class="bi bi-tag"></i>
                 <a
@@ -46,7 +40,7 @@
         </div>
         <a
             href='{% url "blogpost" blog.slug %}'
-            class="btn-primary px-4 py-2 my-3 whitespace-nowrap"
+            class="btn-primary px-4 py-2 whitespace-nowrap"
             >Read more <i class="bi bi-arrow-right"></i
         ></a>
     </div>

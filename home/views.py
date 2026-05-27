@@ -4,7 +4,7 @@ from functools import reduce
 
 from django.core.cache import cache
 from django.core.paginator import Paginator
-from django.db.models import Q, Prefetch
+from django.db.models import Count, Q, Prefetch
 from django.shortcuts import render
 from django.templatetags.static import static
 
@@ -105,8 +105,20 @@ def about(request):
     if about_me:
         abs_profile_image = about_me.get_absolute_profile_image_url(request)
 
+    all_blogs = cache.get_or_set(
+        "all_blogs_list",
+        lambda: list(Blog.objects.order_by("-time", "-sno")),
+        86400,
+    )
+    latest_blogs_about = all_blogs[:5]
+
     # 'about_me' intentionally omitted — provided by the about_me context processor
-    context = {"skills": skills, "experiences": experiences, "abs_profile_image": abs_profile_image}
+    context = {
+        "skills": skills, 
+        "experiences": experiences, 
+        "abs_profile_image": abs_profile_image,
+        "latest_blogs": latest_blogs_about
+    }
     return render(request, "about.html", context)
 
 
@@ -162,7 +174,11 @@ def category(request, category):
 def categories(request):
     all_categories = cache.get_or_set(
         "all_categories",
-        lambda: list(Blog.objects.values("category").distinct().order_by("category")),
+        lambda: list(
+            Blog.objects.values("category")
+            .annotate(count=Count("category"))
+            .order_by("category")
+        ),
         86400,
     )
     return render(request, "categories.html", {"all_categories": all_categories})
