@@ -156,15 +156,16 @@ if (searchModal) {
     return;
   }
 
-  var observer = new IntersectionObserver(
-    function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("reveal-visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    },
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          // Trigger if it's currently intersecting, OR if it's already above the viewport (user scrolled past it)
+          if (entry.isIntersecting || entry.boundingClientRect.top < window.innerHeight) {
+            entry.target.classList.add("reveal-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
     {
       threshold: 0.01,
       // Keep the trigger early and reliable across mobile browsers.
