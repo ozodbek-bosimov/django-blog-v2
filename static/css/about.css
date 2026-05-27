@@ -537,7 +537,7 @@
 
 .calendar-graph rect[fill="#c6e48b"],
 .calendar-graph rect[data-level="1"] {
-    fill: #083344 !important;
+    fill: #164e63 !important;
 }
 
 .calendar-graph rect[fill="#7bc96f"],
@@ -547,7 +547,7 @@
 
 .calendar-graph rect[fill="#239a3b"],
 .calendar-graph rect[data-level="3"] {
-    fill: #06b6d4 !important;
+    fill: #22d3ee !important;
 }
 
 .calendar-graph rect[fill="#196127"],
@@ -569,19 +569,19 @@
 }
 
 #github-calendar-container .ContributionCalendar-day[data-level="1"] {
-    background-color: rgba(6, 182, 212, 0.4) !important;
+    background-color: #164e63 !important;
 }
 
 #github-calendar-container .ContributionCalendar-day[data-level="2"] {
-    background-color: rgba(6, 182, 212, 0.6) !important;
+    background-color: #0e7490 !important;
 }
 
 #github-calendar-container .ContributionCalendar-day[data-level="3"] {
-    background-color: rgba(6, 182, 212, 0.8) !important;
+    background-color: #22d3ee !important;
 }
 
 #github-calendar-container .ContributionCalendar-day[data-level="4"] {
-    background-color: rgba(6, 182, 212, 1) !important;
+    background-color: #67e8f9 !important;
 }
 
 #github-calendar-container .border {
@@ -732,5 +732,17 @@
 
     .profile-subtitle {
         font-size: 0.78rem;
+    }
+}
+
+/* ── Streak responsive sizing ────────────────────────────────── */
+.streak-responsive {
+    max-width: 100%;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .streak-responsive {
+        max-width: 65%;
     }
 }
