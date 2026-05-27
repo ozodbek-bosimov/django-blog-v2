@@ -29,21 +29,6 @@
     <div class="h-px bg-gray-700/50 w-full"></div>
 </div>
 
-<div class="w-full max-w-2xl mx-auto px-4 md:px-0 mt-6 reveal">
-  <form class="flex flex-col sm:flex-row gap-3" method="get" action="{% url 'search' %}">
-    <input
-      type="text"
-      name="q"
-      value="{{ query }}"
-      placeholder="Search posts, categories, or keywords"
-      class="search-inline-input"
-      aria-label="Search query"
-    />
-    <button type="submit" class="btn-primary px-6 py-3 whitespace-nowrap">
-      Search
-    </button>
-  </form>
-</div>
 
 <div class='list-container'>
 
