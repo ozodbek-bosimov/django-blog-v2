@@ -48,8 +48,13 @@ def lazy_iframes(content):
         iframe_close = match.group(2) or "</iframe>"  # </iframe>
         original = iframe_open + iframe_close
 
+        ph_class = "lazy-iframe-ph"
+        iframe_lower = iframe_open.lower()
+        if "spotify.com" in iframe_lower:
+            ph_class += " lazy-iframe-ph--spotify"
+
         return (
-            '<div class="lazy-iframe-ph"></div>'
+            f'<div class="{ph_class}"></div>'
             '<template class="lazy-tpl">'
             + original
             + "</template>"

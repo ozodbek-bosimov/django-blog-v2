@@ -16,12 +16,12 @@
 /* Visible placeholder shown while the real iframe is deferred      */
 /* inside a <template> element. Removed when the iframe loads.      */
 .lazy-iframe-ph {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    border-radius: 8px;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    display: block;
+    border-radius: 12px;
     background: linear-gradient(
         110deg,
         rgba(31, 41, 55, 1) 30%,
@@ -37,11 +37,27 @@
     100% { background-position: -200% 0; }
 }
 
+.lazy-iframe-ph.lazy-iframe-ph--spotify {
+    aspect-ratio: auto;
+    height: 152px;
+}
+
 /* ── Copy Link Button — Copied State ────────────────────────────── */
 #copy-link-btn.copied {
     background-color: rgba(20, 83, 45, 0.5);
     border-color: #4ade80;
     color: #4ade80;
+}
+
+/* ── Rich Media Sizing ─────────────────────────────────────────── */
+.blog-content figure {
+    margin: 1.5rem 0;
+}
+
+.blog-content iframe {
+    width: 100%;
+    max-width: 100%;
+    border: none;
 }
 
 /* ── Code Block Styles ───────────────────────────────────────────── */

@@ -5,6 +5,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#111827" />
+        <link rel="preload" href="{% static 'fonts/Poppins-Regular.ttf' %}" as="font" type="font/ttf" crossorigin />
+        <link rel="preload" href="{% static 'fonts/Poppins-Medium.ttf' %}" as="font" type="font/ttf" crossorigin />
+        <link rel="preload" href="{% static 'fonts/Poppins-Bold.ttf' %}" as="font" type="font/ttf" crossorigin />
         <link
             rel="icon"
             href="{% static 'favicon/favicon.ico' %}?v=20260219"
@@ -119,7 +123,7 @@
         </main>
 
         <footer
-            class="border-t border-gray-800 bg-gray-900 text-white py-8 px-8 md:px-20 relative z-10"
+            class="border-t border-gray-800 bg-gray-900 text-white py-8 px-8 md:px-20 relative z-10 reveal-fade"
         >
             <div
                 class="flex flex-col md:flex-row justify-between items-center gap-6"
@@ -244,7 +248,7 @@
 
         <!-- Back to Top Button -->
         <button id="back-to-top" aria-label="Back to top" title="Back to top">
-            <i class="bi bi-arrow-up text-lg"></i>
+            <i class="bi bi-chevron-up text-xl"></i>
         </button>
 
         <script src="{% static 'js/base.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
