@@ -511,7 +511,15 @@
     border: none !important;
     min-height: auto !important;
     max-width: 100%;
+    width: 100%;
     box-sizing: border-box;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+#github-calendar-container .calendar .position-relative {
+    grid-column: 1 / -1;
 }
 
 /* SVG text labels (day-of-week, month) */
@@ -588,8 +596,10 @@
     display: none !important;
 }
 
-/* Stats columns rendered by the library (Broken due to GitHub HTML changes, hiding them) */
-#github-calendar-container .contrib-column {
+/* Stats columns rendered by the library */
+#github-calendar-container .contrib-column,
+#github-calendar-container .flex-wrap,
+#github-calendar-container .text-muted {
     display: none !important;
 }
 
@@ -620,16 +630,12 @@
 }
 
 #github-calendar-container .graph-before-activity-overview {
-    padding: 0.35rem 0.5rem !important;
+    padding: 0.45rem 1rem !important;
 }
 
 #github-calendar-container .ContributionCalendar-label {
-    padding: 0.125em 0.5em 0.125em 0;
-    font-size: 12px;
-    font-weight: normal;
-    color: #c9d1d9;
-    text-align: left;
-    fill: #c9d1d9;
+    padding-left: 0.35rem !important;
+    padding-right: 1.5rem !important;
 }
 
 #github-calendar-container {
