@@ -50,22 +50,12 @@
 
 <div class="text-white p-6 md:p-8 pt-12 flex flex-col max-w-3xl mx-auto w-full">
     <!-- Title -->
-    <h1 class="text-center text-xl md:text-4xl font-bold text-cyan-200 reveal">
+    <h1 class="text-center text-2xl md:text-3xl font-bold text-cyan-200 leading-snug text-balance reveal">
         {{ blog.title }}
     </h1>
 
     <!-- Meta info -->
     <div class="post-meta justify-center mt-3 text-gray-400 reveal">
-        <span>
-            by <i class="bi bi-person"></i>
-            <a href="{% url 'about' %}" class="group">
-                <span
-                    class="group-hover:text-cyan-200 bg-left-bottom bg-gradient-to-r from-cyan-300 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out"
-                    >Ozodbek</span
-                >
-            </a>
-        </span>
-        <i class="bi bi-dot"></i>
         <span>
             <i class="bi bi-tag"></i>
             <a href="{% url 'category' blog.category %}" class="group">

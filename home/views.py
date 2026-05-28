@@ -276,3 +276,59 @@ def blogpost(request, slug):
     except Blog.DoesNotExist:
         context = {"message": "Blog post not found"}
         return render(request, "404.html", context, status=404)
+
+
+"""
+def leetcode_proxy(request):
+    username = request.GET.get('username')
+    if not username:
+        return HttpResponse("Missing username", status=400)
+    
+    cache_key = f"leetcode_svg_{username}"
+    cached_svg = cache.get(cache_key)
+    if cached_svg:
+        response = HttpResponse(cached_svg, content_type="image/svg+xml")
+        response['Cache-Control'] = 'public, max-age=43200'
+        return response
+    
+    url = f"https://leetcard.jacoblin.cool/{username}?font=Poppins&ext=heatmap&border=0&radius=0&theme=dark"
+    
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=5) as api_response:
+            svg_data = api_response.read().decode('utf-8')
+            
+            # Inject custom CSS to make the heatmap match the site's cyan theme perfectly
+            custom_styles = '''
+            <style>
+                #background, #total-solved-bg, #total-solved-ring { fill: transparent !important; }
+                #total-solved-bg, #easy-solved-bg, #medium-solved-bg, #hard-solved-bg, line:not([id*="-solved-"]) { stroke: #2d3748 !important; }
+                rect[class^="ext-heatmap-"] { rx: 2px !important; ry: 2px !important; }
+                #ext-heatmap-cells { opacity: 1 !important; }
+                rect.ext-heatmap-0 { fill: #2d3748 !important; opacity: 1 !important; }
+                rect.ext-heatmap-1 { fill: #164e63 !important; opacity: 1 !important; }
+                rect.ext-heatmap-2 { fill: #0e7490 !important; opacity: 1 !important; }
+                rect.ext-heatmap-3 { fill: #22d3ee !important; opacity: 1 !important; }
+                rect.ext-heatmap-4 { fill: #67e8f9 !important; opacity: 1 !important; }
+                rect[class^="ext-heatmap-"]:not(.ext-heatmap-0):not(.ext-heatmap-1):not(.ext-heatmap-2):not(.ext-heatmap-3):not(.ext-heatmap-4) { fill: #67e8f9 !important; opacity: 1 !important; }
+                
+                #username-text, #username { font-size: 16px !important; }
+                #ranking { font-size: 12px !important; }
+                #total-solved-text { font-size: 20px !important; }
+                #easy-solved-type, #medium-solved-type, #hard-solved-type { font-size: 11px !important; }
+                #easy-solved-count, #medium-solved-count, #hard-solved-count { font-size: 12px !important; }
+                #ext-heatmap-from, #ext-heatmap-to { font-size: 8px !important; }
+            </style>
+            '''
+            if '</svg>' in svg_data:
+                svg_data = svg_data.replace('</svg>', custom_styles + '</svg>')
+            
+            cache.set(cache_key, svg_data, 43200) # cache for 12 hours
+            
+            response = HttpResponse(svg_data, content_type="image/svg+xml")
+            response['Cache-Control'] = 'public, max-age=43200'
+            return response
+            
+    except Exception as e:
+        return HttpResponse('<svg xmlns="http://www.w3.org/2000/svg" width="500" height="320"><rect width="100%" height="100%" fill="#0f172a"/><text x="50%" y="50%" fill="#9ca3af" text-anchor="middle" font-family="sans-serif">Failed to load LeetCode stats</text></svg>', content_type="image/svg+xml")
+"""
