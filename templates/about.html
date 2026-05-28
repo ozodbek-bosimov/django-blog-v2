@@ -479,8 +479,8 @@
                     const lcUsername = match[1];
                     const baseLcUrl = `https://leetcard.jacoblin.cool/${lcUsername}?font=Poppins&ext=heatmap&border=0&radius=0&v=${cbStr}`;
                     const lcUrl = `${baseLcUrl}&theme=dark`;
-                    // Fallback URL using the default dark theme if CSS injection fails
-                    const lcFallbackUrl = `${baseLcUrl}&theme=dark`;
+                    // Fallback URL uses valid 6-hex colors matching the site's cyan theme (heatmap stays green on fallback)
+                    const lcFallbackUrl = `${baseLcUrl}&colors=0f172a,2d3748,67e8f9,22d3ee,0e7490,67e8f9,22d3ee,164e63`;
                     
                     leetcodePromise = fetch(lcUrl)
                         .then(res => {
@@ -762,9 +762,9 @@
         {% if skills %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12 lg:gap-x-16 reveal-stagger">
             {% for skill in skills %}
-            <div class="skill-item reveal relative group">
-                <div class="flex justify-between items-end mb-2.5">
-                    <p class="text-[15px] font-medium text-gray-200 tracking-wide">{{ skill.name }}</p>
+            <div class="skill-item reveal relative">
+                <div class="flex justify-between items-center mb-2.5">
+                    <p class="text-[15px] font-semibold text-gray-200 tracking-wide">{{ skill.name }}</p>
                     <span class="text-xs font-medium text-gray-400 capitalize">
                         {% if skill.percentage <= 19 %}
                             Familiar
@@ -779,9 +779,9 @@
                         {% endif %}
                     </span>
                 </div>
-                <div class="relative w-full bg-gray-800/50 rounded-full h-[3px] overflow-hidden">
+                <div class="relative w-full rounded-full overflow-hidden" style="background-color: rgba(55,65,81,0.6); height: 4px;">
                     <div
-                        class="skill-bar bg-gradient-to-r from-cyan-600/60 to-cyan-400 h-full rounded-full transition-all duration-500 group-hover:from-cyan-500 group-hover:to-cyan-300"
+                        class="skill-bar bg-gradient-to-r from-cyan-600/60 to-cyan-400 h-full rounded-full"
                         data-percentage="{{ skill.percentage }}"
                     ></div>
                 </div>
