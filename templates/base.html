@@ -53,11 +53,19 @@
                 class="text-xl font-bold bg-gradient-to-r from-cyan-300 to-blue-500 bg-clip-text text-transparent hover:from-cyan-200 hover:to-blue-400 transition-all"
                 >Ozodbek Bosimov</a
             >
-            <div class="flex space-x-4 text-xl">
-                <i
-                    class="searchBtn mt-1 bi bi-search text-sm cursor-pointer md:hidden"
-                ></i>
-                <i class="nav-btn bi bi-list cursor-pointer md:hidden"></i>
+            <div class="flex items-center space-x-2 md:hidden">
+                <button
+                    class="searchBtn p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    aria-label="Search"
+                >
+                    <i class="bi bi-search text-xl"></i>
+                </button>
+                <button
+                    class="nav-btn p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    aria-label="Menu"
+                >
+                    <i class="bi bi-list text-3xl"></i>
+                </button>
             </div>
             <div class="hidden items-center gap-2 md:flex">
                 <a
