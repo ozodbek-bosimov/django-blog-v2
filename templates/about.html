@@ -365,7 +365,7 @@
         <div class="profiles-section">
             <div class="profiles-grid" id="profiles-container">
             {% if about_me.leetcode_url %}
-            <article class="profile-card profile-card--leetcode transition-opacity hover:opacity-95">
+            <article class="profile-card profile-card--leetcode">
                 <div class="profile-card__body p-0">
                     <a href="{{ about_me.leetcode_url }}" target="_blank" rel="noopener noreferrer" class="block cursor-pointer" title="View LeetCode Profile">
                         <div class="profile-media skeleton-loader" id="leetcode-stats-wrapper">
@@ -381,7 +381,7 @@
             {% endif %}
 
             {% if about_me.github_url %}
-            <article class="profile-card profile-card--github transition-opacity hover:opacity-95 cursor-pointer relative" onclick="window.open('{{ about_me.github_url|escapejs }}', '_blank')" title="View GitHub Profile">
+            <article class="profile-card profile-card--github cursor-pointer relative" onclick="window.open('{{ about_me.github_url|escapejs }}', '_blank')" title="View GitHub Profile">
                 <div class="profile-card__top" style="padding-left: 5cqw; padding-top: 3cqw; margin-bottom: 1.5cqw;">
                     <div class="flex items-center text-gray-200" style="gap: 1.8cqw;">
                         <i class="bi bi-github" style="font-size: 4.4cqw; color: #f0f0f0;"></i>
