@@ -56,24 +56,24 @@
 <div class="text-white p-6 md:p-8 flex flex-col max-w-3xl mx-auto w-full">
     {% if about_me %}
 
-    <div class="flex flex-col md:flex-row gap-6 md:gap-8 my-6 mx-6 reveal">
-        <div class="flex justify-center md:justify-start shrink-0">
+    <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 my-6 mx-0 sm:mx-6 reveal">
+        <div class="flex justify-center sm:justify-start shrink-0">
             <img
                 src="{{ about_me.effective_profile_image }}"
                 alt="{{ about_me.name }}"
-                class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg"
+                class="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-cyan-300 shadow-lg"
             />
         </div>
 
         <div
-            class="flex-1 flex flex-col items-center md:items-start text-center md:text-left w-full"
+            class="flex-1 flex flex-col items-center sm:items-start text-center sm:text-left w-full"
         >
-            <div class="mb-4 flex flex-col items-center md:items-start w-full">
-                <div class="text-center md:text-left">
-                    <h2 class="text-2xl md:text-3xl font-bold text-cyan-200">
+            <div class="mb-4 flex flex-col items-center sm:items-start w-full">
+                <div class="text-center sm:text-left">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-cyan-200">
                         {{ about_me.name }}
                     </h2>
-                    <p class="text-lg md:text-xl text-gray-300 mb-3">
+                    <p class="text-lg sm:text-xl text-gray-300 mb-3">
                         {{ about_me.profession }}
                     </p>
                 </div>
@@ -105,7 +105,7 @@
                 </div>
             </div>
 
-            <div class="flex gap-3 justify-center md:justify-start w-full">
+            <div class="flex gap-3 justify-center sm:justify-start w-full">
                 {% if about_me.github_url %}
                 <a
                     href="{{ about_me.github_url }}"
@@ -409,7 +409,7 @@
                         </div>
                         <div class="profile-panel">
                             <p class="profile-panel__label">Top languages</p>
-                            <div id="github-langs-skeleton" class="skeleton-loader" style="aspect-ratio: 300/200;"></div>
+                            <div id="github-langs-skeleton" class="skeleton-loader" style="aspect-ratio: 350/165;"></div>
                             <img
                                 id="github-langs-img"
                                 alt="Top Languages"
@@ -471,14 +471,16 @@
                 }, 50);
             }
             
-            // LeetCode preload in background
             let leetcodePromise = null;
             const leetcodeUrl = "{{ about_me.leetcode_url|escapejs }}";
             if (leetcodeUrl) {
                 const match = leetcodeUrl.match(/leetcode\.com\/(?:u\/)?([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
                     const lcUsername = match[1];
-                    const lcUrl = `https://leetcard.jacoblin.cool/${lcUsername}?theme=dark&font=Poppins&ext=heatmap&border=0&radius=0&v=${cbStr}`;
+                    const baseLcUrl = `https://leetcard.jacoblin.cool/${lcUsername}?font=Poppins&ext=heatmap&border=0&radius=0&v=${cbStr}`;
+                    const lcUrl = `${baseLcUrl}&theme=dark`;
+                    // Fallback URL using the default dark theme if CSS injection fails
+                    const lcFallbackUrl = `${baseLcUrl}&theme=dark`;
                     
                     leetcodePromise = fetch(lcUrl)
                         .then(res => {
@@ -514,7 +516,7 @@
                             }
                             throw new Error('Invalid SVG');
                         })
-                        .catch(() => lcUrl); // Fallback to raw URL on failure
+                        .catch(() => lcFallbackUrl);
                 }
             }
 
@@ -758,12 +760,12 @@
         </h2>
         <div class="h-px bg-gray-700/50 w-full mb-5 md:mb-8 reveal"></div>
         {% if skills %}
-        <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 lg:gap-x-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12 lg:gap-x-16 reveal-stagger">
             {% for skill in skills %}
-            <div class="my-3 skill-item reveal">
-                <div class="flex justify-between items-center mb-2">
-                    <p class="text-base font-medium">{{ skill.name }}</p>
-                    <span class="text-sm text-cyan-300">
+            <div class="skill-item reveal relative group">
+                <div class="flex justify-between items-end mb-2.5">
+                    <p class="text-[15px] font-medium text-gray-200 tracking-wide">{{ skill.name }}</p>
+                    <span class="text-xs font-medium text-gray-400 capitalize">
                         {% if skill.percentage <= 19 %}
                             Familiar
                         {% elif skill.percentage <= 39 %}
@@ -777,11 +779,9 @@
                         {% endif %}
                     </span>
                 </div>
-                <div
-                    class="w-full bg-white/5 ring-1 ring-inset ring-white/5 rounded-full h-2.5"
-                >
+                <div class="relative w-full bg-gray-800/50 rounded-full h-[3px] overflow-hidden">
                     <div
-                        class="skill-bar bg-gradient-to-r from-cyan-300 to-blue-600 h-2.5 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.4)]"
+                        class="skill-bar bg-gradient-to-r from-cyan-600/60 to-cyan-400 h-full rounded-full transition-all duration-500 group-hover:from-cyan-500 group-hover:to-cyan-300"
                         data-percentage="{{ skill.percentage }}"
                     ></div>
                 </div>
