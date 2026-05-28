@@ -325,13 +325,16 @@
 .profile-card {
     container-type: inline-size;
     --accent: #22d3ee;
-    border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.125rem;
+    background: var(--surface-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--surface-border);
+    box-shadow:
+        var(--surface-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
     padding: 1.25rem;
-    padding-top: 0.25rem; /* Reduced to compensate for internal SVG/Top-section padding */
+    padding-top: 0.25rem;
     overflow: hidden;
     max-width: 100%;
     box-sizing: border-box;
