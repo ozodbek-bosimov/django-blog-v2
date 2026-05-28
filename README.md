@@ -1,12 +1,15 @@
 # Django Blog (O'zbekcha)
 
-Shaxsiy blog va portfolio sayti. Django + Tailwind + CKEditor 5 asosida yozilgan.
+Shaxsiy blog va portfolio sayti. Django + Tailwind + CKEditor 5 asosida yozilgan. Ushbu loyiha zamonaviy qulayliklar va xavfsizlik funksiyalari bilan to'liq jihozlangan.
 
 ## Asosiy imkoniyatlar
-- Blog postlar, kategoriya va qidiruv
-- Admin panel orqali kontent boshqaruvi
-- Rich text editor (CKEditor 5)
-- Static/media servis (WhiteNoise + Nginx)
+- **Blog, Kategoriya va Portfolio:** Postlar, ish tajribalari (Experiences), loyihalar (Projects) va ko'nikmalar (Skills).
+- **Admin Panel & Rich Text:** To'liq kontent boshqaruvi va CKEditor 5 orqali qulay tahrirlash.
+- **Shared Files Manager (Yangi):** Har xil turdagi fayllarni (PDF, HTML, Audio) yuklash, ulashish va Admin paneldan nusxalash (Copy URL).
+- **Avtomatik WebP siqish:** Rasmlar sifatni yo'qotmagan holda WebP formatiga o'tkazilib disk hajmini va trafikni tejaydi.
+- **Tezkor Kesh (Caching):** Sayt maksimal tezlikda ishlashi uchun sahifalar xotirada saqlanadi.
+- **Rate Limiting (Himoya):** Kiberhujumlar va sun'iy trafik (DDOS) dan saqlanish uchun avtomatik himoya va bloklash tizimi.
+- **Static/media servis:** WhiteNoise + Nginx integratsiyasi.
 
 ## Texnologiyalar
 - Django 5.x
@@ -33,15 +36,17 @@ pip install -r requirements.txt
 DJANGO_SECRET_KEY=your-local-secret
 DJANGO_DEBUG=true
 DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
-DJANGO_CSRF_TRUSTED_ORIGINS=
+DJANGO_CSRF_TRUSTED_ORIGINS=http://127.0.0.1:8000,http://localhost:8000
 ADMIN_SESSION_TIMEOUT=1800
 ADMIN_LOG_RETENTION_ENABLED=true
 ADMIN_LOG_RETENTION_DAYS=90
 DJANGO_FILE_LOGGING=false
+GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES=/_owner/,/static/,/media/,/shared/
 ```
 
 ### 3) Migratsiya va run
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
@@ -49,43 +54,26 @@ python manage.py runserver
 
 ---
 
-## Production `.env` namunasi
+## Production `.env` namunasi (Server uchun)
+Serverga joylash uchun hozirlangan `.env.deploy` faylidan foydalaning (Nusxa oling: `cp .env.deploy .env`):
 ```env
 DJANGO_SECRET_KEY=your-long-random-secret
 DJANGO_DEBUG=false
 DJANGO_ALLOWED_HOSTS=ozodbek.me,www.ozodbek.me
 DJANGO_CSRF_TRUSTED_ORIGINS=https://ozodbek.me,https://www.ozodbek.me
 
-ADMIN_SESSION_TIMEOUT=1800
-ADMIN_LOG_RETENTION_ENABLED=true
-ADMIN_LOG_RETENTION_DAYS=90
-
+# Xavfsizlik (Productionda YOQILGAN bo'lishi shart)
 DJANGO_SESSION_COOKIE_SECURE=true
 DJANGO_CSRF_COOKIE_SECURE=true
 DJANGO_SECURE_SSL_REDIRECT=true
+DJANGO_SECURE_HSTS_SECONDS=31536000
 
-DJANGO_FILE_LOGGING=false
+# Himoya tizimi (DDOS va blokerlar)
+GLOBAL_RATE_LIMIT_ENABLED=true
+GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES=/_owner/,/static/,/media/,/shared/
 ```
 
-Serverda haqiqiy qiymatlar uchun `.env.deploy.example` ni nusxalang: `cp .env.deploy.example .env.deploy`, keyin `DJANGO_SECRET_KEY` va domenlarni to‘ldiring. `.env.deploy` gitga kirmasligi kerak (`.gitignore` da).
-
-Ishga tushirishda: `DJANGO_ENV_FILE=.env.deploy` (yoki fayl nomingiz bo‘yicha).
-
 > Eslatma: `DJANGO_FILE_LOGGING=true` qilsangiz, `logs/` papkasiga yozish ruxsati bo‘lishi shart.
-
----
-
-## Muhim sozlamalar (hozirgi holat)
-
-### Static (Django 5 mos)
-Loyihada production uchun `STORAGES` ishlatiladi:
-- `default` -> `django.core.files.storage.FileSystemStorage`
-- `staticfiles` -> `whitenoise.storage.CompressedManifestStaticFilesStorage`
-
-Bu `STATICFILES_STORAGE` o‘rniga Django 5 uchun to‘g‘ri yo‘l.
-
-### Logging fallback
-`DJANGO_FILE_LOGGING=true` bo‘lsa ham, `logs/` yoziladigan bo‘lmasa servis yiqilib ketmasligi uchun himoya qo‘shilgan.
 
 ---
 
@@ -148,6 +136,12 @@ server {
         expires 7d;
     }
 
+    # Yangi: Shared files xavfsiz va tez ishlashi uchun
+    location /shared/ {
+        alias /var/www/django-blog/shared/;
+        expires 7d;
+    }
+
     location / {
         proxy_pass http://gunicorn;
         proxy_set_header Host $host;
@@ -190,124 +184,38 @@ sudo systemctl restart gunicorn && \
 sudo systemctl reload nginx
 ```
 
-Deploydan keyin health-check:
-```bash
-curl -I https://ozodbek.me/
-curl -I https://ozodbek.me/_owner/login/
-curl -I https://ozodbek.me/static/favicon/favicon.ico
-```
-
----
-
-## Holatlar (Status Playbook)
-
-### 1) `Healthy`
-Belgilar:
-- `curl -I https://ozodbek.me/` -> `200`
-- `curl -I https://ozodbek.me/_owner/login/` -> `200`
-- `gunicorn` active
-
-Tekshiruv:
-```bash
-sudo systemctl status gunicorn --no-pager -l
-sudo nginx -t
-```
-
-### 2) `Degraded`
-Belgilar:
-- Ba’zan `500`, ba’zan normal ishlash
-- Restart paytida qisqa uzilishlar
-
-Diagnostika:
-```bash
-sudo journalctl -u gunicorn -f --no-pager
-sudo tail -f /var/log/nginx/error.log
-```
-
-### 3) `Down` (502)
-Belgilar:
-- `HTTP/1.1 502 Bad Gateway`
-
-Tezkor tiklash:
-```bash
-sudo systemctl stop gunicorn
-sudo rm -f /run/gunicorn/gunicorn.sock
-sudo systemctl start gunicorn
-sudo systemctl restart nginx
-```
-
 ---
 
 ## Ko‘p uchraydigan xatolar va yechimlar
 
-### A) Favicon chiqmayapti
-Sabablar:
-- `collectstatic` qilinmagan
-- `/static/favicon/*` hali eski cache
-
-Yechim:
-```bash
-python manage.py collectstatic --clear --noinput
-curl -I https://ozodbek.me/static/favicon/favicon.ico
-```
-
-### B) Admin login POST’da 500
-Sabablar:
-- DB yoki papkalarga yozish ruxsati yo‘q
-
-Yechim:
+### 1) Admin login POST’da 500 yoki Rasm/Shared fayl yuklanmayapti
+**Sabablar:** Baza (`db.sqlite3`) yoki maxsus papkalarga (`media`, `shared`, `logs`) yozish ruxsati yo‘q.
+**Yechim:**
 ```bash
 sudo chown www-data:www-data /var/www/django-blog/db.sqlite3
 sudo chmod 664 /var/www/django-blog/db.sqlite3
-sudo chown -R www-data:www-data /var/www/django-blog/logs /var/www/django-blog/media
-sudo chmod -R u+rwX,g+rwX /var/www/django-blog/logs /var/www/django-blog/media
+sudo mkdir -p /var/www/django-blog/shared
+sudo chown -R www-data:www-data /var/www/django-blog/logs /var/www/django-blog/media /var/www/django-blog/shared
+sudo chmod -R u+rwX,g+rwX /var/www/django-blog/logs /var/www/django-blog/media /var/www/django-blog/shared
 sudo systemctl restart gunicorn
 ```
 
-### C) `Unable to configure handler 'file'`
-Sabab:
-- `DJANGO_FILE_LOGGING=true` + `logs/` yozilmaydi
+### 2) Rasm yoki Fayl yuklashda 413/403 xato (Nginx)
+**Sabab:** Nginx da katta fayllarni uzatish ruxsat etilmagan (standart 1MB turadi).
+**Yechim:** Nginx konfiguratsiyasiga `client_max_body_size 20m;` qatorini qo'shing va `sudo systemctl reload nginx` qiling.
 
-Yechim:
-```bash
-# variant 1
-DJANGO_FILE_LOGGING=false
-
-# variant 2
-sudo mkdir -p /var/www/django-blog/logs
-sudo chown -R www-data:www-data /var/www/django-blog/logs
-```
-
-### D) Rasm yuklashda 413/403 xato (Nginx)
-Sabab:
-- `client_max_body_size` Nginx'da sozlanmagan (default 1MB)
-- Django 15MB ga ruxsat bersa ham, Nginx katta fayllarni to'saydi
-
-Yechim:
-```bash
-# /etc/nginx/sites-available/django-blog ichida server{} blokiga qo'shing:
-client_max_body_size 20m;
-
-# Keyin:
-sudo nginx -t
-sudo systemctl reload nginx
-```
+### 3) IP Bloklanishi (Rate Limit) Admin yoki Static sahifalarda ko'p uchrayapti
+**Sabab:** Kesh va Statik ruxsatnomalar eski versiyada turibdi yoki fayllar bloklangan.
+**Yechim:** `.env` faylda `GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES=/_owner/,/static/,/media/,/shared/` ekanligini ta'minlang.
 
 ---
 
 ## Foydali buyruqlar
 ```bash
-python manage.py check
+python manage.py check --deploy  # Xavfsizlik bo'yicha to'liq tekshirish
 python manage.py migrate
 python manage.py collectstatic --noinput
 sudo systemctl status gunicorn --no-pager -l
 sudo journalctl -u gunicorn -n 120 --no-pager
 sudo tail -n 120 /var/log/nginx/error.log
 ```
-
----
-
-## Xavfsizlik eslatmasi
-- `DJANGO_DEBUG=false` productionda majburiy
-- `.env` ni gitga push qilmang
-- SQLite production uchun cheklangan; katta trafikda PostgreSQL tavsiya qilinadi

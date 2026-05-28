@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.core.files.storage import default_storage
+from django.core.files.storage import default_storage, FileSystemStorage
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -801,3 +801,54 @@ def delete_aboutme_bio_media_on_delete(sender, instance, **kwargs):
 def invalidate_aboutme_cache(sender, instance, **kwargs):
     """Invalidate cache when AboutMe is updated."""
     cache.delete("about_me_singleton")
+
+
+# Custom storage for shared files
+def get_shared_storage():
+    return FileSystemStorage(location=settings.SHARED_ROOT, base_url=settings.SHARED_URL)
+
+
+class SharedFile(models.Model):
+    name = models.CharField(max_length=255, help_text="A friendly name or description for the file.")
+    file = models.FileField(storage=get_shared_storage)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['-uploaded_at']
+        verbose_name = "Shared File"
+        verbose_name_plural = "Shared Files"
+
+@receiver(pre_save, sender=SharedFile)
+def cleanup_sharedfile_on_save(sender, instance, **kwargs):
+    """Delete old file when SharedFile file is changed."""
+    if not instance.pk:
+        return
+    try:
+        old = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+
+    old_file = old.file.name if old.file else None
+    new_file = instance.file.name if instance.file else None
+
+    if old_file and old_file != new_file:
+        try:
+            storage = get_shared_storage()
+            if storage.exists(old_file):
+                storage.delete(old_file)
+        except Exception:
+            pass
+
+@receiver(post_delete, sender=SharedFile)
+def cleanup_sharedfile_on_delete(sender, instance, **kwargs):
+    """Delete the actual file when the SharedFile model instance is deleted."""
+    if instance.file and instance.file.name:
+        try:
+            storage = get_shared_storage()
+            if storage.exists(instance.file.name):
+                storage.delete(instance.file.name)
+        except Exception:
+            pass

@@ -54,7 +54,7 @@
 ></canvas>
 
 <div
-    class="hero-section relative overflow-hidden bg-transparent text-white flex flex-col justify-center items-center min-h-[550px] md:min-h-[580px] lg:min-h-[600px] py-12"
+    class="hero-section relative z-10 overflow-hidden bg-transparent text-white flex flex-col justify-center items-center min-h-[550px] md:min-h-[580px] lg:min-h-[600px] py-12"
 >
     <!-- Main content -->
     <div
@@ -114,6 +114,32 @@
                     <i class="bi bi-code-slash"></i> View projects
                 </a>
             </div>
+
+            <!-- Stats Bar -->
+            <div class="flex items-center gap-8 justify-center lg:justify-start w-full mt-16 md:mt-20 reveal" style="animation-delay: 0.3s">
+                <!-- Articles Stat -->
+                <div class="flex flex-col items-center lg:items-start">
+                    <div class="text-xl md:text-2xl font-semibold text-gray-200 tracking-tight">
+                        {{ total_blogs|default:"10" }}<span class="font-medium ml-0.5 text-gray-400">+</span>
+                    </div>
+                    <div class="text-sm text-gray-400 font-medium mt-1">
+                        Articles
+                    </div>
+                </div>
+                
+                <!-- Elegant Divider -->
+                <div class="h-6 w-px bg-white/10"></div>
+                
+                <!-- Projects Stat -->
+                <div class="flex flex-col items-center lg:items-start">
+                    <div class="text-xl md:text-2xl font-semibold text-gray-200 tracking-tight">
+                        {{ total_projects|default:"5" }}<span class="font-medium ml-0.5 text-gray-400">+</span>
+                    </div>
+                    <div class="text-sm text-gray-400 font-medium mt-1">
+                        Projects
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Right: AboutMe hero imagery -->
@@ -155,48 +181,7 @@
         </div>
     </div>
 
-    <!-- Bottom stats bar -->
-    <div
-        class="relative z-10 w-full max-w-5xl mx-auto px-6 mt-20 md:mt-24 lg:mt-12 reveal"
-    >
-        <div
-            class="flex justify-center lg:justify-start gap-8 md:gap-12 text-center"
-        >
-            <div>
-                <div class="text-xl md:text-2xl font-bold text-white">
-                    {{ total_blogs|default:"10" }}<span class="text-cyan-400"
-                        >+</span
-                    >
-                </div>
-                <div class="text-gray-500 uppercase tracking-wider mt-0.5 stat-label">
-                    Articles
-                </div>
-            </div>
-            <div class="w-px bg-gray-700"></div>
-            <div>
-                <div class="text-xl md:text-2xl font-bold text-white">
-                    {{ total_categories|default:"4" }}<span
-                        class="text-cyan-400"
-                        >+</span
-                    >
-                </div>
-                <div class="text-gray-500 uppercase tracking-wider mt-0.5 stat-label">
-                    Topics
-                </div>
-            </div>
-            <div class="w-px bg-gray-700"></div>
-            <div>
-                <div class="text-xl md:text-2xl font-bold text-white">
-                    {{ total_projects|default:"5" }}<span class="text-cyan-400"
-                        >+</span
-                    >
-                </div>
-                <div class="text-gray-500 uppercase tracking-wider mt-0.5 stat-label">
-                    Projects
-                </div>
-            </div>
-        </div>
-    </div>
+
 </div>
 
 <div class="blog-section text-white overflow-hidden relative z-10">
@@ -223,7 +208,7 @@
                 />
             </div>
             {% endif %}
-            <h3 class="text-xl font-bold text-gray-100 line-clamp-2">{{ blog.title|truncatechars:80 }}</h3>
+            <h3 class="text-lg font-bold text-gray-100 line-clamp-2">{{ blog.title|truncatechars:80 }}</h3>
             <p
                 class="my-3 break-words text-sm md:text-base leading-relaxed text-gray-100 line-clamp-3"
                 style="overflow-wrap: anywhere"

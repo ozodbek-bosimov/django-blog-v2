@@ -228,3 +228,43 @@ class ViewsSmokeTests(TestCase):
         resp = self.client.get(url, {"q": "django"}, REMOTE_ADDR="1.2.3.4")
         self.assertEqual(resp.status_code, 429)
         self.assertTrue(resp.context["rate_limited"])
+
+    def test_blogpost_no_code_blocks_does_not_load_prism(self):
+        blog = Blog.objects.create(
+            title="Simple Post",
+            meta="meta",
+            content="<p>No code here.</p>",
+            category="python",
+            slug="simple-post",
+        )
+        resp = self.client.get(reverse("blogpost", kwargs={"slug": blog.slug}))
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotContains(resp, "prism.min.js")
+        self.assertNotContains(resp, "prism-tomorrow.min.css")
+        self.assertNotContains(resp, "widgets.js")
+        self.assertNotContains(resp, "embed.js")
+
+    def test_blogpost_with_code_blocks_loads_prism(self):
+        blog = Blog.objects.create(
+            title="Tech Post",
+            meta="meta",
+            content="<pre><code class='language-python'>print('hello')</code></pre>",
+            category="python",
+            slug="tech-post",
+        )
+        resp = self.client.get(reverse("blogpost", kwargs={"slug": blog.slug}))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "prism.min.js")
+        self.assertContains(resp, "prism-tomorrow.min.css")
+
+    def test_blogpost_with_twitter_loads_widget(self):
+        blog = Blog.objects.create(
+            title="Social Post",
+            meta="meta",
+            content="<p>Checkout this tweet: twitter.com/test</p>",
+            category="python",
+            slug="social-post",
+        )
+        resp = self.client.get(reverse("blogpost", kwargs={"slug": blog.slug}))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "widgets.js")

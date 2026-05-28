@@ -37,10 +37,12 @@
     rel="stylesheet"
     href="{% static 'css/blogpost.css' %}?v={{ STATIC_ASSET_VERSION }}"
 />
+{% if '<pre' in blog.content or '<code' in blog.content %}
 <link
     href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
     rel="stylesheet"
 />
+{% endif %}
 {% endblock meta %} {% block content %}
 
 <!-- Reading Progress Bar -->
@@ -150,7 +152,7 @@
     <!-- Social Share Buttons -->
     <div class="share-section mt-10 pt-6 border-t border-gray-700 reveal">
         <p
-            class="text-sm text-gray-400 mb-3 font-medium uppercase tracking-widest"
+            class="text-sm text-gray-400 mb-3 font-medium"
         >
             Share this post
         </p>
@@ -212,6 +214,7 @@
 
 <script src="{% static 'js/blogpost.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 {% endblock %} {% block extra_scripts %}
+{% if '<pre' in blog.content or '<code' in blog.content %}
 <!-- Prism.js autoloader: loads only the language components actually used on the page.
      This replaces 8 separate CDN requests with just 2, saving ~30 KB on most posts. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -220,10 +223,15 @@
     Prism.plugins.autoloader.languages_path =
         "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/";
 </script>
+{% endif %}
 
 <!-- Scripts to render CKEditor 5 embedded media (Twitter, Instagram) -->
+{% if 'twitter-tweet' in blog.content or 'twitter.com' in blog.content or 'x.com' in blog.content %}
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+{% endif %}
+{% if 'instagram-media' in blog.content or 'instagram.com' in blog.content %}
 <script async src="//www.instagram.com/embed.js"></script>
+{% endif %}
 
 <!-- Custom script to convert oembeds and standalone links to actual embeds -->
 <script>

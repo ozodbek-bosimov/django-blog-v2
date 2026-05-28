@@ -42,7 +42,7 @@ def _get_bool_env(name, default=False):
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _get_bool_env("DJANGO_DEBUG", False)
-STATIC_ASSET_VERSION = os.getenv("DJANGO_STATIC_ASSET_VERSION", "20260527")
+STATIC_ASSET_VERSION = os.getenv("DJANGO_STATIC_ASSET_VERSION", "20260528_24")
 
 _allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS")
 if not (_allowed_hosts and _allowed_hosts.strip()):
@@ -173,8 +173,10 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
+SHARED_URL = "/shared/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+SHARED_ROOT = os.path.join(BASE_DIR, "shared")
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
@@ -220,7 +222,7 @@ GLOBAL_RATE_LIMIT_BLOCK_SECONDS = int(
 )
 _global_rl_exempt = os.getenv(
     "GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES",
-    "/_owner/,/static/,/media/",
+    "/_owner/,/static/,/media/,/shared/",
 )
 GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES = [
     p.strip() for p in _global_rl_exempt.split(",") if p.strip()
