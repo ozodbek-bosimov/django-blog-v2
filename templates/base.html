@@ -46,25 +46,27 @@
         class="min-h-screen flex flex-col bg-gradient-to-b from-gray-800 via-gray-800 to-gray-900"
     >
         <nav
-            class="nav sticky top-0 z-40 backdrop-blur-lg bg-gray-900/80 border-b border-gray-800 text-white flex justify-between items-center py-4 px-8 md:px-20"
+            class="nav sticky top-0 z-40 backdrop-blur-lg bg-gray-900/80 border-b border-gray-800 text-white flex justify-between items-center py-3 px-6 md:py-4 md:px-20"
         >
             <a
                 href="{% url 'home' %}"
                 class="text-xl font-bold bg-gradient-to-r from-cyan-300 to-blue-500 bg-clip-text text-transparent hover:from-cyan-200 hover:to-blue-400 transition-all"
                 >Ozodbek Bosimov</a
             >
-            <div class="flex items-center space-x-2 md:hidden">
+            <div class="flex items-center md:hidden" style="gap: 4px;">
                 <button
-                    class="searchBtn p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    class="searchBtn text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    style="width: 38px; height: 38px;"
                     aria-label="Search"
                 >
-                    <i class="bi bi-search text-xl"></i>
+                    <i class="bi bi-search" style="font-size: 18px;"></i>
                 </button>
                 <button
-                    class="nav-btn p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    class="nav-btn text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer flex items-center justify-center"
+                    style="width: 38px; height: 38px;"
                     aria-label="Menu"
                 >
-                    <i class="bi bi-list text-3xl"></i>
+                    <i class="bi bi-list" style="font-size: 26px;"></i>
                 </button>
             </div>
             <div class="hidden items-center gap-2 md:flex">
