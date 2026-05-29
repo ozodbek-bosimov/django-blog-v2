@@ -279,25 +279,27 @@ body {
     box-shadow:
         var(--surface-shadow-hover),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transform: translateZ(0); /* No jumping */
 }
 
 /* Sleek Modern Dark Card (Perfectly integrated with the site) */
 .solid-content-card {
     background: var(--surface-card) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
     border: 1px solid var(--surface-border) !important;
     border-radius: 1.125rem !important;
     box-shadow:
         var(--surface-shadow),
         inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-    transform: translateZ(0);
     transition:
         background 220ms ease,
         border-color 220ms ease,
         box-shadow 220ms ease,
         transform 220ms ease !important;
+    -webkit-transform-style: flat;
+    transform-style: flat;
+    /* Fix Android Chrome: overflow:hidden + border-radius fails to clip
+       during momentum/overscroll. contain:paint forces compositor-level
+       clipping so content never bleeds outside rounded corners. */
+    contain: paint;
 }
 
 .solid-content-card:hover {
@@ -306,7 +308,6 @@ body {
     box-shadow:
         var(--surface-shadow-hover),
         inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-    transform: translateZ(0) !important; /* No jumping */
 }
 
 /* Unified Button System — Apple White Glass */
@@ -500,6 +501,7 @@ body {
     max-width: 1100px;
     margin-left: auto;
     margin-right: auto;
+    isolation: isolate;
 }
 
 @media (min-width: 768px) {
@@ -596,7 +598,7 @@ body {
     .solid-content-card:active,
     .solid-content-card.tapped {
         opacity: 1 !important;
-        transform: scale(0.985) translateZ(0) !important;
+        transform: scale(0.985) !important;
     }
 
     /* Prevent text links from scaling, just change opacity */
@@ -610,7 +612,13 @@ body {
     }
 
 
-    /* Keep animations but reduce expensive effects on touch devices. */
+    /* Keep animations but reduce expensive effects on touch devices.
+       Remove backdrop-filter from cards entirely on mobile to prevent
+       compositing layer glitches during scroll (iOS WebKit bug). */
+    .solid-content-card {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
     .glass-card,
     .btn-hero-ghost,
     #back-to-top {
@@ -655,7 +663,7 @@ span a.tapped,
 
 .solid-content-card.tapped {
     opacity: 1 !important;
-    transform: scale(0.985) translateZ(0) !important;
+    transform: scale(0.985) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -742,7 +750,7 @@ span a.tapped,
 /* Override for cards with !important transforms — use opacity-only reveal */
 .solid-content-card.reveal {
     opacity: 0 !important;
-    transform: translateY(12px) translateZ(0) !important;
+    transform: translateY(12px) !important;
     transition:
         opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
         transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
@@ -752,11 +760,11 @@ span a.tapped,
 
 .solid-content-card.reveal.reveal-visible {
     opacity: 1 !important;
-    transform: translateY(0) translateZ(0) !important;
+    transform: none !important;
 }
 
 .solid-content-card.reveal.reveal-visible:hover {
-    transform: translateY(0) translateZ(0) !important;
+    transform: none !important;
 }
 
 /* ── Shared Rich Content Styles (.blog-content) ─────────────────
