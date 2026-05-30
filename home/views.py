@@ -158,7 +158,7 @@ def category(request, category):
     category_list = [b for b in all_blogs if b.category == category]
 
     if not category_list:
-        message = f"No posts found in category: '{category}'"
+        message = f"No posts found in topic: '{category}'"
         return render(
             request, "category.html", {"message": message, "category": category}
         )

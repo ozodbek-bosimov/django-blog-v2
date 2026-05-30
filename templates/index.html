@@ -90,7 +90,7 @@
             <div
                 class="flex flex-wrap items-center content-start justify-center lg:justify-start gap-3 md:gap-4 mt-8"
             >
-                <a href='{% url "about" %}' class="btn-hero-primary group">
+                <a href='{% url "about" %}' class="btn-hero-primary group w-36">
                     <i class="bi bi-person"></i> About me
                 </a>
                 {% if about_me.effective_resume %}
@@ -98,7 +98,7 @@
                     href="{{ about_me.effective_resume }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="btn-hero-ghost"
+                    class="btn-hero-ghost w-36"
                 >
                     <i class="bi bi-download"></i> Resume
                 </a>
@@ -108,18 +108,19 @@
                     role="link"
                     aria-disabled="true"
                     tabindex="-1"
-                    class="btn-hero-ghost opacity-50 cursor-not-allowed pointer-events-none"
+                    class="btn-hero-ghost opacity-50 cursor-not-allowed pointer-events-none w-36"
                 >
                     <i class="bi bi-download"></i> Resume
                 </a>
                 {% endif %}
-                <a href='{% url "projects" %}' class="btn-hero-ghost">
+                <a href='{% url "projects" %}' class="btn-hero-ghost !hidden sm:!inline-flex">
                     <i class="bi bi-code-slash"></i> View projects
                 </a>
             </div>
 
             <!-- Stats Bar -->
-            <div class="flex items-center gap-8 justify-center lg:justify-start w-full mt-16 md:mt-20 reveal" style="animation-delay: 0.3s">
+            <!-- Stats Bar -->
+            <div class="flex items-center gap-6 sm:gap-8 justify-center lg:justify-start w-full mt-12 md:mt-14 reveal" style="animation-delay: 0.3s">
                 <!-- Articles Stat -->
                 <div class="flex flex-col items-center">
                     <div class="text-xl md:text-2xl font-semibold text-gray-200 tracking-tight flex items-center">
@@ -129,10 +130,23 @@
                         Posts
                     </div>
                 </div>
-                
+
                 <!-- Elegant Divider -->
                 <div class="w-px bg-white/10" style="height: 40px;"></div>
-                
+
+                <!-- Topics Stat -->
+                <div class="flex flex-col items-center">
+                    <div class="text-xl md:text-2xl font-semibold text-gray-200 tracking-tight flex items-center">
+                        {{ total_categories|default:"4" }}<span class="font-medium ml-1">+</span>
+                    </div>
+                    <div class="text-sm text-gray-400 font-medium mt-1">
+                        Topics
+                    </div>
+                </div>
+
+                <!-- Elegant Divider -->
+                <div class="w-px bg-white/10" style="height: 40px;"></div>
+
                 <!-- Projects Stat -->
                 <div class="flex flex-col items-center">
                     <div class="text-xl md:text-2xl font-semibold text-gray-200 tracking-tight flex items-center">
@@ -196,7 +210,7 @@
         </h1>
         <div class="h-px bg-gray-700/50 w-full"></div>
     </div>
-    <div class="blogs blog-cards-grid mt-8 mb-8 grid gap-6 px-4 md:grid-cols-3 reveal-stagger">
+    <div class="blogs blog-cards-grid mt-8 mb-8 px-4 reveal-stagger">
         {% for blog in latest_blogs %}
         <div class="blog-card-item glass-card solid-content-card p-5 h-auto reveal">
             {% if blog.effective_thumbnail %}

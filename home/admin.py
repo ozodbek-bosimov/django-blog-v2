@@ -547,11 +547,11 @@ def get_app_list(self, request, app_label=None):
     app_list = sorted(app_dict.values(), key=lambda x: x["name"].lower())
 
     ordering = {
-        "Blogs": 1,
-        "About Me": 2,
-        "Experiences": 3,
-        "Projects": 4,
-        "Skills": 5,
+        "About Me": 1,
+        "Experiences": 2,
+        "Projects": 3,
+        "Skills": 4,
+        "Blogs": 5,
         "Shared Files": 6,
     }
 
