@@ -336,6 +336,7 @@ body {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     color: #f3f4f6;
+    font-size: 0.875rem;
     font-weight: 600;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-shadow:
@@ -548,23 +549,6 @@ body {
     border-radius: 0.75rem;
 }
 
-/* Social Icon Button */
-.btn-social {
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 0.75rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 300ms ease-in-out, border-color 300ms ease-in-out, color 300ms ease-in-out, transform 300ms ease-in-out;
-}
-
-.btn-social:hover {
-    transform: scale(1.1);
-}
-
 /* Primary Buttons (Hero and General) — stands out with subtle blueness */
 .btn-hero-primary {
     padding: 0.875rem 1.25rem;
@@ -606,7 +590,7 @@ body {
     span a:active,
     .blog-content a:active,
     .post-meta a:active,
-    footer a:not(.btn-social):active {
+    footer a:not(.btn-icon):active {
         transform: none !important;
         opacity: 0.5 !important;
     }
@@ -627,7 +611,7 @@ body {
     }
     .btn-primary,
     .btn-ghost,
-    .btn-social,
+    .btn-icon,
     .btn-pagination,
     .btn-hero-primary,
     .btn-hero-ghost,
@@ -657,7 +641,7 @@ span a.tapped,
     opacity: 0.5 !important;
 }
 
-.btn-social.tapped {
+.btn-icon.tapped {
     transform: scale(0.85) translateZ(0) !important;
 }
 
@@ -1075,7 +1059,150 @@ p iframe {
 /* ── Interactive Micro-Animations ────────────────────────────── */
 
 /* Button Click/Active State */
-.btn-primary:active, .btn-ghost:active, .btn-social:active, .btn-pagination:active, .btn-hero-primary:active, .btn-hero-ghost:active, .nav-btn:active {
+.btn-primary:active, .btn-ghost:active, .btn-icon:active, .btn-pagination:active, .btn-hero-primary:active, .btn-hero-ghost:active, .nav-btn:active {
     transform: scale(0.95) translateZ(0) !important;
     transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ── Size modifiers — the single source of truth for height ──────
+   Pair a size with any text-button variant, e.g.
+   <a class="btn-primary btn-md"> … </a> */
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+}
+
+.btn-md {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+}
+
+.btn-lg {
+    padding: 0.8125rem 1.5rem;
+    font-size: 0.9375rem;
+}
+
+/* Hero buttons keep their generous default sizing */
+.btn-hero-primary,
+.btn-hero-ghost {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9375rem;
+}
+
+/* ── Icon button — one class for ALL round/square icon actions
+   (footer socials, blogpost share, copy-link …).
+
+   Resting state: neutral white-glass that matches the text-button
+   system. Hover state: a full, solid brand-colour fill driven entirely
+   from CSS via a `--brand` modifier — NO inline Tailwind hover
+   utilities. This avoids the cascade conflicts that left the glyph
+   invisible (white-on-white) and the gradient bleeding through a solid
+   fill, which made the tile look "detached". ──── */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    border-radius: var(--control-radius);
+    color: #e5e7eb;
+    text-decoration: none;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        background 240ms cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 240ms cubic-bezier(0.16, 1, 0.3, 1),
+        color 240ms cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Single-colour brand SVGs (X, LeetCode) render as crisp white in
+   every state — no group-hover filter juggling needed. */
+.btn-icon img {
+    width: 1.25rem;
+    height: 1.25rem;
+    filter: brightness(0) invert(1);
+}
+
+/* Hover lift + solid brand fills. Scoped to real hover devices so
+   touch screens never get a stuck colour (tap feedback handles those). */
+@media (hover: hover) {
+    .btn-icon:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 255, 255, 0.18);
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.28),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-icon--github:hover {
+        background: #ffffff;
+        border-color: #ffffff;
+        color: #0d1117;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.32);
+    }
+
+    .btn-icon--linkedin:hover {
+        background: #0a66c2;
+        border-color: #0a66c2;
+        color: #ffffff;
+        box-shadow: 0 8px 22px rgba(10, 102, 194, 0.45);
+    }
+
+    .btn-icon--telegram:hover {
+        background: #229ed9;
+        border-color: #229ed9;
+        color: #ffffff;
+        box-shadow: 0 8px 22px rgba(34, 158, 217, 0.45);
+    }
+
+    .btn-icon--x:hover {
+        background: #000000;
+        border-color: rgba(255, 255, 255, 0.22);
+        color: #ffffff;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-icon--leetcode:hover {
+        background: #ffa116;
+        border-color: #ffa116;
+        color: #ffffff;
+        box-shadow: 0 8px 22px rgba(255, 161, 22, 0.45);
+    }
+
+    .btn-icon--neutral:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.22);
+        color: #ffffff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+    }
+}
+
+/* ── Equal-width helper — for paired action buttons that should
+   line up (e.g. GitHub / Live site on a project card). ─────────── */
+.btn-uniform {
+    width: 8rem;
+}
+
+/* ── Full-width action pair helper — used on 404 / empty states.
+   Stacks full-width on mobile, fixed comfortable width ≥ sm. ───── */
+.btn-action {
+    width: 100%;
+    max-width: 320px;
+}
+
+@media (min-width: 640px) {
+    .btn-action {
+        width: 14rem;
+        max-width: none;
+    }
 }

@@ -155,7 +155,8 @@
                             href="{{ about_me.github_url }}"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="btn-social hover:bg-white hover:text-black hover:border-white"
+                            class="btn-icon btn-icon--github"
+                            aria-label="GitHub profile"
                         >
                             <i class="bi bi-github text-xl"></i>
                         </a>
@@ -164,7 +165,8 @@
                             href="{{ about_me.linkedin_url }}"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="btn-social hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white"
+                            class="btn-icon btn-icon--linkedin"
+                            aria-label="LinkedIn profile"
                         >
                             <i class="bi bi-linkedin text-xl"></i>
                         </a>
@@ -173,12 +175,12 @@
                             href="{{ about_me.leetcode_url }}"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="btn-social hover:bg-[#FFA116] hover:border-[#FFA116] group"
+                            class="btn-icon btn-icon--leetcode"
+                            aria-label="LeetCode profile"
                         >
                             <img
                                 src="{% static 'images/icons/leetcode.svg' %}"
                                 alt="LeetCode"
-                                class="w-5 h-5 filter invert group-hover:invert-0 transition-all"
                             />
                         </a>
                         {% endif %}
@@ -219,12 +221,12 @@
                             <input
                                 name="q"
                                 type="text"
-                                class="searchInput w-full bg-white/5 text-white placeholder-gray-400 ring-1 ring-inset ring-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/40 transition-all font-light shadow-inner"
+                                class="searchInput w-full bg-white/5 text-white placeholder-gray-400 ring-1 ring-inset ring-white/10 rounded-[0.875rem] py-3 px-4 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/40 transition-all font-light shadow-inner"
                                 placeholder="Enter your search query..."
                             />
                             <button
                                 type="submit"
-                                class="searchSubmitBtn btn-ghost !rounded-xl !px-5 !py-3 flex items-center justify-center transition-all"
+                                class="searchSubmitBtn btn-ghost !px-5 !py-3 flex items-center justify-center transition-all"
                             >
                                 <i class="bi bi-search"></i>
                             </button>

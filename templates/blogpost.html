@@ -152,14 +152,13 @@
                 href="https://twitter.com/intent/tweet?text={{ blog.title|urlencode }}&url={{ blog_url|urlencode }}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-black hover:ring-black transition-all duration-300 hover:scale-110 group"
+                class="btn-icon btn-icon--x"
                 title="Share on Twitter / X"
                 aria-label="Share on X"
             >
                 <img
                     src="{% static 'images/icons/x.svg' %}"
                     alt="X"
-                    class="w-5 h-5 filter brightness-0 invert transition-all"
                 />
             </a>
 
@@ -168,7 +167,7 @@
                 href="https://www.linkedin.com/sharing/share-offsite/?url={{ blog_url|urlencode }}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-[#0077b5] hover:ring-[#0077b5] hover:text-white transition-all duration-300 hover:scale-110"
+                class="btn-icon btn-icon--linkedin"
                 title="Share on LinkedIn"
                 aria-label="Share on LinkedIn"
             >
@@ -180,7 +179,7 @@
                 href="https://t.me/share/url?url={{ blog_url|urlencode }}&text={{ blog.title|urlencode }}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-[#26A5E4] hover:ring-[#26A5E4] hover:text-white transition-all duration-300 hover:scale-110"
+                class="btn-icon btn-icon--telegram"
                 title="Share on Telegram"
                 aria-label="Share on Telegram"
             >
@@ -191,7 +190,7 @@
             <button
                 id="copy-link-btn"
                 type="button"
-                class="w-11 h-11 rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 flex items-center justify-center hover:bg-white/10 hover:ring-white/20 hover:text-white transition-all duration-300 hover:scale-110"
+                class="btn-icon btn-icon--neutral"
                 data-url="{{ blog_url }}"
                 title="Copy link to clipboard"
                 aria-label="Copy link"
