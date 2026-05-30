@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Categories{% endblock title %}
+{% block title %}Topics{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="Browse posts by category on Ozodbek Bosimov's blog. From programming and tech notes to personal reflections and study logs.">
+<meta name="description" content="Browse posts by topic on Ozodbek Bosimov's blog. From programming and tech notes to personal reflections and study logs.">
 <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'categories' %}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ozodbek Bosimov">
 <meta property="og:locale" content="en_US">
-<meta property="og:title" content="Categories — Ozodbek Bosimov">
-<meta property="og:description" content="Browse posts by category on Ozodbek Bosimov's blog. From programming and tech notes to personal reflections and study logs.">
+<meta property="og:title" content="Topics — Ozodbek Bosimov">
+<meta property="og:description" content="Browse posts by topic on Ozodbek Bosimov's blog. From programming and tech notes to personal reflections and study logs.">
 <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'categories' %}">
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Categories — Ozodbek Bosimov">
-<meta name="twitter:description" content="Browse posts by category on Ozodbek Bosimov's blog. From programming and tech notes to personal reflections and study logs.">
+<meta name="twitter:title" content="Topics — Ozodbek Bosimov">
+<meta name="twitter:description" content="Browse posts by topic on Ozodbek Bosimov's blog. From programming and tech notes to personal reflections and study logs.">
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 {% endblock meta %}
 
@@ -23,7 +23,7 @@
 
 <div class="px-4 sm:px-6 md:px-20 w-full mt-6 md:mt-8 mb-0 reveal">
     <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
-        Categories
+        Topics
     </h1>
     <div class="h-px bg-gray-700/50 w-full"></div>
 </div>

@@ -89,7 +89,9 @@ class Blog(models.Model):
     content = models.TextField()
     thumbnail_img = models.ImageField(null=True, blank=True, upload_to="postimages/")
     thumbnail_url = models.URLField(blank=True, null=True)
-    category = models.CharField(max_length=255, default="uncategorized")
+    category = models.CharField(
+        max_length=255, default="uncategorized", verbose_name="topic"
+    )
     slug = models.CharField(max_length=100, unique=True)
     time = models.DateTimeField(default=timezone.now)
     reading_time_minutes = models.PositiveSmallIntegerField(default=1, editable=False)

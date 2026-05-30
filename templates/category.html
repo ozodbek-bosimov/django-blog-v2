@@ -4,18 +4,18 @@
 {% block title %}{{ category }}{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="Posts in the '{{ category }}' category on Ozodbek Bosimov's blog.">
+<meta name="description" content="Posts in the '{{ category }}' topic on Ozodbek Bosimov's blog.">
 <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'category' category %}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ozodbek Bosimov">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="{{ category|capfirst }} — Ozodbek Bosimov">
-<meta property="og:description" content="Posts in the '{{ category }}' category on Ozodbek Bosimov's blog.">
+<meta property="og:description" content="Posts in the '{{ category }}' topic on Ozodbek Bosimov's blog.">
 <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'category' category %}">
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="{{ category|capfirst }} — Ozodbek Bosimov">
-<meta name="twitter:description" content="Posts in the '{{ category }}' category on Ozodbek Bosimov's blog.">
+<meta name="twitter:description" content="Posts in the '{{ category }}' topic on Ozodbek Bosimov's blog.">
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 {% endblock meta %}
 
@@ -51,7 +51,7 @@
                   <i class="bi bi-arrow-left"></i> Back to home
               </a>
               <a href="{% url 'categories' %}" class="btn-ghost btn-lg btn-action">
-                  <i class="bi bi-tags"></i> Browse categories
+                  <i class="bi bi-tags"></i> Browse topics
               </a>
           </div>
       </div>
