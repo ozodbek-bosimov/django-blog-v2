@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0003_alter_blog_meta_max_length'),
+        ("home", "0003_alter_blog_meta_max_length"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='aboutme',
-            name='hero_img',
-            field=models.ImageField(blank=True, null=True, upload_to='hero/'),
+            model_name="aboutme",
+            name="hero_img",
+            field=models.ImageField(blank=True, null=True, upload_to="hero/"),
         ),
         migrations.AddField(
-            model_name='aboutme',
-            name='hero_image_url',
-            field=models.URLField(blank=True, help_text='CDN URL for the homepage hero background image'),
+            model_name="aboutme",
+            name="hero_image_url",
+            field=models.URLField(
+                blank=True, help_text="CDN URL for the homepage hero background image"
+            ),
         ),
     ]

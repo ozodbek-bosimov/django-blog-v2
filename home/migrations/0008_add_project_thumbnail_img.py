@@ -4,20 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0007_change_blog_thumbnail_upload_to_postimages'),
+        ("home", "0007_change_blog_thumbnail_upload_to_postimages"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='thumbnail_img',
-            field=models.ImageField(blank=True, help_text='Upload a thumbnail image (preferred over URL)', null=True, upload_to='projects/'),
+            model_name="project",
+            name="thumbnail_img",
+            field=models.ImageField(
+                blank=True,
+                help_text="Upload a thumbnail image (preferred over URL)",
+                null=True,
+                upload_to="projects/",
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='thumbnail_url',
-            field=models.URLField(blank=True, help_text='CDN URL for project thumbnail (used if no image is uploaded)'),
+            model_name="project",
+            name="thumbnail_url",
+            field=models.URLField(
+                blank=True,
+                help_text="CDN URL for project thumbnail (used if no image is uploaded)",
+            ),
         ),
     ]

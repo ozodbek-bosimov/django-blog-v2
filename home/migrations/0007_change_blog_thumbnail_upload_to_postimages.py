@@ -24,17 +24,15 @@ def reverse_rename(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0006_alter_aboutme_resume_file'),
+        ("home", "0006_alter_aboutme_resume_file"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='blog',
-            name='thumbnail_img',
-            field=models.ImageField(blank=True, null=True, upload_to='postimages/'),
+            model_name="blog",
+            name="thumbnail_img",
+            field=models.ImageField(blank=True, null=True, upload_to="postimages/"),
         ),
         migrations.RunPython(rename_thumbnail_paths, reverse_rename),
     ]
-

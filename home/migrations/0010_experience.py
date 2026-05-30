@@ -4,29 +4,58 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0009_blog_reading_time_minutes'),
+        ("home", "0009_blog_reading_time_minutes"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Experience',
+            name="Experience",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('company', models.CharField(max_length=200)),
-                ('position', models.CharField(max_length=200)),
-                ('location', models.CharField(blank=True, max_length=200)),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField(blank=True, help_text='Leave blank if current', null=True)),
-                ('is_current', models.BooleanField(default=False, help_text='Check if this is your current position')),
-                ('description', models.TextField(blank=True, help_text='Key responsibilities and achievements (supports bullet points)')),
-                ('order', models.IntegerField(default=0, help_text='Display order (lower numbers first)')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("company", models.CharField(max_length=200)),
+                ("position", models.CharField(max_length=200)),
+                ("location", models.CharField(blank=True, max_length=200)),
+                ("start_date", models.DateField()),
+                (
+                    "end_date",
+                    models.DateField(
+                        blank=True, help_text="Leave blank if current", null=True
+                    ),
+                ),
+                (
+                    "is_current",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Check if this is your current position",
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True,
+                        help_text="Key responsibilities and achievements (supports bullet points)",
+                    ),
+                ),
+                (
+                    "order",
+                    models.IntegerField(
+                        default=0, help_text="Display order (lower numbers first)"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Experience',
-                'verbose_name_plural': 'Experiences',
-                'ordering': ['order', '-start_date'],
+                "verbose_name": "Experience",
+                "verbose_name_plural": "Experiences",
+                "ordering": ["order", "-start_date"],
             },
         ),
     ]

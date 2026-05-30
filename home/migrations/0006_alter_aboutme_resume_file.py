@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0005_aboutme_resume_file_aboutme_resume_url'),
+        ("home", "0005_aboutme_resume_file_aboutme_resume_url"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='aboutme',
-            name='resume_file',
-            field=models.FileField(blank=True, help_text='Upload your resume file directly (e.g. PDF)', null=True, upload_to='resume/'),
+            model_name="aboutme",
+            name="resume_file",
+            field=models.FileField(
+                blank=True,
+                help_text="Upload your resume file directly (e.g. PDF)",
+                null=True,
+                upload_to="resume/",
+            ),
         ),
     ]

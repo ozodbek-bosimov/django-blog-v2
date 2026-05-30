@@ -4,25 +4,38 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0010_experience'),
+        ("home", "0010_experience"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='experience',
-            name='company_url',
-            field=models.URLField(blank=True, help_text='Company website URL (opens in new tab)'),
+            model_name="experience",
+            name="company_url",
+            field=models.URLField(
+                blank=True, help_text="Company website URL (opens in new tab)"
+            ),
         ),
         migrations.AddField(
-            model_name='experience',
-            name='work_type',
-            field=models.CharField(choices=[('on-site', 'On-site'), ('hybrid', 'Hybrid'), ('remote', 'Remote')], default='on-site', help_text='On-site, Hybrid, or Remote', max_length=10),
+            model_name="experience",
+            name="work_type",
+            field=models.CharField(
+                choices=[
+                    ("on-site", "On-site"),
+                    ("hybrid", "Hybrid"),
+                    ("remote", "Remote"),
+                ],
+                default="on-site",
+                help_text="On-site, Hybrid, or Remote",
+                max_length=10,
+            ),
         ),
         migrations.AlterField(
-            model_name='experience',
-            name='description',
-            field=models.TextField(blank=True, help_text='Key responsibilities and achievements. Each line becomes a bullet point.'),
+            model_name="experience",
+            name="description",
+            field=models.TextField(
+                blank=True,
+                help_text="Key responsibilities and achievements. Each line becomes a bullet point.",
+            ),
         ),
     ]

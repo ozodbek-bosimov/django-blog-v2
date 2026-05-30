@@ -4,15 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0012_experience_roles'),
+        ("home", "0012_experience_roles"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='experiencerole',
-            name='employment_type',
-            field=models.CharField(choices=[('full-time', 'Full-time'), ('part-time', 'Part-time'), ('self-employed', 'Self-employed'), ('freelance', 'Freelance'), ('contract', 'Contract'), ('internship', 'Internship'), ('apprenticeship', 'Apprenticeship'), ('seasonal', 'Seasonal')], default='full-time', max_length=20),
+            model_name="experiencerole",
+            name="employment_type",
+            field=models.CharField(
+                choices=[
+                    ("full-time", "Full-time"),
+                    ("part-time", "Part-time"),
+                    ("self-employed", "Self-employed"),
+                    ("freelance", "Freelance"),
+                    ("contract", "Contract"),
+                    ("internship", "Internship"),
+                    ("apprenticeship", "Apprenticeship"),
+                    ("seasonal", "Seasonal"),
+                ],
+                default="full-time",
+                max_length=20,
+            ),
         ),
     ]
