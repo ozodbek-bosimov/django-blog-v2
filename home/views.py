@@ -95,7 +95,9 @@ def about(request):
             Experience.objects.filter(roles__isnull=False)
             .distinct()
             .prefetch_related(
-                Prefetch("roles", queryset=ExperienceRole.objects.order_by("-start_date"))
+                Prefetch(
+                    "roles", queryset=ExperienceRole.objects.order_by("-start_date")
+                )
             )
         ),
         86400,
@@ -114,10 +116,10 @@ def about(request):
 
     # 'about_me' intentionally omitted — provided by the about_me context processor
     context = {
-        "skills": skills, 
-        "experiences": experiences, 
+        "skills": skills,
+        "experiences": experiences,
         "abs_profile_image": abs_profile_image,
-        "latest_blogs": latest_blogs_about
+        "latest_blogs": latest_blogs_about,
     }
     return render(request, "about.html", context)
 

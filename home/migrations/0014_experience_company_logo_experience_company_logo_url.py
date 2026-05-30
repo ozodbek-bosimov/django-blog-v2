@@ -4,20 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0013_experiencerole_employment_type'),
+        ("home", "0013_experiencerole_employment_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='experience',
-            name='company_logo',
-            field=models.ImageField(blank=True, help_text='Company logo image (will be compressed to WebP)', upload_to='companies/'),
+            model_name="experience",
+            name="company_logo",
+            field=models.ImageField(
+                blank=True,
+                help_text="Company logo image (will be compressed to WebP)",
+                upload_to="companies/",
+            ),
         ),
         migrations.AddField(
-            model_name='experience',
-            name='company_logo_url',
-            field=models.URLField(blank=True, help_text='External URL for company logo (used if no file uploaded)'),
+            model_name="experience",
+            name="company_logo_url",
+            field=models.URLField(
+                blank=True,
+                help_text="External URL for company logo (used if no file uploaded)",
+            ),
         ),
     ]

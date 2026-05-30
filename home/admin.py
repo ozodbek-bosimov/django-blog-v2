@@ -12,7 +12,15 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from home.models import AboutMe, Blog, Experience, ExperienceRole, Project, Skill, SharedFile
+from home.models import (
+    AboutMe,
+    Blog,
+    Experience,
+    ExperienceRole,
+    Project,
+    Skill,
+    SharedFile,
+)
 
 
 def _sanitize_youtube_embeds(html_content):
@@ -473,16 +481,25 @@ class ExperienceAdmin(admin.ModelAdmin):
     """
 
     class Media:
-        css = {
-            'all': ('css/admin_experience.css',)
-        }
+        css = {"all": ("css/admin_experience.css",)}
 
     list_display = ["company", "entry_type", "order"]
     list_editable = ["order"]
     search_fields = ["company"]
     inlines = [ExperienceRoleInline]
     fieldsets = (
-        ("Company", {"fields": ("company", "company_url", "company_logo", "company_logo_url", "order")}),
+        (
+            "Company",
+            {
+                "fields": (
+                    "company",
+                    "company_url",
+                    "company_logo",
+                    "company_logo_url",
+                    "order",
+                )
+            },
+        ),
     )
 
     def get_queryset(self, request):
@@ -507,25 +524,27 @@ admin.site.register(Experience, ExperienceAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(LogEntry, LogEntryAdmin)
 
+
 @admin.register(SharedFile)
 class SharedFileAdmin(admin.ModelAdmin):
-    list_display = ('name', 'file', 'uploaded_at', 'copy_url_button')
-    search_fields = ('name', 'file')
-    readonly_fields = ('uploaded_at',)
+    list_display = ("name", "file", "uploaded_at", "copy_url_button")
+    search_fields = ("name", "file")
+    readonly_fields = ("uploaded_at",)
 
     @admin.display(description="Copy URL")
     def copy_url_button(self, obj):
-        if obj.file and hasattr(obj.file, 'url'):
+        if obj.file and hasattr(obj.file, "url"):
             return format_html(
-                '<a class="button" style="cursor: pointer; color: white;" onclick="navigator.clipboard.writeText(window.location.origin + \'{}\'); this.innerText=\'Copied!\'; setTimeout(() => this.innerText=\'Copy URL\', 2000);">Copy URL</a>',
-                escape(obj.file.url)
+                "<a class=\"button\" style=\"cursor: pointer; color: white;\" onclick=\"navigator.clipboard.writeText(window.location.origin + '{}'); this.innerText='Copied!'; setTimeout(() => this.innerText='Copy URL', 2000);\">Copy URL</a>",
+                escape(obj.file.url),
             )
         return ""
+
 
 # Custom ordering for models in the admin panel
 def get_app_list(self, request, app_label=None):
     app_dict = self._build_app_dict(request, app_label)
-    app_list = sorted(app_dict.values(), key=lambda x: x['name'].lower())
+    app_list = sorted(app_dict.values(), key=lambda x: x["name"].lower())
 
     ordering = {
         "Blogs": 1,
@@ -533,13 +552,14 @@ def get_app_list(self, request, app_label=None):
         "Experiences": 3,
         "Projects": 4,
         "Skills": 5,
-        "Shared Files": 6
+        "Shared Files": 6,
     }
-    
+
     for app in app_list:
-        if app['app_label'] == 'home':
-            app['models'].sort(key=lambda x: ordering.get(x['name'], 999))
+        if app["app_label"] == "home":
+            app["models"].sort(key=lambda x: ordering.get(x["name"], 999))
 
     return app_list
+
 
 admin.site.get_app_list = get_app_list.__get__(admin.site, admin.site.__class__)

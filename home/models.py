@@ -407,7 +407,7 @@ class Experience(models.Model):
                 status = self.end_date.strftime("%m/%Y")
             else:
                 status = "Present"
-            start = self.start_date.strftime('%m/%Y') if self.start_date else '?'
+            start = self.start_date.strftime("%m/%Y") if self.start_date else "?"
             return f"{self.position} @ {self.company} ({start} – {status})"
         return self.company
 
@@ -471,7 +471,9 @@ class ExperienceRole(models.Model):
         if self.is_current and self.end_date:
             raise ValidationError("A current role should not have an end date.")
         if not self.is_current and not self.end_date:
-            raise ValidationError("Please provide an end date or mark the role as current.")
+            raise ValidationError(
+                "Please provide an end date or mark the role as current."
+            )
 
     def __str__(self):
         return f"{self.position} @ {self.experience.company}"
@@ -551,7 +553,7 @@ def _extract_media_paths_from_html(html_content):
     for raw_url in re.findall(r'(?:src|href)=["\']([^"\']+)["\']', html_content):
         parsed_path = urlparse(raw_url).path
         if parsed_path.startswith(media_url):
-            relative_path = parsed_path[len(media_url):].lstrip("/")
+            relative_path = parsed_path[len(media_url) :].lstrip("/")
             if relative_path:
                 paths.add(relative_path)
     return paths
@@ -805,11 +807,15 @@ def invalidate_aboutme_cache(sender, instance, **kwargs):
 
 # Custom storage for shared files
 def get_shared_storage():
-    return FileSystemStorage(location=settings.SHARED_ROOT, base_url=settings.SHARED_URL)
+    return FileSystemStorage(
+        location=settings.SHARED_ROOT, base_url=settings.SHARED_URL
+    )
 
 
 class SharedFile(models.Model):
-    name = models.CharField(max_length=255, help_text="A friendly name or description for the file.")
+    name = models.CharField(
+        max_length=255, help_text="A friendly name or description for the file."
+    )
     file = models.FileField(storage=get_shared_storage)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -817,9 +823,10 @@ class SharedFile(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['-uploaded_at']
+        ordering = ["-uploaded_at"]
         verbose_name = "Shared File"
         verbose_name_plural = "Shared Files"
+
 
 @receiver(pre_save, sender=SharedFile)
 def cleanup_sharedfile_on_save(sender, instance, **kwargs):
@@ -841,6 +848,7 @@ def cleanup_sharedfile_on_save(sender, instance, **kwargs):
                 storage.delete(old_file)
         except Exception:
             pass
+
 
 @receiver(post_delete, sender=SharedFile)
 def cleanup_sharedfile_on_delete(sender, instance, **kwargs):

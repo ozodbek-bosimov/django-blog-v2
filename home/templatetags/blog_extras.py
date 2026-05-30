@@ -44,7 +44,7 @@ def lazy_iframes(content):
         return content
 
     def _process(match):
-        iframe_open = match.group(1)   # <iframe ...>
+        iframe_open = match.group(1)  # <iframe ...>
         iframe_close = match.group(2) or "</iframe>"  # </iframe>
         original = iframe_open + iframe_close
 
@@ -55,9 +55,7 @@ def lazy_iframes(content):
 
         return (
             f'<div class="{ph_class}"></div>'
-            '<template class="lazy-tpl">'
-            + original
-            + "</template>"
+            '<template class="lazy-tpl">' + original + "</template>"
         )
 
     result = _IFRAME_RE.sub(_process, content)

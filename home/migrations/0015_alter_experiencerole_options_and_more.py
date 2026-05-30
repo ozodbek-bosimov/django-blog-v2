@@ -4,18 +4,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0014_experience_company_logo_experience_company_logo_url'),
+        ("home", "0014_experience_company_logo_experience_company_logo_url"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='experiencerole',
-            options={'ordering': ['-start_date'], 'verbose_name': 'Experience Role', 'verbose_name_plural': 'Experience Roles'},
+            name="experiencerole",
+            options={
+                "ordering": ["-start_date"],
+                "verbose_name": "Experience Role",
+                "verbose_name_plural": "Experience Roles",
+            },
         ),
         migrations.RemoveField(
-            model_name='experiencerole',
-            name='order',
+            model_name="experiencerole",
+            name="order",
         ),
     ]

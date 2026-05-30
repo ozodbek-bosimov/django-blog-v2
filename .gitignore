@@ -17,6 +17,10 @@ staticfiles/
 __pycache__/
 *.pyc
 
+# Logs
+logs/
+*.log
+
 # IDE
 .idea/
 .vscode/

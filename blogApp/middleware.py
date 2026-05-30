@@ -18,7 +18,9 @@ class DevStaticNoCacheMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
-        if getattr(settings, "DEBUG", False) and request.path.startswith(("/static/", "/media/")):
+        if getattr(settings, "DEBUG", False) and request.path.startswith(
+            ("/static/", "/media/")
+        ):
             response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
             response["Pragma"] = "no-cache"
             response["Expires"] = "0"
@@ -44,8 +46,12 @@ class IpRateLimitMiddleware:
             return self.get_response(request)
 
         max_requests = max(int(getattr(settings, "GLOBAL_RATE_LIMIT_REQUESTS", 120)), 1)
-        window_seconds = max(int(getattr(settings, "GLOBAL_RATE_LIMIT_WINDOW_SECONDS", 60)), 1)
-        block_seconds = max(int(getattr(settings, "GLOBAL_RATE_LIMIT_BLOCK_SECONDS", 120)), 1)
+        window_seconds = max(
+            int(getattr(settings, "GLOBAL_RATE_LIMIT_WINDOW_SECONDS", 60)), 1
+        )
+        block_seconds = max(
+            int(getattr(settings, "GLOBAL_RATE_LIMIT_BLOCK_SECONDS", 120)), 1
+        )
 
         blocked_key = f"global_rl:block:{ip}"
         blocked_until = cache.get(blocked_key)
@@ -111,7 +117,9 @@ class AdminSessionTimeoutMiddleware:
     CLEANUP_LAST_RUN_CACHE_KEY = "admin_log_cleanup:last_run_ts"
     CLEANUP_LOCK_CACHE_KEY = "admin_log_cleanup:lock"
     CLEANUP_INTERVAL_SECONDS = 24 * 60 * 60  # Log cleanup daily
-    SESSION_CLEANUP_INTERVAL_SECONDS = 60 * 24 * 60 * 60  # Session cleanup every 60 days
+    SESSION_CLEANUP_INTERVAL_SECONDS = (
+        60 * 24 * 60 * 60
+    )  # Session cleanup every 60 days
     SESSION_CLEANUP_LAST_RUN_KEY = "session_cleanup:last_run_ts"
 
     def __init__(self, get_response):
@@ -129,14 +137,18 @@ class AdminSessionTimeoutMiddleware:
         now_ts = timezone.now().timestamp()
         last_run_ts = cache.get(self.SESSION_CLEANUP_LAST_RUN_KEY)
 
-        if last_run_ts and now_ts - float(last_run_ts) < self.SESSION_CLEANUP_INTERVAL_SECONDS:
+        if (
+            last_run_ts
+            and now_ts - float(last_run_ts) < self.SESSION_CLEANUP_INTERVAL_SECONDS
+        ):
             return
 
         # Double check lock is not needed for a light operation like session cleanup
         # but we use a simple flag to avoid multiple runs in same process.
         from django.core.management import call_command
+
         try:
-            call_command('clearsessions')
+            call_command("clearsessions")
             cache.set(self.SESSION_CLEANUP_LAST_RUN_KEY, now_ts, timeout=None)
         except Exception:
             # Silent fail to not interrupt admin experience

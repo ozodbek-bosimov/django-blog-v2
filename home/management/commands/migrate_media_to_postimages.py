@@ -19,7 +19,15 @@ from django.core.management.base import BaseCommand
 
 # Image extensions that CKEditor typically uploads
 IMAGE_EXTENSIONS = {
-    ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".tiff", ".ico",
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".bmp",
+    ".webp",
+    ".svg",
+    ".tiff",
+    ".ico",
 }
 
 # Subdirectories that already have a purpose — never touch these
@@ -124,9 +132,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"   media/images/{f}  →  media/postimages/{f}")
         else:
             self.stdout.write(
-                self.style.SUCCESS(
-                    "\n✅ No images to move in media/images/."
-                )
+                self.style.SUCCESS("\n✅ No images to move in media/images/.")
             )
 
         images_moved = 0
@@ -168,15 +174,13 @@ class Command(BaseCommand):
 
         # Pattern 1: /media/FILENAME (root files, not in any subdir)
         pattern_root = re.compile(
-            rf'({re.escape(media_url)}/)'
-            rf'(?!(?:{"|".join(SKIP_DIRS)})/)'
+            rf"({re.escape(media_url)}/)"
+            rf"(?!(?:{'|'.join(SKIP_DIRS)})/)"
             rf'([^"\'\s>/]+)'
         )
 
         # Pattern 2: /media/images/FILENAME → /media/postimages/FILENAME
-        pattern_images = re.compile(
-            rf'({re.escape(media_url)}/)images/([^"\'\s>]+)'
-        )
+        pattern_images = re.compile(rf'({re.escape(media_url)}/)images/([^"\'\s>]+)')
 
         def replace_refs(html):
             """Replace /media/file.jpg and /media/images/file.jpg → /media/postimages/file.jpg"""
@@ -199,9 +203,9 @@ class Command(BaseCommand):
                 aboutme_updates.append((about, new_bio))
 
         if blog_updates or aboutme_updates:
-            msg = (
-                "\n📝 DB updates: {} blog post(s), {} aboutme"
-            ).format(len(blog_updates), len(aboutme_updates))
+            msg = ("\n📝 DB updates: {} blog post(s), {} aboutme").format(
+                len(blog_updates), len(aboutme_updates)
+            )
             self.stdout.write(self.style.WARNING(msg))
             for blog, new_content in blog_updates:
                 self.stdout.write(
@@ -213,11 +217,7 @@ class Command(BaseCommand):
                     f"   AboutMe [{about.name[:40]}]: reference will be updated"
                 )
         else:
-            self.stdout.write(
-                self.style.SUCCESS(
-                    "\n✅ No DB references to update."
-                )
-            )
+            self.stdout.write(self.style.SUCCESS("\n✅ No DB references to update."))
 
         # ------------------------------------------------------------------
         # 5. Apply DB changes (if --apply)
@@ -231,9 +231,7 @@ class Command(BaseCommand):
                 about.bio = new_bio
                 AboutMe.objects.filter(pk=about.pk).update(bio=new_bio)
 
-            self.stdout.write(
-                self.style.SUCCESS("✅ DB references updated.")
-            )
+            self.stdout.write(self.style.SUCCESS("✅ DB references updated."))
 
         # ------------------------------------------------------------------
         # 6. Summary

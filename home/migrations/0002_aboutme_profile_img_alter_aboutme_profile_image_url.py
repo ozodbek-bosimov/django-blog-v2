@@ -4,20 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0001_initial'),
+        ("home", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='aboutme',
-            name='profile_img',
-            field=models.ImageField(blank=True, null=True, upload_to='profile/'),
+            model_name="aboutme",
+            name="profile_img",
+            field=models.ImageField(blank=True, null=True, upload_to="profile/"),
         ),
         migrations.AlterField(
-            model_name='aboutme',
-            name='profile_image_url',
-            field=models.URLField(blank=True, help_text='CDN URL for profile image (used if no image is uploaded)'),
+            model_name="aboutme",
+            name="profile_image_url",
+            field=models.URLField(
+                blank=True,
+                help_text="CDN URL for profile image (used if no image is uploaded)",
+            ),
         ),
     ]

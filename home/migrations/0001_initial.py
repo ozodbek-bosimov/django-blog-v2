@@ -6,75 +6,135 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='AboutMe',
+            name="AboutMe",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('profession', models.CharField(max_length=150)),
-                ('bio', models.TextField()),
-                ('email', models.EmailField(max_length=254)),
-                ('phone', models.CharField(blank=True, max_length=20)),
-                ('profile_image_url', models.URLField(help_text='CDN URL for profile image')),
-                ('linkedin_url', models.URLField(blank=True)),
-                ('github_url', models.URLField(blank=True)),
-                ('telegram_url', models.URLField(blank=True)),
-                ('x_url', models.URLField(blank=True, help_text='X (formerly Twitter) profile URL')),
-                ('leetcode_url', models.URLField(blank=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("profession", models.CharField(max_length=150)),
+                ("bio", models.TextField()),
+                ("email", models.EmailField(max_length=254)),
+                ("phone", models.CharField(blank=True, max_length=20)),
+                (
+                    "profile_image_url",
+                    models.URLField(help_text="CDN URL for profile image"),
+                ),
+                ("linkedin_url", models.URLField(blank=True)),
+                ("github_url", models.URLField(blank=True)),
+                ("telegram_url", models.URLField(blank=True)),
+                (
+                    "x_url",
+                    models.URLField(
+                        blank=True, help_text="X (formerly Twitter) profile URL"
+                    ),
+                ),
+                ("leetcode_url", models.URLField(blank=True)),
             ],
             options={
-                'verbose_name': 'About Me',
-                'verbose_name_plural': 'About Me',
+                "verbose_name": "About Me",
+                "verbose_name_plural": "About Me",
             },
         ),
         migrations.CreateModel(
-            name='Blog',
+            name="Blog",
             fields=[
-                ('sno', models.AutoField(primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=200)),
-                ('meta', models.CharField(max_length=300)),
-                ('content', models.TextField()),
-                ('thumbnail_img', models.ImageField(blank=True, null=True, upload_to='images/')),
-                ('thumbnail_url', models.URLField(blank=True, null=True)),
-                ('category', models.CharField(default='uncategorized', max_length=255)),
-                ('slug', models.CharField(max_length=100, unique=True)),
-                ('time', models.DateTimeField(default=django.utils.timezone.now)),
+                ("sno", models.AutoField(primary_key=True, serialize=False)),
+                ("title", models.CharField(max_length=200)),
+                ("meta", models.CharField(max_length=300)),
+                ("content", models.TextField()),
+                (
+                    "thumbnail_img",
+                    models.ImageField(blank=True, null=True, upload_to="images/"),
+                ),
+                ("thumbnail_url", models.URLField(blank=True, null=True)),
+                ("category", models.CharField(default="uncategorized", max_length=255)),
+                ("slug", models.CharField(max_length=100, unique=True)),
+                ("time", models.DateTimeField(default=django.utils.timezone.now)),
             ],
         ),
         migrations.CreateModel(
-            name='Project',
+            name="Project",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('description', models.TextField()),
-                ('thumbnail_url', models.URLField(help_text='CDN URL for project thumbnail')),
-                ('github_link', models.URLField(blank=True)),
-                ('demo_link', models.URLField(blank=True)),
-                ('technologies', models.CharField(help_text='Comma-separated technologies', max_length=500)),
-                ('order', models.IntegerField(default=0, help_text='Display order (lower numbers first)')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("description", models.TextField()),
+                (
+                    "thumbnail_url",
+                    models.URLField(help_text="CDN URL for project thumbnail"),
+                ),
+                ("github_link", models.URLField(blank=True)),
+                ("demo_link", models.URLField(blank=True)),
+                (
+                    "technologies",
+                    models.CharField(
+                        help_text="Comma-separated technologies", max_length=500
+                    ),
+                ),
+                (
+                    "order",
+                    models.IntegerField(
+                        default=0, help_text="Display order (lower numbers first)"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'ordering': ['order', '-created_at'],
+                "ordering": ["order", "-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='Skill',
+            name="Skill",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('percentage', models.IntegerField(help_text='Skill proficiency (0-100)', validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)])),
-                ('order', models.IntegerField(default=0, help_text='Display order (lower numbers first)')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "percentage",
+                    models.IntegerField(
+                        help_text="Skill proficiency (0-100)",
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(100),
+                        ],
+                    ),
+                ),
+                (
+                    "order",
+                    models.IntegerField(
+                        default=0, help_text="Display order (lower numbers first)"
+                    ),
+                ),
             ],
             options={
-                'ordering': ['order', 'name'],
+                "ordering": ["order", "name"],
             },
         ),
     ]

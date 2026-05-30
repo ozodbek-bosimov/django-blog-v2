@@ -8,10 +8,10 @@ from home.models import Blog
 
 class StaticViewSitemap(Sitemap):
     priority = 0.7
-    changefreq = 'weekly'
+    changefreq = "weekly"
 
     def items(self):
-        return ['home', 'about', 'blog', 'projects', 'categories']
+        return ["home", "about", "blog", "projects", "categories"]
 
     def location(self, obj: Any) -> str:
         return reverse(obj)
@@ -19,30 +19,30 @@ class StaticViewSitemap(Sitemap):
 
 class BlogPostSitemap(Sitemap):
     priority = 0.8
-    changefreq = 'weekly'
+    changefreq = "weekly"
 
     def items(self):
-        return Blog.objects.all().order_by('-time')
+        return Blog.objects.all().order_by("-time")
 
     def lastmod(self, obj: Any):
         return obj.time
 
     def location(self, obj: Any) -> str:
-        return reverse('blogpost', args=[obj.slug])
+        return reverse("blogpost", args=[obj.slug])
 
 
 class CategorySitemap(Sitemap):
     priority = 0.6
-    changefreq = 'weekly'
+    changefreq = "weekly"
 
     def items(self):
         return (
             Blog.objects.exclude(category__isnull=True)
-            .exclude(category__exact='')
-            .values_list('category', flat=True)
+            .exclude(category__exact="")
+            .values_list("category", flat=True)
             .distinct()
-            .order_by('category')
+            .order_by("category")
         )
 
     def location(self, obj: Any) -> str:
-        return reverse('category', args=[obj])
+        return reverse("category", args=[obj])
