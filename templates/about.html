@@ -144,10 +144,10 @@
                     class="btn-icon btn-icon--x"
                     aria-label="X profile"
                 >
-                    <img
-                        src="{% static 'images/icons/x.svg' %}"
-                        alt="X"
-                    />
+                    <span
+                        class="btn-icon__glyph"
+                        style="--glyph: url('{% static 'images/icons/x.svg' %}')"
+                    ></span>
                 </a>
                 {% endif %} {% if about_me.leetcode_url %}
                 <a
@@ -157,10 +157,10 @@
                     class="btn-icon btn-icon--leetcode"
                     aria-label="LeetCode profile"
                 >
-                    <img
-                        src="{% static 'images/icons/leetcode.svg' %}"
-                        alt="LeetCode"
-                    />
+                    <span
+                        class="btn-icon__glyph"
+                        style="--glyph: url('{% static 'images/icons/leetcode.svg' %}')"
+                    ></span>
                 </a>
                 {% endif %}
             </div>

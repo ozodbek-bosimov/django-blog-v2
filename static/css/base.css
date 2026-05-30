@@ -1092,13 +1092,17 @@ p iframe {
 /* ── Icon button — one class for ALL round/square icon actions
    (footer socials, blogpost share, copy-link …).
 
-   Resting state: neutral white-glass that matches the text-button
-   system. Hover state: a full, solid brand-colour fill driven entirely
-   from CSS via a `--brand` modifier — NO inline Tailwind hover
-   utilities. This avoids the cascade conflicts that left the glyph
-   invisible (white-on-white) and the gradient bleeding through a solid
-   fill, which made the tile look "detached". ──── */
+   Behaves exactly like the hero buttons: transparent glass at rest
+   (cf. "Resume"), then on hover the INSIDE fills with its own brand
+   colour in a liquid-glass domed style (cf. "About me"). The glow is
+   fully contained inside the glass — a vertical dome gradient, a soft
+   radial bloom from the centre, and a top rim highlight. NO outer glow,
+   NO lift, NO dark drop shadow. Each brand is just two custom
+   properties (`--brand` fill, `--brand-glyph` icon). ──── */
 .btn-icon {
+    /* r,g,b channels so we can compose any opacity we need */
+    --brand: 255, 255, 255;
+    --brand-glyph: 255, 255, 255;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1109,81 +1113,52 @@ p iframe {
     border-radius: var(--control-radius);
     color: #e5e7eb;
     text-decoration: none;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     -webkit-tap-highlight-color: transparent;
     transition:
-        background 240ms cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 240ms cubic-bezier(0.16, 1, 0.3, 1),
-        color 240ms cubic-bezier(0.16, 1, 0.3, 1),
-        box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1),
-        transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+        background 300ms cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+        color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Single-colour brand SVGs (X, LeetCode) render as crisp white in
-   every state — no group-hover filter juggling needed. */
-.btn-icon img {
+/* Brand SVG glyphs (X, LeetCode) rendered as masks so they inherit the
+   button's `color` — at rest they read light grey like the icon-font
+   glyphs, on hover they tint to the brand colour with everything else. */
+.btn-icon__glyph {
     width: 1.25rem;
     height: 1.25rem;
-    filter: brightness(0) invert(1);
+    background-color: currentColor;
+    -webkit-mask: var(--glyph) center / contain no-repeat;
+    mask: var(--glyph) center / contain no-repeat;
 }
 
-/* Hover lift + solid brand fills. Scoped to real hover devices so
-   touch screens never get a stuck colour (tap feedback handles those). */
+/* Per-brand colours (resting glyph stays neutral via the base `color`). */
+.btn-icon--github   { --brand: 240, 246, 252; --brand-glyph: 245, 248, 252; }
+.btn-icon--linkedin { --brand: 20, 120, 220;  --brand-glyph: 130, 185, 250; }
+.btn-icon--telegram { --brand: 38, 158, 215;  --brand-glyph: 130, 200, 240; }
+.btn-icon--x        { --brand: 225, 228, 235;  --brand-glyph: 240, 242, 248; }
+.btn-icon--leetcode { --brand: 245, 158, 30;   --brand-glyph: 250, 195, 120; }
+.btn-icon--neutral  { --brand: 210, 222, 240;  --brand-glyph: 240, 244, 250; }
+
+/* Liquid-glass inner illumination on hover — light blooms softly from
+   inside, fully contained within the button (Apple Control Center feel:
+   even fill, clean rim, no harsh top seam). Scoped to real hover devices
+   so touch never gets a stuck glow. */
 @media (hover: hover) {
     .btn-icon:hover {
-        transform: translateY(-2px);
-        border-color: rgba(255, 255, 255, 0.18);
+        background:
+            radial-gradient(120% 120% at 50% 55%, rgba(var(--brand), 0.20) 0%, rgba(var(--brand), 0.05) 60%, rgba(var(--brand), 0) 100%),
+            linear-gradient(180deg, rgba(var(--brand), 0.10) 0%, rgba(var(--brand), 0.03) 100%);
+        border-color: rgba(var(--brand), 0.30);
+        color: rgb(var(--brand-glyph));
         box-shadow:
-            0 8px 20px rgba(0, 0, 0, 0.28),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-
-    .btn-icon--github:hover {
-        background: #ffffff;
-        border-color: #ffffff;
-        color: #0d1117;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.32);
-    }
-
-    .btn-icon--linkedin:hover {
-        background: #0a66c2;
-        border-color: #0a66c2;
-        color: #ffffff;
-        box-shadow: 0 8px 22px rgba(10, 102, 194, 0.45);
-    }
-
-    .btn-icon--telegram:hover {
-        background: #229ed9;
-        border-color: #229ed9;
-        color: #ffffff;
-        box-shadow: 0 8px 22px rgba(34, 158, 217, 0.45);
-    }
-
-    .btn-icon--x:hover {
-        background: #000000;
-        border-color: rgba(255, 255, 255, 0.22);
-        color: #ffffff;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
-    }
-
-    .btn-icon--leetcode:hover {
-        background: #ffa116;
-        border-color: #ffa116;
-        color: #ffffff;
-        box-shadow: 0 8px 22px rgba(255, 161, 22, 0.45);
-    }
-
-    .btn-icon--neutral:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.22);
-        color: #ffffff;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+            inset 0 1px 0 rgba(255, 255, 255, 0.10),
+            inset 0 0 16px rgba(var(--brand), 0.10);
     }
 }
 
