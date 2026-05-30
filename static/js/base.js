@@ -191,7 +191,7 @@ if (searchModal) {
   if (!isTouch) return;
 
   var interactive =
-    "a, button, .glass-card, .btn-social, .btn-primary, .btn-ghost, " +
+    "a, button, .glass-card, .btn-icon, .btn-primary, .btn-ghost, " +
     ".btn-hero-primary, .btn-hero-ghost, .btn-pagination, .nav-btn, " +
     ".solid-content-card";
 

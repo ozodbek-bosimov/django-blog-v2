@@ -44,7 +44,7 @@
 
 /* ── Copy Link Button — Copied State ────────────────────────────── */
 #copy-link-btn.copied {
-    background-color: rgba(20, 83, 45, 0.5);
+    background: rgba(20, 83, 45, 0.5);
     border-color: #4ade80;
     color: #4ade80;
 }

@@ -59,13 +59,13 @@
             <div class="flex flex-wrap gap-3 mt-6">
                 {% if project.github_link %}
                 <a href="{{ project.github_link }}" target="_blank" rel="noopener noreferrer"
-                    class="btn-ghost w-[116px] px-2 py-2 text-[13px]">
-                    <i class="bi bi-github text-sm"></i> GitHub
+                    class="btn-ghost btn-sm btn-uniform">
+                    <i class="bi bi-github"></i> GitHub
                 </a>
                 {% endif %} {% if project.demo_link %}
                 <a href="{{ project.demo_link }}" target="_blank" rel="noopener noreferrer"
-                    class="btn-primary btn-cyan w-[116px] px-2 py-2 text-[13px]">
-                    Live site <i class="bi bi-box-arrow-up-right text-xs"></i>
+                    class="btn-primary btn-cyan btn-sm btn-uniform">
+                    Live site <i class="bi bi-box-arrow-up-right"></i>
                 </a>
                 {% endif %}
             </div>

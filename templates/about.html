@@ -111,7 +111,7 @@
                     href="{{ about_me.github_url }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="btn-social hover:bg-white hover:text-black hover:border-white"
+                    class="btn-icon btn-icon--github"
                     aria-label="GitHub profile"
                 >
                     <i class="bi bi-github text-xl"></i>
@@ -121,7 +121,7 @@
                     href="{{ about_me.linkedin_url }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="btn-social hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white"
+                    class="btn-icon btn-icon--linkedin"
                     aria-label="LinkedIn profile"
                 >
                     <i class="bi bi-linkedin text-xl"></i>
@@ -131,7 +131,7 @@
                     href="{{ about_me.telegram_url }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="btn-social hover:bg-[#26A5E4] hover:border-[#26A5E4] hover:text-white"
+                    class="btn-icon btn-icon--telegram"
                     aria-label="Telegram profile"
                 >
                     <i class="bi bi-telegram text-xl"></i>
@@ -141,13 +141,12 @@
                     href="{{ about_me.x_url }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="btn-social hover:bg-black hover:border-black group"
+                    class="btn-icon btn-icon--x"
                     aria-label="X profile"
                 >
                     <img
                         src="{% static 'images/icons/x.svg' %}"
                         alt="X"
-                        class="w-5 h-5 filter brightness-0 invert transition-all"
                     />
                 </a>
                 {% endif %} {% if about_me.leetcode_url %}
@@ -155,13 +154,12 @@
                     href="{{ about_me.leetcode_url }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="btn-social hover:bg-[#FFA116] hover:border-[#FFA116] group"
+                    class="btn-icon btn-icon--leetcode"
                     aria-label="LeetCode profile"
                 >
                     <img
                         src="{% static 'images/icons/leetcode.svg' %}"
                         alt="LeetCode"
-                        class="w-5 h-5 filter invert group-hover:invert-0 transition-all"
                     />
                 </a>
                 {% endif %}
