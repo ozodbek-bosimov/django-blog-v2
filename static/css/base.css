@@ -620,22 +620,14 @@ body {
 
 
 
-    /* Drop backdrop-filter on mobile: blur() is the heaviest GPU effect and
-       gets re-rasterised every frame during scroll, causing the jank/slow
-       feel on long lists (blog & projects). */
+    /* We restore the premium glass blur on mobile! 
+       Performance is saved by content-visibility: auto on lists below, 
+       so the GPU only blurs the 2-3 visible cards instead of 20 at once. */
     .glass-card,
     .btn-hero-ghost,
     #back-to-top {
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-    }
-
-    /* Because the blur is gone, give cards an opaque fill so (a) the fixed
-       dot-grid canvas on the home page can't bleed through and (b) cards
-       read as clean elevated panels instead of near-transparent boxes. */
-    .solid-content-card,
-    .solid-content-card:hover {
-        background: #1f2937 !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
     }
 
     /* Skip rendering/layout of off-screen list cards on the long blog and
@@ -710,6 +702,15 @@ span a.tapped,
         opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
         transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     /* Removed will-change to prevent mobile GPU VRAM bloat on large lists */
+}
+
+/* Mobile: Remove the heavy translateY animation. A simple fade-in is much 
+   lighter on the mobile GPU and eliminates jank while scrolling. */
+@media (max-width: 768px) {
+    .reveal {
+        transform: none !important;
+        transition: opacity 0.5s ease-out;
+    }
 }
 
 .reveal.reveal-visible {

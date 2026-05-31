@@ -229,8 +229,12 @@ def search(request):
 
     query = (request.GET.get("q") or "").strip()
 
+    # Prevent abusive queries: max 50 characters
+    query = query[:50]
+
     if query:
-        query_list = query.split()
+        # Prevent SQL complexity DoS: max 5 words per search
+        query_list = query.split()[:5]
         q_objects = [
             Q(title__icontains=word) | Q(content__icontains=word) for word in query_list
         ]
