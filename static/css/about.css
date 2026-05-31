@@ -566,8 +566,9 @@
 
 #github-calendar-container .ContributionCalendar-day {
     background-color: #2d3748 !important;
-    border-radius: 25% !important;
-    aspect-ratio: 1 / 1 !important;
+    border-radius: 20% !important;
+    width: 11px !important;
+    height: 11px !important;
     outline: none !important;
 }
 
@@ -607,34 +608,36 @@
     display: none !important;
 }
 
-/* Ensure SVG graph doesn't overflow */
+/* Ensure SVG graph doesn't overflow and handles native scrolling */
 #github-calendar-container .js-calendar-graph {
-    max-width: 100% !important;
+    width: 100% !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
+    padding-bottom: 0.5rem; /* Space for scrollbar */
 }
 
 #github-calendar-container .calendar-graph {
-    max-width: 100%;
+    width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
 }
 
 #github-calendar-container .calendar-graph svg,
 #github-calendar-container .js-calendar-graph svg {
-    max-width: 100%;
     height: auto;
+    min-width: 600px; /* Ensure SVG doesn't shrink infinitely */
 }
 
 #github-calendar-container table.ContributionCalendar-grid {
     width: max-content !important;
-    max-width: 100%;
-    border-spacing: 1px !important;
+    border-spacing: 2px !important;
     border-collapse: separate !important;
 }
 
 #github-calendar-container .graph-before-activity-overview {
-    padding: 0.45rem 1rem !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 #github-calendar-container .ContributionCalendar-label {

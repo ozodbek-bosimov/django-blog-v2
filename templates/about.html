@@ -426,9 +426,11 @@
                         <div class="profile-panel profile-panel--full">
                             <p class="profile-panel__label">Contribution calendar</p>
                             <hr style="border: none; border-top: 1.5px solid #2d3748; margin: 1.5rem auto 1.2rem auto; width: 96%;" />
-                            <div id="github-cal-skeleton" class="skeleton-loader" style="aspect-ratio: 663/104; width: 100%; margin-bottom: 1rem;"></div>
-                            <div id="github-calendar-container" class="calendar-shell">
-                                <!-- Calendar injected by github-calendar library -->
+                            <div style="height: 125px; margin-bottom: 1rem; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
+                                <div id="github-cal-skeleton" class="skeleton-loader" style="height: 100%; width: 100%;"></div>
+                                <div id="github-calendar-container" class="calendar-shell">
+                                    <!-- Calendar injected by github-calendar library -->
+                                </div>
                             </div>
                         </div>
                     </div>

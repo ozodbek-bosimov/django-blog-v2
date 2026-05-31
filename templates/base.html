@@ -6,9 +6,8 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#111827" />
-        <link rel="preload" href="{% static 'fonts/Poppins-Regular.ttf' %}" as="font" type="font/ttf" crossorigin />
-        <link rel="preload" href="{% static 'fonts/Poppins-Medium.ttf' %}" as="font" type="font/ttf" crossorigin />
-        <link rel="preload" href="{% static 'fonts/Poppins-Bold.ttf' %}" as="font" type="font/ttf" crossorigin />
+        <link rel="preload" href="{% static 'fonts/Poppins-Regular.woff2' %}" as="font" type="font/woff2" crossorigin />
+        <link rel="preload" href="{% static 'fonts/Poppins-Bold.woff2' %}" as="font" type="font/woff2" crossorigin />
         <link
             rel="icon"
             href="{% static 'favicon/favicon.ico' %}?v=20260219"
@@ -42,7 +41,6 @@
 
     {% with url_name=request.resolver_match.url_name %}
     <body
-        ontouchstart=""
         class="min-h-screen flex flex-col bg-gradient-to-b from-gray-800 via-gray-800 to-gray-900"
     >
         <nav
