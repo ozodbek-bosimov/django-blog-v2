@@ -19,7 +19,7 @@ class DevStaticNoCacheMiddleware:
         response = self.get_response(request)
 
         if getattr(settings, "DEBUG", False) and request.path.startswith(
-            ("/static/", "/media/")
+            ("/static/", "/media/", "/shared/")
         ):
             response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
             response["Pragma"] = "no-cache"

@@ -7,7 +7,9 @@ urlpatterns = [
     path("blog/", views.blog, name="blog"),
     path("projects/", views.projects, name="projects"),
     path("blog/<str:slug>/", views.blogpost, name="blogpost"),
-    path("category/<str:category>/", views.category, name="category"),
-    path("categories/", views.categories, name="categories"),
+    path("topic/<str:category>/", views.category, name="category"),
+    path("topics/", views.categories, name="categories"),
     path("search/", views.search, name="search"),
+    path("github-contributions/", views.github_calendar_proxy, name="github_contributions"),
+    path("leetcode-proxy/", views.leetcode_proxy, name="leetcode_proxy"),
 ]

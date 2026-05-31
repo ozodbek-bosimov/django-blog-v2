@@ -363,17 +363,15 @@
         <div class="profiles-section">
             <div class="profiles-grid" id="profiles-container">
             {% if about_me.leetcode_url %}
-            <article class="profile-card profile-card--leetcode">
+            <article class="profile-card profile-card--leetcode cursor-pointer relative" onclick="window.open('{{ about_me.leetcode_url|escapejs }}', '_blank')" title="View LeetCode Profile">
                 <div class="profile-card__body p-0">
-                    <a href="{{ about_me.leetcode_url }}" target="_blank" rel="noopener noreferrer" class="block cursor-pointer" title="View LeetCode Profile">
-                        <div class="profile-media skeleton-loader" id="leetcode-stats-wrapper">
-                            <img
-                                id="leetcode-stats-img"
-                                alt="LeetCode Stats"
-                                class="profile-media__img github-img-hidden"
-                            />
-                        </div>
-                    </a>
+                    <div class="profile-media skeleton-loader" id="leetcode-stats-wrapper">
+                        <img
+                            id="leetcode-stats-img"
+                            alt="LeetCode Stats"
+                            class="profile-media__img github-img-hidden"
+                        />
+                    </div>
                 </div>
             </article>
             {% endif %}
@@ -428,6 +426,7 @@
                         <div class="profile-panel profile-panel--full">
                             <p class="profile-panel__label">Contribution calendar</p>
                             <hr style="border: none; border-top: 1.5px solid #2d3748; margin: 1.5rem auto 1.2rem auto; width: 96%;" />
+                            <div id="github-cal-skeleton" class="skeleton-loader" style="aspect-ratio: 663/104; width: 100%; margin-bottom: 1rem;"></div>
                             <div id="github-calendar-container" class="calendar-shell">
                                 <!-- Calendar injected by github-calendar library -->
                             </div>
@@ -453,7 +452,11 @@
                 if (match && match[1]) ghUsername = match[1];
             }
             
-            const cbStr = Date.now().toString();
+            // Time-bucketed cache-buster: refreshes once per hour instead of every
+            // page load. This lets the browser, Cloudflare and the upstream stat
+            // services serve cached renders (less load, faster, fewer rate-limits)
+            // while still keeping the data reasonably fresh.
+            const cbStr = Math.floor(Date.now() / 3600000).toString();
             let statsUrl = "", langsUrl = "", streakUrl = "";
             
             if (ghUsername) {
@@ -471,51 +474,9 @@
             
             let leetcodePromise = null;
             const leetcodeUrl = "{{ about_me.leetcode_url|escapejs }}";
-            if (leetcodeUrl) {
-                const match = leetcodeUrl.match(/leetcode\.com\/(?:u\/)?([a-zA-Z0-9_-]+)/);
-                if (match && match[1]) {
-                    const lcUsername = match[1];
-                    const baseLcUrl = `https://leetcard.jacoblin.cool/${lcUsername}?font=Poppins&ext=heatmap&border=0&radius=0&v=${cbStr}`;
-                    const lcUrl = `${baseLcUrl}&theme=dark`;
-                    // Fallback URL uses valid 6-hex colors matching the site's cyan theme (heatmap stays green on fallback)
-                    const lcFallbackUrl = `${baseLcUrl}&colors=0f172a,2d3748,67e8f9,22d3ee,0e7490,67e8f9,22d3ee,164e63`;
-                    
-                    leetcodePromise = fetch(lcUrl)
-                        .then(res => {
-                            if (!res.ok) throw new Error('Network error');
-                            return res.text();
-                        })
-                        .then(svgText => {
-                            if (svgText.includes('<svg')) {
-                                const customStyles = `
-                                    <style>
-                                        #background, #total-solved-bg, #total-solved-ring { fill: transparent !important; }
-                                        #total-solved-bg, #easy-solved-bg, #medium-solved-bg, #hard-solved-bg, line:not([id*="-solved-"]) { stroke: #2d3748 !important; }
-                                        rect[class^="ext-heatmap-"] { rx: 2px !important; ry: 2px !important; }
-                                        #ext-heatmap-cells { opacity: 1 !important; }
-                                        rect.ext-heatmap-0 { fill: #2d3748 !important; opacity: 1 !important; }
-                                        rect.ext-heatmap-1 { fill: #164e63 !important; opacity: 1 !important; }
-                                        rect.ext-heatmap-2 { fill: #0e7490 !important; opacity: 1 !important; }
-                                        rect.ext-heatmap-3 { fill: #22d3ee !important; opacity: 1 !important; }
-                                        rect.ext-heatmap-4 { fill: #67e8f9 !important; opacity: 1 !important; }
-                                        rect[class^="ext-heatmap-"]:not(.ext-heatmap-0):not(.ext-heatmap-1):not(.ext-heatmap-2):not(.ext-heatmap-3):not(.ext-heatmap-4) { fill: #67e8f9 !important; opacity: 1 !important; }
-                                        
-                                        #username-text, #username { font-size: 16px !important; }
-                                        #ranking { font-size: 12px !important; }
-                                        #total-solved-text { font-size: 20px !important; }
-                                        #easy-solved-type, #medium-solved-type, #hard-solved-type { font-size: 11px !important; }
-                                        #easy-solved-count, #medium-solved-count, #hard-solved-count { font-size: 12px !important; }
-                                        #ext-heatmap-from, #ext-heatmap-to { font-size: 8px !important; }
-                                    </style>
-                                `;
-                                const modifiedSvg = svgText.replace('</svg>', customStyles + '</svg>');
-                                const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });
-                                return URL.createObjectURL(blob);
-                            }
-                            throw new Error('Invalid SVG');
-                        })
-                        .catch(() => lcFallbackUrl);
-                }
+            if (leetcodeUrl && leetcodeUrl.includes("leetcode.com")) {
+                // The backend handles the fetching, caching, and CSS injection natively
+                leetcodePromise = Promise.resolve(`/leetcode-proxy/`);
             }
 
             const initGithubStats = function() {
@@ -608,11 +569,28 @@
                             streakImg.src = streakUrl;
                         } else items[2].loaded = true;
 
+                        const tryFallbackCalendar = () => {
+                            if (container) {
+                                container.innerHTML = `<img src="https://ghchart.rshah.org/06b6d4/${username}" alt="GitHub Contribution Calendar" style="width: 100%; height: auto; padding-bottom: 1rem; filter: invert(1) hue-rotate(180deg) brightness(1.2);" onerror="const p = this.closest('.profile-panel--full'); if(p) p.style.display='none';">`;
+                                container.style.opacity = '1';
+                                container.style.height = 'auto';
+                                container.style.overflow = 'visible';
+                                const skel = document.getElementById('github-cal-skeleton');
+                                if (skel) skel.style.display = 'none';
+                            }
+                        };
+
                         if (container && typeof GitHubCalendar !== 'undefined') {
                                                                 revealCalendarFn = () => {
                                                                     if (container.dataset.revealed) return;
                                                                     container.dataset.revealed = 'true';
                                                                     
+                                                                    const skel = document.getElementById('github-cal-skeleton');
+                                                                    if (skel) skel.style.display = 'none';
+                                                                    
+                                                                    container.style.height = 'auto';
+                                                                    container.style.overflow = 'visible';
+
                                                                     // Trigger the CSS animation to fade in the grid
                                                                     setTimeout(() => {
                                                                         container.style.opacity = '1';
@@ -687,19 +665,48 @@
                                                                     if (enhanceCalendar()) return;
                                                                     if (attempt < 20) {
                                                                         setTimeout(() => waitForCalendar(attempt + 1), 150);
+                                                                    } else {
+                                                                        // We tried 20 times and enhanceCalendar STILL returned false.
+                                                                        // This means the GitHub calendar DOM is incompatible or proxy returned an error HTML.
+                                                                        // We MUST use the fallback.
+                                                                        tryFallbackCalendar();
                                                                     }
                                                                 };
 
                                                                 const initResult = GitHubCalendar("#github-calendar-container", username, {
                                                                     responsive: true,
-                                                                    tooltips: true
+                                                                    tooltips: true,
+                                                                    proxy: function (username) {
+                                                                        // Try the primary remote proxy first
+                                                                        return fetch(`https://github-calendar.js.org/${username}`).then(r => {
+                                                                            if (!r.ok) throw new Error("Primary proxy failed");
+                                                                            return r.text();
+                                                                        }).catch(() => {
+                                                                            // Fallback to our internal Django proxy
+                                                                            return fetch(`/github-contributions/`).then(r => {
+                                                                                if (!r.ok) throw new Error("Internal proxy failed");
+                                                                                return r.text();
+                                                                            });
+                                                                        });
+                                                                    }
                                                                 });
 
                                                                 if (initResult && typeof initResult.then === 'function') {
-                                                                    initResult.then(() => waitForCalendar()).catch(e => console.error("GitHub Calendar error:", e));
+                                                                    initResult.then(() => waitForCalendar()).catch(e => {
+                                                                        console.error("GitHub Calendar error:", e);
+                                                                        tryFallbackCalendar();
+                                                                    });
                                                                 } else {
                                                                     waitForCalendar();
                                                                 }
+                                                        } else if (container) {
+                                                            // Library completely failed to load -> Setup sequential fallback
+                                                            revealCalendarFn = () => {
+                                                                if (container.dataset.revealed) return;
+                                                                container.dataset.revealed = 'true';
+                                                                tryFallbackCalendar();
+                                                            };
+                                                            calReadyToReveal = true;
                                                         }
                         startTurn(0);
                     }

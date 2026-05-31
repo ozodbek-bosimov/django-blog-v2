@@ -288,11 +288,15 @@
 
         resize();
         window.addEventListener("resize", resize);
-        window.addEventListener("mousemove", (e) => {
+        
+        window.addEventListener("pointermove", (e) => {
+            // Ignore touch pointers so the grid doesn't stick on mobile
+            // or in DevTools mobile emulation
+            if (e.pointerType === "touch") return;
             mouse.x = e.clientX;
             mouse.y = e.clientY;
         });
-        window.addEventListener("mouseleave", () => {
+        window.addEventListener("pointerleave", () => {
             mouse.x = -1000;
             mouse.y = -1000;
         });
@@ -320,7 +324,8 @@
                     if (intensity > 0) {
                         ctx.fillStyle = `rgba(103, 232, 249, ${0.08 + intensity * 0.7})`;
                     } else {
-                        ctx.fillStyle = "rgba(156, 163, 175, 0)";
+                        // Very faint static dots in the background
+                        ctx.fillStyle = "rgba(156, 163, 175, 0.08)";
                     }
                     ctx.fill();
                 }
