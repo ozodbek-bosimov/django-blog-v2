@@ -602,7 +602,8 @@
 /* Stats columns rendered by the library */
 #github-calendar-container .contrib-column,
 #github-calendar-container .flex-wrap,
-#github-calendar-container .text-muted {
+#github-calendar-container .text-muted,
+#github-calendar-container .float-right {
     display: none !important;
 }
 
@@ -643,6 +644,8 @@
 
 #github-calendar-container {
     opacity: 0;
+    height: 0;
+    overflow: hidden;
 }
 
 .github-img-hidden {

@@ -204,7 +204,7 @@ class ViewsSmokeTests(TestCase):
         resp = self.client.get(reverse("category", kwargs={"category": "nope"}))
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, "category.html")
-        self.assertContains(resp, "No posts found in category")
+        self.assertContains(resp, "No posts found in topic")
 
     def test_search_empty_query_shows_message(self):
         resp = self.client.get(reverse("search"))

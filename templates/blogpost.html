@@ -43,6 +43,32 @@
     rel="stylesheet"
 />
 {% endif %}
+
+<!-- JSON-LD Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'blogpost' blog.slug %}"
+  },
+  "headline": "{{ blog.title|escapejs }}",
+  "description": "{{ blog.meta|escapejs }}",
+  "image": "{% if abs_thumbnail %}{{ abs_thumbnail }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}{% endif %}",
+  "author": {
+    "@type": "Person",
+    "name": "Ozodbek Bosimov",
+    "url": "{{ request.scheme }}://{{ request.get_host }}/"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ozodbek Bosimov"
+  },
+  "datePublished": "{{ blog.time|date:'c' }}",
+  "dateModified": "{{ blog.time|date:'c' }}"
+}
+</script>
 {% endblock meta %} {% block content %}
 
 <!-- Reading Progress Bar -->
