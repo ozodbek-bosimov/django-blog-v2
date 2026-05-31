@@ -271,45 +271,9 @@
         const mouse = { x: -1000, y: -1000 };
         const radius = 120;
 
-        function resize() {
-            w = canvas.width = window.innerWidth * devicePixelRatio;
-            h = canvas.height = window.innerHeight * devicePixelRatio;
-            canvas.style.width = window.innerWidth + "px";
-            canvas.style.height = window.innerHeight + "px";
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.scale(devicePixelRatio, devicePixelRatio);
-            cols = Math.floor(window.innerWidth / gap) + 1;
-            rows = Math.floor(window.innerHeight / gap) + 1;
-            const gridWidth = (cols - 1) * gap;
-            const gridHeight = (rows - 1) * gap;
-            offsetX = (window.innerWidth - gridWidth) / 2;
-            offsetY = (window.innerHeight - gridHeight) / 2;
-        }
+        let animationFrameId = null;
 
-        resize();
-        window.addEventListener("resize", resize);
-        
-        window.addEventListener("pointermove", (e) => {
-            // Ignore touch pointers so the grid doesn't stick on mobile
-            // or in DevTools mobile emulation
-            if (e.pointerType === "touch") return;
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-        window.addEventListener("pointerleave", () => {
-            mouse.x = -1000;
-            mouse.y = -1000;
-        });
-        window.addEventListener(
-            "scroll",
-            () => {
-                mouse.x = -1000;
-                mouse.y = -1000;
-            },
-            { passive: true },
-        );
-
-        function draw() {
+        function render() {
             ctx.clearRect(0, 0, w / devicePixelRatio, h / devicePixelRatio);
             for (let i = 0; i < cols; i++) {
                 for (let j = 0; j < rows; j++) {
@@ -330,9 +294,55 @@
                     ctx.fill();
                 }
             }
-            requestAnimationFrame(draw);
+            animationFrameId = null;
         }
-        draw();
+
+        function queueRedraw() {
+            if (!animationFrameId) {
+                animationFrameId = requestAnimationFrame(render);
+            }
+        }
+
+        function resize() {
+            w = canvas.width = window.innerWidth * devicePixelRatio;
+            h = canvas.height = window.innerHeight * devicePixelRatio;
+            canvas.style.width = window.innerWidth + "px";
+            canvas.style.height = window.innerHeight + "px";
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(devicePixelRatio, devicePixelRatio);
+            cols = Math.floor(window.innerWidth / gap) + 1;
+            rows = Math.floor(window.innerHeight / gap) + 1;
+            const gridWidth = (cols - 1) * gap;
+            const gridHeight = (rows - 1) * gap;
+            offsetX = (window.innerWidth - gridWidth) / 2;
+            offsetY = (window.innerHeight - gridHeight) / 2;
+            queueRedraw();
+        }
+
+        resize();
+        window.addEventListener("resize", resize);
+        
+        window.addEventListener("pointermove", (e) => {
+            // Ignore touch pointers so the grid doesn't stick on mobile
+            // or in DevTools mobile emulation
+            if (e.pointerType === "touch") return;
+            if (mouse.x !== e.clientX || mouse.y !== e.clientY) {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+                queueRedraw();
+            }
+        });
+        
+        const resetMouse = () => {
+            if (mouse.x !== -1000 || mouse.y !== -1000) {
+                mouse.x = -1000;
+                mouse.y = -1000;
+                queueRedraw();
+            }
+        };
+
+        window.addEventListener("pointerleave", resetMouse);
+        window.addEventListener("scroll", resetMouse, { passive: true });
     })();
 
     // ── Hero Typing Effect ───────────────────────────────────────────

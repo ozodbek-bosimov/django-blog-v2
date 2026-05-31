@@ -79,35 +79,35 @@
 
 @font-face {
     font-family: "Poppins";
-    src: url("../fonts/Poppins-Light.ttf") format("truetype");
+    src: url("../fonts/Poppins-Light.woff2") format("woff2");
     font-weight: 300;
     font-display: swap;
 }
 
 @font-face {
     font-family: "Poppins";
-    src: url("../fonts/Poppins-Regular.ttf") format("truetype");
+    src: url("../fonts/Poppins-Regular.woff2") format("woff2");
     font-weight: 400;
     font-display: swap;
 }
 
 @font-face {
     font-family: "Poppins";
-    src: url("../fonts/Poppins-Medium.ttf") format("truetype");
+    src: url("../fonts/Poppins-Medium.woff2") format("woff2");
     font-weight: 500;
     font-display: swap;
 }
 
 @font-face {
     font-family: "Poppins";
-    src: url("../fonts/Poppins-SemiBold.ttf") format("truetype");
+    src: url("../fonts/Poppins-SemiBold.woff2") format("woff2");
     font-weight: 600;
     font-display: swap;
 }
 
 @font-face {
     font-family: "Poppins";
-    src: url("../fonts/Poppins-Bold.ttf") format("truetype");
+    src: url("../fonts/Poppins-Bold.woff2") format("woff2");
     font-weight: 700;
     font-display: swap;
 }
@@ -619,19 +619,7 @@ body {
     }
 
 
-    /* Keep animations but reduce expensive effects on touch devices.
-       Remove backdrop-filter from cards entirely on mobile to prevent
-       compositing layer glitches during scroll (iOS WebKit bug). */
-    .solid-content-card {
-        /* We leave the backdrop-filter in place unless it proves buggy, 
-           or we can use a slightly more opaque glass fallback if needed. 
-           But the user explicitly wants the transparent/glass look back, 
-           so we just remove this solid #1f2937 override. */
-    }
-    /* Sticky-hover after tap must not restore the translucent fill. */
-    .solid-content-card:hover {
-        /* No override needed */
-    }
+
     .glass-card,
     .btn-hero-ghost,
     #back-to-top {
