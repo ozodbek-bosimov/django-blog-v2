@@ -27,7 +27,7 @@ class BlogModelTests(TestCase):
             meta="m",
             content="c",
             thumbnail_url="https://example.com/x.jpg",
-            category="Test",
+            topic="Test",
             slug="s1",
         )
 
@@ -39,17 +39,17 @@ class BlogModelTests(TestCase):
         blog.thumbnail_img = _FakeFieldFile()
         self.assertEqual(blog.effective_thumbnail, "/media/images/upload.jpg")
 
-    def test_blog_save_normalizes_category_and_clears_cache(self):
+    def test_blog_save_normalizes_topic_and_clears_cache(self):
         cache.set(USED_TAGS_CACHE_KEY, ["cached"])
         blog = Blog.objects.create(
             title="t",
             meta="m",
             content="c",
-            category="  PyThOn  ",
+            topic="  PyThOn  ",
             slug="s2",
         )
         blog.refresh_from_db()
-        self.assertEqual(blog.category, "python")
+        self.assertEqual(blog.topic, "python")
         self.assertIsNone(cache.get(USED_TAGS_CACHE_KEY))
 
 
@@ -112,21 +112,21 @@ class ContextProcessorTests(TestCase):
             title="t1",
             meta="m",
             content="c",
-            category="python",
+            topic="python",
             slug="c1",
         )
         Blog.objects.create(
             title="t2",
             meta="m",
             content="c",
-            category="django",
+            topic="django",
             slug="c2",
         )
         Blog.objects.create(
             title="t3",
             meta="m",
             content="c",
-            category="django",
+            topic="django",
             slug="c3",
         )
         data = used_tags(self.rf.get("/"))
@@ -137,7 +137,7 @@ class ContextProcessorTests(TestCase):
             title="t1",
             meta="m",
             content="c",
-            category="python",
+            topic="python",
             slug="c1",
         )
         _ = used_tags(self.rf.get("/"))
@@ -149,7 +149,7 @@ class ContextProcessorTests(TestCase):
             title="t2",
             meta="m",
             content="c",
-            category="django",
+            topic="django",
             slug="c2",
         )
         # Cache was cleared by Blog.save()
@@ -175,7 +175,7 @@ class ViewsSmokeTests(TestCase):
             title="Hello Django",
             meta="meta",
             content="<p>Some content</p>",
-            category="django",
+            topic="django",
             slug="hello-django",
         )
 
@@ -200,10 +200,10 @@ class ViewsSmokeTests(TestCase):
         self.assertEqual(resp.status_code, 404)
         self.assertTemplateUsed(resp, "404.html")
 
-    def test_category_missing_shows_message(self):
-        resp = self.client.get(reverse("category", kwargs={"category": "nope"}))
+    def test_topic_missing_shows_message(self):
+        resp = self.client.get(reverse("topic", kwargs={"topic": "nope"}))
         self.assertEqual(resp.status_code, 200)
-        self.assertTemplateUsed(resp, "category.html")
+        self.assertTemplateUsed(resp, "topic.html")
         self.assertContains(resp, "No posts found in topic")
 
     def test_search_empty_query_shows_message(self):
@@ -234,7 +234,7 @@ class ViewsSmokeTests(TestCase):
             title="Simple Post",
             meta="meta",
             content="<p>No code here.</p>",
-            category="python",
+            topic="python",
             slug="simple-post",
         )
         resp = self.client.get(reverse("blogpost", kwargs={"slug": blog.slug}))
@@ -249,7 +249,7 @@ class ViewsSmokeTests(TestCase):
             title="Tech Post",
             meta="meta",
             content="<pre><code class='language-python'>print('hello')</code></pre>",
-            category="python",
+            topic="python",
             slug="tech-post",
         )
         resp = self.client.get(reverse("blogpost", kwargs={"slug": blog.slug}))
@@ -262,7 +262,7 @@ class ViewsSmokeTests(TestCase):
             title="Social Post",
             meta="meta",
             content="<p>Checkout this tweet: twitter.com/test</p>",
-            category="python",
+            topic="python",
             slug="social-post",
         )
         resp = self.client.get(reverse("blogpost", kwargs={"slug": blog.slug}))

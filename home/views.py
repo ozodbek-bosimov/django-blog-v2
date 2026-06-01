@@ -64,9 +64,9 @@ def index(request):
     total_projects = cache.get_or_set(
         "total_projects", lambda: Project.objects.count(), 86400
     )
-    total_categories = cache.get_or_set(
-        "total_categories",
-        lambda: Blog.objects.values("category").distinct().count(),
+    total_topics = cache.get_or_set(
+        "total_topics",
+        lambda: Blog.objects.values("topic").distinct().count(),
         86400,
     )
 
@@ -78,7 +78,7 @@ def index(request):
         "latest_blogs": latest_blogs,
         "total_blogs": total_blogs,
         "total_projects": total_projects,
-        "total_categories": total_categories,
+        "total_topics": total_topics,
     }
     return render(request, "index.html", context)
 
@@ -152,43 +152,43 @@ def blog(request):
     return render(request, "blog.html", context)
 
 
-def category(request, category):
+def topic(request, topic):
     # Reuse the already-cached full blog list and filter in Python.
-    # This avoids a per-category DB query while keeping a single cache key to invalidate.
+    # This avoids a per-topic DB query while keeping a single cache key to invalidate.
     all_blogs = cache.get_or_set(
         "all_blogs_list",
         lambda: list(Blog.objects.order_by("-time", "-sno")),
         86400,
     )
-    category_list = [b for b in all_blogs if b.category == category]
+    topic_list = [b for b in all_blogs if b.topic == topic]
 
-    if not category_list:
-        message = f"No posts found in topic: '{category}'"
+    if not topic_list:
+        message = f"No posts found in topic: '{topic}'"
         return render(
-            request, "category.html", {"message": message, "category": category}
+            request, "topic.html", {"message": message, "topic": topic}
         )
 
-    paginator = Paginator(category_list, 3)
+    paginator = Paginator(topic_list, 3)
     page = request.GET.get("page")
-    category_posts = paginator.get_page(page)
+    topic_posts = paginator.get_page(page)
     return render(
         request,
-        "category.html",
-        {"category": category, "category_posts": category_posts},
+        "topic.html",
+        {"topic": topic, "topic_posts": topic_posts},
     )
 
 
-def categories(request):
-    all_categories = cache.get_or_set(
-        "all_categories",
+def topics(request):
+    all_topics = cache.get_or_set(
+        "all_topics",
         lambda: list(
-            Blog.objects.values("category")
-            .annotate(count=Count("category"))
-            .order_by("category")
+            Blog.objects.values("topic")
+            .annotate(count=Count("topic"))
+            .order_by("topic")
         ),
         86400,
     )
-    return render(request, "categories.html", {"all_categories": all_categories})
+    return render(request, "topics.html", {"all_topics": all_topics})
 
 
 def search(request):
