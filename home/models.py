@@ -89,11 +89,12 @@ class Blog(models.Model):
     content = models.TextField()
     thumbnail_img = models.ImageField(null=True, blank=True, upload_to="postimages/")
     thumbnail_url = models.URLField(blank=True, null=True)
-    category = models.CharField(
+    topic = models.CharField(
         max_length=255, default="uncategorized", verbose_name="topic"
     )
     slug = models.CharField(max_length=100, unique=True)
     time = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
     reading_time_minutes = models.PositiveSmallIntegerField(default=1, editable=False)
 
     def __str__(self):
@@ -109,8 +110,8 @@ class Blog(models.Model):
         return max(1, math.ceil(word_count / 160))
 
     def save(self, *args, **kwargs):
-        if self.category:
-            self.category = self.category.strip().lower()
+        if self.topic:
+            self.topic = self.topic.strip().lower()
 
         if self.thumbnail_img:
             self.thumbnail_img = _compress_and_rename_image(
@@ -642,8 +643,8 @@ def cleanup_blog_on_delete(sender, instance, **kwargs):
         [
             "latest_blogs",
             "total_blogs",
-            "total_categories",
-            "all_categories",
+            "total_topics",
+            "all_topics",
             "all_blogs_list",
         ]
     )
@@ -662,8 +663,8 @@ def invalidate_blog_cache_on_save(sender, instance, **kwargs):
         [
             "latest_blogs",
             "total_blogs",
-            "total_categories",
-            "all_categories",
+            "total_topics",
+            "all_topics",
             "all_blogs_list",
         ]
     )

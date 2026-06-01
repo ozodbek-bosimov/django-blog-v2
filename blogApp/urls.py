@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
-from home.sitemaps import BlogPostSitemap, CategorySitemap, StaticViewSitemap
+from home.sitemaps import BlogPostSitemap, TopicSitemap, StaticViewSitemap
 from blogApp.views import admin_keepalive
 
 
@@ -20,7 +20,7 @@ urlpatterns = [
             "sitemaps": {
                 "static": StaticViewSitemap,
                 "posts": BlogPostSitemap,
-                "categories": CategorySitemap,
+                "topics": TopicSitemap,
             }
         },
         name="django.contrib.sitemaps.views.sitemap",

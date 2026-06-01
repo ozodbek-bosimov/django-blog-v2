@@ -172,12 +172,12 @@ class BlogAdmin(admin.ModelAdmin):
     class Media:
         js = ("js/admin_thumbnail.js", "js/admin_ckeditor_fix.js")
 
-    list_display = ["title", "category", "created_at_display", "slug"]
-    list_filter = ["category"]
-    search_fields = ["title", "category", "slug"]
+    list_display = ["title", "topic", "created_at_display", "slug"]
+    list_filter = ["topic"]
+    search_fields = ["title", "topic", "slug"]
     readonly_fields = ("thumbnail_preview",)
     fieldsets = (
-        (None, {"fields": ("title", "meta", "content", "category", "slug")}),
+        (None, {"fields": ("title", "meta", "content", "topic", "slug")}),
         ("Meta", {"fields": ("time",)}),
         (
             "Thumbnail",

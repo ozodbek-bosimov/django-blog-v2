@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ category }}{% endblock title %}
+{% block title %}{{ topic }}{% endblock title %}
 
 {% block meta %}
-<meta name="description" content="Posts in the '{{ category }}' topic on Ozodbek Bosimov's blog.">
-<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'category' category %}">
+<meta name="description" content="Posts in the '{{ topic }}' topic on Ozodbek Bosimov's blog.">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'topic' topic %}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ozodbek Bosimov">
 <meta property="og:locale" content="en_US">
-<meta property="og:title" content="{{ category|capfirst }} — Ozodbek Bosimov">
-<meta property="og:description" content="Posts in the '{{ category }}' topic on Ozodbek Bosimov's blog.">
-<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'category' category %}">
+<meta property="og:title" content="{{ topic|capfirst }} — Ozodbek Bosimov">
+<meta property="og:description" content="Posts in the '{{ topic }}' topic on Ozodbek Bosimov's blog.">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'topic' topic %}">
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="{{ category|capfirst }} — Ozodbek Bosimov">
-<meta name="twitter:description" content="Posts in the '{{ category }}' topic on Ozodbek Bosimov's blog.">
+<meta name="twitter:title" content="{{ topic|capfirst }} — Ozodbek Bosimov">
+<meta name="twitter:description" content="Posts in the '{{ topic }}' topic on Ozodbek Bosimov's blog.">
 <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 {% endblock meta %}
 
@@ -23,7 +23,7 @@
 
 <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-0 reveal">
     <h1 class="text-2xl md:text-3xl font-semibold text-gray-100 tracking-wide mb-4 text-center">
-        {{ category }}
+        {{ topic }}
     </h1>
     <div class="h-px bg-gray-700/50 w-full"></div>
 </div>
@@ -50,29 +50,29 @@
               <a href="{% url 'home' %}" class="btn-primary btn-cyan btn-lg btn-action">
                   <i class="bi bi-arrow-left"></i> Back to home
               </a>
-              <a href="{% url 'categories' %}" class="btn-ghost btn-lg btn-action">
+              <a href="{% url 'topics' %}" class="btn-ghost btn-lg btn-action">
                   <i class="bi bi-tags"></i> Browse topics
               </a>
           </div>
       </div>
   </div>
   {% else %}
-  {% for blog in category_posts %}
+  {% for blog in topic_posts %}
   {% include 'partials/_blog_list_card.html' %}
   {% endfor %}
   {% endif %}
 
   <div class="pagination py-8 flex justify-between items-center">
-    {% if category_posts.has_previous %}
+    {% if topic_posts.has_previous %}
     <a class='btn-pagination'
-      href="?page={{ category_posts.previous_page_number }}"><i class="bi bi-arrow-left"></i> Previous</a>
+      href="?page={{ topic_posts.previous_page_number }}"><i class="bi bi-arrow-left"></i> Previous</a>
     {% else %}
     <span class="w-36"></span>
     {% endif %}
 
-    {% if category_posts.has_next %}
+    {% if topic_posts.has_next %}
     <a class='btn-pagination'
-      href="?page={{ category_posts.next_page_number }}">Next <i class="bi bi-arrow-right"></i></a>
+      href="?page={{ topic_posts.next_page_number }}">Next <i class="bi bi-arrow-right"></i></a>
     {% endif %}
   </div>
 </div>

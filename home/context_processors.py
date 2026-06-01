@@ -16,15 +16,15 @@ _CACHE_MISS = object()
 
 
 def used_tags(request):
-    """Provide a list of distinct categories (used as tags) to templates."""
+    """Provide a list of distinct topics (used as tags) to templates."""
     tags = cache.get(USED_TAGS_CACHE_KEY)
     if tags is None:
         tags = list(
-            Blog.objects.exclude(category__isnull=True)
-            .exclude(category__exact="")
-            .values_list("category", flat=True)
+            Blog.objects.exclude(topic__isnull=True)
+            .exclude(topic__exact="")
+            .values_list("topic", flat=True)
             .distinct()
-            .order_by("category")
+            .order_by("topic")
         )
         cache.set(USED_TAGS_CACHE_KEY, tags, USED_TAGS_CACHE_TTL)
     return {"used_tags": tags}

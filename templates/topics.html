@@ -5,13 +5,13 @@
 
 {% block meta %}
 <meta name="description" content="Browse posts by topic on Ozodbek Bosimov's blog. From programming and tech notes to personal reflections and study logs.">
-<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'categories' %}">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'topics' %}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ozodbek Bosimov">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="Topics — Ozodbek Bosimov">
 <meta property="og:description" content="Browse posts by topic on Ozodbek Bosimov's blog. From programming and tech notes to personal reflections and study logs.">
-<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'categories' %}">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'topics' %}">
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/banner.jpg' %}">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Topics — Ozodbek Bosimov">
@@ -30,12 +30,12 @@
 
 <div class='text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
-    {% for category in all_categories %}
-    <a href="{% url 'category' category.category %}" 
+    {% for topic in all_topics %}
+    <a href="{% url 'topic' topic.topic %}" 
       class="group relative glass-card px-6 py-5 hover:ring-cyan-500/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center text-center reveal-scale">
         <div>
-          <h3 class="text-sm md:text-base font-medium text-gray-200 group-hover:text-cyan-300 transition-colors">{{ category.category }}</h3>
-          <div class="category-count mt-1">{{ category.count }} post{{ category.count|pluralize }}</div>
+          <h3 class="text-sm md:text-base font-medium text-gray-200 group-hover:text-cyan-300 transition-colors">{{ topic.topic }}</h3>
+          <div class="topic-count mt-1">{{ topic.count }} post{{ topic.count|pluralize }}</div>
         </div>
     </a>
     {% endfor %}
