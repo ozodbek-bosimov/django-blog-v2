@@ -1,39 +1,47 @@
-# Django Blog (O'zbekcha)
+# Django Blog & Portfolio (O'zbekcha)
 
-Shaxsiy blog va portfolio sayti. Django + Tailwind + CKEditor 5 asosida yozilgan. Ushbu loyiha zamonaviy qulayliklar va xavfsizlik funksiyalari bilan to'liq jihozlangan.
+Shaxsiy blog va portfolio sayti. Django, Tailwind CSS va CKEditor 5 asosida yaratilgan. Ushbu loyiha zamonaviy dizayn, qulay boshqaruv tizimi, yuqori xavfsizlik va optimal ishlash tezligi (performance) kabi xususiyatlarni o'z ichiga oladi.
 
-## Asosiy imkoniyatlar
-- **Blog, Kategoriya va Portfolio:** Postlar, ish tajribalari (Experiences), loyihalar (Projects) va ko'nikmalar (Skills).
-- **Admin Panel & Rich Text:** To'liq kontent boshqaruvi va CKEditor 5 orqali qulay tahrirlash.
-- **Shared Files Manager (Yangi):** Har xil turdagi fayllarni (PDF, HTML, Audio) yuklash, ulashish va Admin paneldan nusxalash (Copy URL).
-- **Avtomatik WebP siqish:** Rasmlar sifatni yo'qotmagan holda WebP formatiga o'tkazilib disk hajmini va trafikni tejaydi.
-- **Tezkor Kesh (Caching):** Sayt maksimal tezlikda ishlashi uchun sahifalar xotirada saqlanadi.
-- **Rate Limiting (Himoya):** Kiberhujumlar va sun'iy trafik (DDOS) dan saqlanish uchun avtomatik himoya va bloklash tizimi.
-- **Static/media servis:** WhiteNoise + Nginx integratsiyasi.
+## 🚀 Asosiy Imkoniyatlar
 
-## Texnologiyalar
-- Django 5.x
-- SQLite (hozirgi konfiguratsiya)
-- Gunicorn + Nginx
-- WhiteNoise
-- django-tailwind
-- django-ckeditor-5
+- **Blog Tizimi**: Maqolalar yozish, kategoriyalar bo'yicha ajratish (topics), o'qish vaqtini avtomatik hisoblash (reading time) va YouTube videolarini xavfsiz formatda (sanitized iframe) joylashtirish.
+- **Portfolio & Tajriba**: Loyihalar (Projects), ish tajribasi (Experience & Roles, timeline formatida) hamda ko'nikmalar (Skills) sahifalari. Barcha ma'lumotlar Admin paneldan to'liq boshqariladi.
+- **About Me (Singleton)**: Bosh sahifadagi shaxsiy ma'lumotlar, ijtimoiy tarmoq linklari va rezyumeni (CV) boshqarish tizimi. Faqat bitta (yagona) ob'yekt sifatida saqlanadi.
+- **Admin Panel & Rich Text**: CKEditor 5 orqali maqola va bio matnlarini chiroyli yozish, formatlash va rasm/videolarni to'g'ridan-to'g'ri matn ichiga joylash.
+- **Fayllar Boshqaruvi (Shared Files)**: Katta hajmli fayllarni yuklash, ro'yxatini ko'rish, Admin paneldan turib URL-dan bevosita nusxa olish (Copy URL) va `/shared/` linki orqali ulashish.
+- **Avtomatik Kesh (Caching)**: Sayt sahifalari va ma'lumotlar (LocMemCache yordamida) xotirada saqlanadi. Model o'zgarganda (Signallar yordamida) kesh avtomatik tozalanadi.
+- **Avtomatik WebP va Siqish**: Rasm yuklanganda sifati saqlab qolingan holda hajmi kichraytiriladi va avtomatik ravishda WebP formatiga o'tkaziladi.
+- **Avto-tozalash tizimi (Cleanup Signals)**: Maqola yoki biror ob'yekt tahrirlanganda yoki o'chirilganda, u bilan bog'liq eski rasmlar, CKEditor ichidagi ishlatilmayotgan media fayllar diskdan o'zi tozalanadi.
+- **Rate Limiting & Xavfsizlik**: IP orqali so'rovlar sonini cheklash (DDOS va botlarga qarshi middleware). CSRF, XSS va boshqa hujumlarga qarshi xavfsizlik choralari.
+- **Admin Session & Log Pruning**: Admin seanslari xavfsizligini ta'minlash maqsadida belgilangan vaqt (Timeout) sozlamasi va Admin panel harakatlari tarixini (LogEntry) eski yozuvlardan avtomatik/qo'lda tozalash.
+
+## 🛠 Texnologiyalar
+
+- **Backend:** Django 5.x
+- **Baza (Database):** SQLite (Standart konfiguratsiya, ko'chirish oson)
+- **Frontend:** Django Templates, Tailwind CSS
+- **Matn Muharriri:** django-ckeditor-5
+- **Server / Deploy:** Gunicorn, Nginx, WhiteNoise (static fayllar uchun)
+- **Rasm Bilan Ishlash:** Pillow (WebP siqish va o'lchamlarini moslash)
 
 ---
 
-## Lokal ishga tushirish
+## 💻 Lokal Muhitda Ishga Tushirish (Development)
 
-### 1) Muhit va paketlar
+### 1. Loyihani yuklab olish va paketlarni o'rnatish
 ```bash
+git clone <repo-url>
+cd django-blog-v2
 python3 -m venv env
 source env/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2) `.env` yarating
+### 2. `.env` faylini yaratish
+Loyiha papkasida `.env` fayl yarating va quyidagilarni kiriting:
 ```env
-DJANGO_SECRET_KEY=your-local-secret
+DJANGO_SECRET_KEY=your-local-secret-key
 DJANGO_DEBUG=true
 DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
 DJANGO_CSRF_TRUSTED_ORIGINS=http://127.0.0.1:8000,http://localhost:8000
@@ -41,10 +49,10 @@ ADMIN_SESSION_TIMEOUT=1800
 ADMIN_LOG_RETENTION_ENABLED=true
 ADMIN_LOG_RETENTION_DAYS=90
 DJANGO_FILE_LOGGING=false
-GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES=/_owner/,/static/,/media/,/shared/
+GLOBAL_RATE_LIMIT_ENABLED=false
 ```
 
-### 3) Migratsiya va run
+### 3. Migratsiya va serverni yurgizish
 ```bash
 python manage.py makemigrations
 python manage.py migrate
@@ -52,34 +60,21 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+*(Tailwind CSS o'zgarishlarini kuzatish uchun alohida terminal oynasida: `python manage.py tailwind start` yozishingiz mumkin)*
+
 ---
 
-## Production `.env` namunasi (Server uchun)
-Serverga joylash uchun hozirlangan `.env.deploy` faylidan foydalaning (Nusxa oling: `cp .env.deploy .env`):
-```env
-DJANGO_SECRET_KEY=your-long-random-secret
-DJANGO_DEBUG=false
-DJANGO_ALLOWED_HOSTS=ozodbek.me,www.ozodbek.me
-DJANGO_CSRF_TRUSTED_ORIGINS=https://ozodbek.me,https://www.ozodbek.me
+## 🌍 Serverga Joylash (Production Deployment)
 
-# Xavfsizlik (Productionda YOQILGAN bo'lishi shart)
-DJANGO_SESSION_COOKIE_SECURE=true
-DJANGO_CSRF_COOKIE_SECURE=true
-DJANGO_SECURE_SSL_REDIRECT=true
-DJANGO_SECURE_HSTS_SECONDS=31536000
-
-# Himoya tizimi (DDOS va blokerlar)
-GLOBAL_RATE_LIMIT_ENABLED=true
-GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES=/_owner/,/static/,/media/,/shared/
+### 1. Muhit O'zgaruvchilari (Environment Variables)
+Production muhiti uchun loyihadagi `.env.deploy` nusxasidan foydalaning:
+```bash
+cp .env.deploy .env
 ```
+Fayl ichidagi o'zgaruvchilarni serveringiz (domen nomlari) ga qarab to'g'rilab chiqing. Xavfsizlik va Rate Limit (Himoya) sozlamalari odatda yoqiq bo'lishi kerak.
 
-> Eslatma: `DJANGO_FILE_LOGGING=true` qilsangiz, `logs/` papkasiga yozish ruxsati bo‘lishi shart.
-
----
-
-## Gunicorn (systemd) tavsiya qilingan servis
-
-`/etc/systemd/system/gunicorn.service`
+### 2. Gunicorn (systemd) xizmatini sozlash
+Tavsiya etiladigan `/etc/systemd/system/gunicorn.service` fayli:
 
 ```ini
 [Unit]
@@ -89,9 +84,10 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/var/www/django-blog
-Environment="PATH=/var/www/django-blog/env/bin"
-ExecStart=/var/www/django-blog/env/bin/gunicorn --workers 2 --bind unix:/run/gunicorn/gunicorn.sock blogApp.wsgi:application
+WorkingDirectory=/var/www/django-blog-v2
+Environment="PATH=/var/www/django-blog-v2/env/bin"
+Environment="DJANGO_ENV_FILE=.env"
+ExecStart=/var/www/django-blog-v2/env/bin/gunicorn --workers 1 --bind unix:/run/gunicorn/gunicorn.sock blogApp.wsgi:application
 RuntimeDirectory=gunicorn
 RuntimeDirectoryMode=0755
 Restart=always
@@ -100,19 +96,14 @@ RestartSec=3
 [Install]
 WantedBy=multi-user.target
 ```
-
-Faollashtirish:
+Servisni faollashtirish:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable gunicorn
 sudo systemctl start gunicorn
-sudo systemctl status gunicorn --no-pager -l
 ```
 
----
-
-## Nginx konfiguratsiya (asosiy)
-
+### 3. Nginx Konfiguratsiyasi (Asosiy ko'rinish)
 `/etc/nginx/sites-available/django-blog`
 
 ```nginx
@@ -122,24 +113,22 @@ upstream gunicorn {
 
 server {
     server_name ozodbek.me www.ozodbek.me;
-
     client_max_body_size 20m;
 
     location /static/ {
-        alias /var/www/django-blog/staticfiles/;
+        alias /var/www/django-blog-v2/staticfiles/;
         expires 30d;
         add_header Cache-Control "public, immutable";
     }
 
     location /media/ {
-        alias /var/www/django-blog/media/;
+        alias /var/www/django-blog-v2/media/;
         expires 7d;
     }
 
-    # Yangi: Shared files xavfsiz va tez ishlashi uchun
     location /shared/ {
-        alias /var/www/django-blog/shared/;
-        expires 7d;
+        alias /var/www/django-blog-v2/shared/;
+        expires 30d;
     }
 
     location / {
@@ -150,10 +139,10 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_redirect off;
     }
-
+    
     listen 443 ssl http2;
-    # ssl_certificate ...
-    # ssl_certificate_key ...
+    # ssl_certificate /path/to/fullchain.pem;
+    # ssl_certificate_key /path/to/privkey.pem;
 }
 
 server {
@@ -162,19 +151,15 @@ server {
     return 301 https://$host$request_uri;
 }
 ```
-
-Tekshiruv:
-```bash
-sudo nginx -t
-sudo systemctl reload nginx
-```
+O'zgarishlarni kiritgach tekshirish: `sudo nginx -t && sudo systemctl reload nginx`
 
 ---
 
-## Deploy checklist (copy-paste)
+## 🚀 Deploy Checklist (Copy-Paste)
 
+Yangi o'zgarishlarni serverga tortish va ishga tushirish uchun qisqa buyruq:
 ```bash
-cd /var/www/django-blog && \
+cd /var/www/django-blog-v2 && \
 git pull && \
 source env/bin/activate && \
 pip install -r requirements.txt && \
@@ -186,31 +171,8 @@ sudo systemctl reload nginx
 
 ---
 
-## Ko‘p uchraydigan xatolar va yechimlar
+## 💡 Foydali Buyruqlar
 
-### 1) Admin login POST’da 500 yoki Rasm/Shared fayl yuklanmayapti
-**Sabablar:** Baza (`db.sqlite3`) yoki maxsus papkalarga (`media`, `shared`, `logs`) yozish ruxsati yo‘q.
-**Yechim:**
-```bash
-sudo chown www-data:www-data /var/www/django-blog/db.sqlite3
-sudo chmod 664 /var/www/django-blog/db.sqlite3
-sudo mkdir -p /var/www/django-blog/shared
-sudo chown -R www-data:www-data /var/www/django-blog/logs /var/www/django-blog/media /var/www/django-blog/shared
-sudo chmod -R u+rwX,g+rwX /var/www/django-blog/logs /var/www/django-blog/media /var/www/django-blog/shared
-sudo systemctl restart gunicorn
-```
-
-### 2) Rasm yoki Fayl yuklashda 413/403 xato (Nginx)
-**Sabab:** Nginx da katta fayllarni uzatish ruxsat etilmagan (standart 1MB turadi).
-**Yechim:** Nginx konfiguratsiyasiga `client_max_body_size 20m;` qatorini qo'shing va `sudo systemctl reload nginx` qiling.
-
-### 3) IP Bloklanishi (Rate Limit) Admin yoki Static sahifalarda ko'p uchrayapti
-**Sabab:** Kesh va Statik ruxsatnomalar eski versiyada turibdi yoki fayllar bloklangan.
-**Yechim:** `.env` faylda `GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES=/_owner/,/static/,/media/,/shared/` ekanligini ta'minlang.
-
----
-
-## Foydali buyruqlar
 ```bash
 python manage.py check --deploy  # Xavfsizlik bo'yicha to'liq tekshirish
 python manage.py migrate
@@ -219,3 +181,20 @@ sudo systemctl status gunicorn --no-pager -l
 sudo journalctl -u gunicorn -n 120 --no-pager
 sudo tail -n 120 /var/log/nginx/error.log
 ```
+
+---
+
+## 🛠 Ko‘p Uchraydigan Xatolar va Ularning Yechimi
+
+1. **Rasm yoki Fayl yuklashda "Server Error (500)" yoxud sahifada rasm ishlamay qolishi:**
+   `media`, `shared`, jurnallar papkasi `logs` va `db.sqlite3` fayllariga Nginx/Gunicorn foydalanuvchisi (`www-data`) yozish ruxsatiga ega bo'lishi shart.
+   ```bash
+   sudo chown -R www-data:www-data /var/www/django-blog-v2/media /var/www/django-blog-v2/shared /var/www/django-blog-v2/logs
+   sudo chown www-data:www-data /var/www/django-blog-v2/db.sqlite3
+   sudo chmod -R 775 /var/www/django-blog-v2/media /var/www/django-blog-v2/shared
+   sudo chmod 664 /var/www/django-blog-v2/db.sqlite3
+   ```
+2. **Katta fayl (Masalan `SharedFiles` orqali) yuklayotganda "413 Request Entity Too Large":**
+   Nginx konfiguratsiyasidagi `client_max_body_size` qiymati Django limitidan (`DATA_UPLOAD_MAX_MEMORY_SIZE`) kichik bo'lmasligi kerak (masalan `20m;`). Qo'shgach Nginx-ni qayta ishga tushiring.
+3. **Sahifalar tez-tez kirilganda "429 Too Many Requests" (IP bloklanishi):**
+   Saytdagi DDOS va agressiv botlarga qarshi Rate Limit himoyasi ishlab ketdi. `.env` dagi `GLOBAL_RATE_LIMIT_ENABLED` va tegishli sozlamalarni ko'rib chiqing. Statik fayllar (rasm, dizaynlar) bloklanmasligi uchun `GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES` ichida `/static/,/media/,/shared/` kabilar albatta kiritilganligini tekshiring.
