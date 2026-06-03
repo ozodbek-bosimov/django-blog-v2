@@ -85,7 +85,13 @@ def _compress_and_rename_image(image_field, max_size=(1000, 1000), quality=80):
 class Blog(models.Model):
     sno = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200)
-    meta = models.CharField(max_length=600)
+    meta = models.CharField(
+        max_length=300,
+        help_text=(
+            "Short summary shown on cards and in search/social previews "
+            "(max 300 characters)."
+        ),
+    )
     content = models.TextField()
     thumbnail_img = models.ImageField(null=True, blank=True, upload_to="postimages/")
     thumbnail_url = models.URLField(blank=True, null=True)
@@ -493,7 +499,24 @@ class Project(models.Model):
     """Portfolio projects"""
 
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(
+        max_length=2000,
+        help_text="Project description (max 2000 characters).",
+    )
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text="When the project was started.",
+    )
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text="When the project was finished. Leave blank if ongoing.",
+    )
+    is_current = models.BooleanField(
+        default=False,
+        help_text="Check if this project is still in progress.",
+    )
     thumbnail_img = models.ImageField(
         null=True,
         blank=True,
@@ -515,7 +538,37 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        label = self.title
+        if self.start_date:
+            start = self.start_date.strftime("%m/%Y")
+            if self.is_current:
+                label += f" ({start} – Present)"
+            elif self.end_date:
+                label += f" ({start} – {self.end_date.strftime('%m/%Y')})"
+            else:
+                label += f" ({start} – Present)"
+        return label
+
+    @property
+    def duration_display(self):
+        """Human-readable duration, e.g. '1 yr 3 mos'."""
+        return Experience._compute_duration(
+            self.start_date, self.end_date, self.is_current
+        )
+
+    @property
+    def date_range_display(self):
+        """Formatted date range, e.g. 'Jan 2024 – Present'."""
+        if not self.start_date:
+            return ""
+        start = self.start_date.strftime("%b %Y")
+        if self.is_current:
+            end = "Present"
+        elif self.end_date:
+            end = self.end_date.strftime("%b %Y")
+        else:
+            end = "Present"
+        return f"{start} – {end}"
 
     @property
     def effective_thumbnail(self):
