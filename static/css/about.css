@@ -2,6 +2,7 @@
 .skill-bar {
     width: 0;
 }
+
 /* JS (about.js) sets --target-width from data-percentage attribute */
 .skill-item.reveal-visible .skill-bar {
     animation: skill-animation 1.5s ease-out forwards;
@@ -163,7 +164,8 @@
 .timeline-inline-less {
     background: none;
     border: none;
-    color: #64748b; /* meta data color */
+    color: #64748b;
+    /* meta data color */
     font-size: 0.9rem;
     font-family: inherit;
     padding: 0 0.15rem;
@@ -434,7 +436,8 @@
 
 .profile-media__img {
     width: 100%;
-    max-width: 100%; /* Allow SVG to stretch so heatmap cells match GitHub's 11px size */
+    max-width: 100%;
+    /* Allow SVG to stretch so heatmap cells match GitHub's 11px size */
     height: auto;
     display: block;
 }
@@ -443,10 +446,12 @@
 #leetcode-stats-wrapper {
     position: relative;
     width: 100%;
-    padding-bottom: 64%; /* 320 / 500 = 64% aspect ratio */
+    padding-bottom: 64%;
+    /* 320 / 500 = 64% aspect ratio */
     height: 0;
     overflow: hidden;
-    display: block; /* Override flex */
+    display: block;
+    /* Override flex */
 }
 
 #leetcode-stats-svg {
@@ -496,7 +501,7 @@
     background: transparent;
     border: none;
     padding: 0;
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: hidden;
     box-sizing: border-box;
 }
@@ -566,9 +571,9 @@
 
 #github-calendar-container .ContributionCalendar-day {
     background-color: #2d3748 !important;
-    border-radius: 20% !important;
-    width: 11px !important;
-    height: 11px !important;
+    border-radius: 2px !important;
+    width: 8px !important;
+    height: 8px !important;
     outline: none !important;
 }
 
@@ -592,7 +597,7 @@
     border: none !important;
 }
 
-#github-calendar-container .calendar .position-relative > a,
+#github-calendar-container .calendar .position-relative>a,
 #github-calendar-container .contrib-footer a,
 #github-calendar-container a,
 #github-calendar-container .sr-only,
@@ -611,21 +616,54 @@
 /* Ensure SVG graph doesn't overflow and handles native scrolling */
 #github-calendar-container .js-calendar-graph {
     width: 100% !important;
-    overflow-x: auto !important;
+    overflow-x: hidden !important;
     overflow-y: hidden !important;
-    padding-bottom: 0.5rem; /* Space for scrollbar */
 }
 
 #github-calendar-container .calendar-graph {
     width: 100%;
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: hidden;
+}
+
+/* ── Custom Scrollbar for Calendar ────────────────────────────── */
+#github-calendar-container *::-webkit-scrollbar {
+    height: 6px !important;
+    display: block !important;
+}
+
+#github-calendar-container *::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+#github-calendar-container *::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3) !important;
+    border-radius: 4px !important;
+}
+
+#github-calendar-container *::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5) !important;
+}
+
+#github-calendar-container * {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(148, 163, 184, 0.3) transparent !important;
 }
 
 #github-calendar-container .calendar-graph svg,
 #github-calendar-container .js-calendar-graph svg {
     height: auto;
-    min-width: 600px; /* Ensure SVG doesn't shrink infinitely */
+    min-width: 600px;
+    /* Ensure SVG doesn't shrink infinitely */
+}
+
+/* The GitHub grid is a <table> scaled to fit the panel via JS
+   (see about.html fitGithubCalendar). Clip instead of scroll so the
+   scaled-down grid matches the LeetCode heatmap footprint. */
+#github-calendar-container .js-calendar-graph,
+#github-calendar-container .calendar-graph {
+    overflow-x: hidden !important;
+    align-items: flex-start !important;
 }
 
 #github-calendar-container table.ContributionCalendar-grid {
@@ -669,8 +707,13 @@
 }
 
 @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 /* Contrib legend overrides */
