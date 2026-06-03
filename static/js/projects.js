@@ -8,150 +8,150 @@
 //   • The "more" button only appears when the text is actually longer than
 //     3 lines.
 (function () {
-    "use strict";
+  "use strict";
 
-    function lineHeightOf(el) {
-        var cs = getComputedStyle(el);
-        var lh = parseFloat(cs.lineHeight);
-        if (isNaN(lh)) {
-            lh = parseFloat(cs.fontSize) * 1.625;
-        }
-        return lh;
+  function lineHeightOf(el) {
+    var cs = getComputedStyle(el);
+    var lh = parseFloat(cs.lineHeight);
+    if (isNaN(lh)) {
+      lh = parseFloat(cs.fontSize) * 1.625;
     }
+    return lh;
+  }
 
-    function buildToggle(label, withEllipsis) {
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "project-desc-toggle";
-        if (withEllipsis) {
-            var ell = document.createElement("span");
-            ell.className = "project-desc-ellipsis";
-            ell.textContent = "\u2026 "; // "… "
-            btn.appendChild(ell);
-        } else {
-            // No leading ellipsis (the "less" button) — give it a small gap
-            // so it doesn't butt right up against the final word.
-            btn.classList.add("project-desc-toggle--gap");
-        }
-        btn.appendChild(document.createTextNode(label));
-        return btn;
-    }
-
-    function setupCard(desc) {
-        var full = desc.getAttribute("data-fulltext");
-        if (full === null) {
-            full = desc.textContent;
-            desc.setAttribute("data-fulltext", full);
-        }
-
-        // Reset the element to a single text span we control.
-        desc.classList.remove("is-clamped");
-        desc.textContent = "";
-        var textSpan = document.createElement("span");
-        textSpan.className = "project-desc-text";
-        desc.appendChild(textSpan);
-
-        var maxH = lineHeightOf(desc) * 3 + 1;
-
-        // Does the full text already fit within 3 lines? Then no toggle needed.
-        textSpan.textContent = full;
-        if (desc.scrollHeight <= maxH) {
-            return;
-        }
-
-        // Word-boundary cut points (char index just after each word).
-        var wordEnds = [];
-        var re = /\S+/g;
-        var m;
-        while ((m = re.exec(full)) !== null) {
-            wordEnds.push(m.index + m[0].length);
-        }
-        if (wordEnds.length === 0) return;
-
-        var moreBtn = buildToggle("more", true);
-        var lessBtn = buildToggle("less", false);
-
-        function measureFits(len) {
-            textSpan.textContent = full.slice(0, len).replace(/\s+$/, "");
-            return desc.scrollHeight <= maxH;
-        }
-
-        // Binary search for the largest prefix that still fits in 3 lines
-        // WITH the "more" button present at the end.
-        function computeCut() {
-            desc.appendChild(moreBtn); // present while measuring
-            var lo = 0;
-            var hi = wordEnds.length - 1;
-            var best = wordEnds[0];
-            while (lo <= hi) {
-                var mid = (lo + hi) >> 1;
-                if (measureFits(wordEnds[mid])) {
-                    best = wordEnds[mid];
-                    lo = mid + 1;
-                } else {
-                    hi = mid - 1;
-                }
-            }
-            return best;
-        }
-
-        var cutLen = computeCut();
-
-        function collapse() {
-            desc.classList.remove("is-expanded");
-            textSpan.textContent = full.slice(0, cutLen).replace(/\s+$/, "");
-            if (lessBtn.parentNode) lessBtn.remove();
-            desc.appendChild(moreBtn);
-        }
-
-        function expand() {
-            desc.classList.add("is-expanded");
-            textSpan.textContent = full;
-            if (moreBtn.parentNode) moreBtn.remove();
-            desc.appendChild(lessBtn);
-        }
-
-        moreBtn.addEventListener("click", expand);
-        lessBtn.addEventListener("click", collapse);
-
-        // Start collapsed.
-        collapse();
-        // Remember expanded state across resizes.
-        desc._collapse = collapse;
-        desc._expand = expand;
-        desc._recompute = function () {
-            var wasExpanded = desc.classList.contains("is-expanded");
-            maxH = lineHeightOf(desc) * 3 + 1;
-            cutLen = computeCut();
-            if (wasExpanded) {
-                expand();
-            } else {
-                collapse();
-            }
-        };
-    }
-
-    function setupAll() {
-        document.querySelectorAll(".project-desc").forEach(setupCard);
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", setupAll);
+  function buildToggle(label, withEllipsis) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "project-desc-toggle";
+    if (withEllipsis) {
+      var ell = document.createElement("span");
+      ell.className = "project-desc-ellipsis";
+      ell.textContent = "\u2026 "; // "… "
+      btn.appendChild(ell);
     } else {
-        setupAll();
+      // No leading ellipsis (the "less" button) — give it a small gap
+      // so it doesn't butt right up against the final word.
+      btn.classList.add("project-desc-toggle--gap");
+    }
+    btn.appendChild(document.createTextNode(label));
+    return btn;
+  }
+
+  function setupCard(desc) {
+    var full = desc.getAttribute("data-fulltext");
+    if (full === null) {
+      full = desc.textContent;
+      desc.setAttribute("data-fulltext", full);
     }
 
-    var resizeTimer = null;
-    window.addEventListener("resize", function () {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () {
-            document.querySelectorAll(".project-desc").forEach(function (desc) {
-                if (typeof desc._recompute === "function") {
-                    desc._recompute();
-                } else {
-                    setupCard(desc);
-                }
-            });
-        }, 150);
-    });
+    // Reset the element to a single text span we control.
+    desc.classList.remove("is-clamped");
+    desc.textContent = "";
+    var textSpan = document.createElement("span");
+    textSpan.className = "project-desc-text";
+    desc.appendChild(textSpan);
+
+    var maxH = lineHeightOf(desc) * 3 + 1;
+
+    // Does the full text already fit within 3 lines? Then no toggle needed.
+    textSpan.textContent = full;
+    if (desc.scrollHeight <= maxH) {
+      return;
+    }
+
+    // Word-boundary cut points (char index just after each word).
+    var wordEnds = [];
+    var re = /\S+/g;
+    var m;
+    while ((m = re.exec(full)) !== null) {
+      wordEnds.push(m.index + m[0].length);
+    }
+    if (wordEnds.length === 0) return;
+
+    var moreBtn = buildToggle("more", true);
+    var lessBtn = buildToggle("less", false);
+
+    function measureFits(len) {
+      textSpan.textContent = full.slice(0, len).replace(/\s+$/, "");
+      return desc.scrollHeight <= maxH;
+    }
+
+    // Binary search for the largest prefix that still fits in 3 lines
+    // WITH the "more" button present at the end.
+    function computeCut() {
+      desc.appendChild(moreBtn); // present while measuring
+      var lo = 0;
+      var hi = wordEnds.length - 1;
+      var best = wordEnds[0];
+      while (lo <= hi) {
+        var mid = (lo + hi) >> 1;
+        if (measureFits(wordEnds[mid])) {
+          best = wordEnds[mid];
+          lo = mid + 1;
+        } else {
+          hi = mid - 1;
+        }
+      }
+      return best;
+    }
+
+    var cutLen = computeCut();
+
+    function collapse() {
+      desc.classList.remove("is-expanded");
+      textSpan.textContent = full.slice(0, cutLen).replace(/\s+$/, "");
+      if (lessBtn.parentNode) lessBtn.remove();
+      desc.appendChild(moreBtn);
+    }
+
+    function expand() {
+      desc.classList.add("is-expanded");
+      textSpan.textContent = full;
+      if (moreBtn.parentNode) moreBtn.remove();
+      desc.appendChild(lessBtn);
+    }
+
+    moreBtn.addEventListener("click", expand);
+    lessBtn.addEventListener("click", collapse);
+
+    // Start collapsed.
+    collapse();
+    // Remember expanded state across resizes.
+    desc._collapse = collapse;
+    desc._expand = expand;
+    desc._recompute = function () {
+      var wasExpanded = desc.classList.contains("is-expanded");
+      maxH = lineHeightOf(desc) * 3 + 1;
+      cutLen = computeCut();
+      if (wasExpanded) {
+        expand();
+      } else {
+        collapse();
+      }
+    };
+  }
+
+  function setupAll() {
+    document.querySelectorAll(".project-desc").forEach(setupCard);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupAll);
+  } else {
+    setupAll();
+  }
+
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      document.querySelectorAll(".project-desc").forEach(function (desc) {
+        if (typeof desc._recompute === "function") {
+          desc._recompute();
+        } else {
+          setupCard(desc);
+        }
+      });
+    }, 150);
+  });
 })();

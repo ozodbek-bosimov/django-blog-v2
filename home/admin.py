@@ -1,12 +1,11 @@
 import re
 from datetime import timedelta
 
-from django.core.exceptions import ValidationError
-
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.admin.models import LogEntry
+from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.urls import path, reverse
 from django.utils import timezone
@@ -20,8 +19,8 @@ from home.models import (
     Experience,
     ExperienceRole,
     Project,
-    Skill,
     SharedFile,
+    Skill,
 )
 
 
@@ -342,7 +341,11 @@ class SkillAdmin(admin.ModelAdmin):
 class ProjectAdminForm(forms.ModelForm):
     description = forms.CharField(
         widget=forms.Textarea(
-            attrs={"rows": 10, "style": "width:100%; resize:vertical;", "maxlength": 2000}
+            attrs={
+                "rows": 10,
+                "style": "width:100%; resize:vertical;",
+                "maxlength": 2000,
+            }
         ),
         max_length=2000,
         help_text="Shown on the project card with a 'more' toggle.",
@@ -355,9 +358,7 @@ class ProjectAdminForm(forms.ModelForm):
     def clean_description(self):
         description = (self.cleaned_data.get("description") or "").strip()
         if len(description) > 2000:
-            raise forms.ValidationError(
-                "Description can be at most 2000 characters."
-            )
+            raise forms.ValidationError("Description can be at most 2000 characters.")
         return description
 
     def clean(self):
@@ -400,7 +401,15 @@ class ProjectAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "Basic Info",
-            {"fields": ("title", "description", "start_date", "end_date", "is_current")},
+            {
+                "fields": (
+                    "title",
+                    "description",
+                    "start_date",
+                    "end_date",
+                    "is_current",
+                )
+            },
         ),
         (
             "Thumbnail",

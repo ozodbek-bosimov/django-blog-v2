@@ -7,9 +7,9 @@ from functools import reduce
 
 from django.core.cache import cache
 from django.core.paginator import Paginator
-from django.db.models import Count, Q, Prefetch
-from django.shortcuts import render
+from django.db.models import Count, Prefetch, Q
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.templatetags.static import static
 
 from home.models import AboutMe, Blog, Experience, ExperienceRole, Project, Skill
@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 # Sentinel: distinguishes "key not in cache" from "key cached with value None".
 # cache.get() returns None in both cases, so we pass this as the default instead.
 _CACHE_MISS = object()
+
 
 def _is_valid_ip(ip):
     """Validate if string is a valid IPv4 or IPv6 address using stdlib."""
@@ -164,9 +165,7 @@ def topic(request, topic):
 
     if not topic_list:
         message = f"No posts found in topic: '{topic}'"
-        return render(
-            request, "topic.html", {"message": message, "topic": topic}
-        )
+        return render(request, "topic.html", {"message": message, "topic": topic})
 
     paginator = Paginator(topic_list, 3)
     page = request.GET.get("page")
@@ -297,33 +296,36 @@ def github_calendar_proxy(request):
 
     if not about_me or not about_me.github_url:
         return HttpResponse("GitHub URL not configured", status=404)
-        
+
     match = re.search(r"github\.com/([a-zA-Z0-9_-]+)", about_me.github_url)
     if not match:
         return HttpResponse("Invalid GitHub URL in config", status=400)
-        
+
     username = match.group(1)
 
     cache_key = f"github_contrib_{username}"
     cached_html = cache.get(cache_key)
     if cached_html is not None:
         response = HttpResponse(cached_html, content_type="text/html")
-        response['Cache-Control'] = 'public, max-age=300'
+        response["Cache-Control"] = "public, max-age=300"
         return response
 
     url = f"https://github.com/users/{username}/contributions"
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=5) as api_response:
-            html_data = api_response.read().decode('utf-8')
+            html_data = api_response.read().decode("utf-8")
             # Cache for 5 minutes so a Cloudflare/browser miss doesn't hit GitHub every time.
             cache.set(cache_key, html_data, 300)
             response = HttpResponse(html_data, content_type="text/html")
-            response['Cache-Control'] = 'public, max-age=300'
+            response["Cache-Control"] = "public, max-age=300"
             return response
     except Exception:
-        logger.warning("GitHub contributions proxy failed for %s", username, exc_info=True)
+        logger.warning(
+            "GitHub contributions proxy failed for %s", username, exc_info=True
+        )
         return HttpResponse(status=502)
+
 
 def leetcode_proxy(request):
     about_me = cache.get("about_me_singleton", _CACHE_MISS)
@@ -333,29 +335,29 @@ def leetcode_proxy(request):
 
     if not about_me or not about_me.leetcode_url:
         return HttpResponse("LeetCode URL not configured", status=404)
-        
+
     match = re.search(r"leetcode\.com/(?:u/)?([a-zA-Z0-9_-]+)", about_me.leetcode_url)
     if not match:
         return HttpResponse("Invalid LeetCode URL in config", status=400)
-        
+
     username = match.group(1)
 
     cache_key = f"leetcode_svg_{username}"
     cached_svg = cache.get(cache_key)
     if cached_svg:
         response = HttpResponse(cached_svg, content_type="image/svg+xml")
-        response['Cache-Control'] = 'public, max-age=600'
+        response["Cache-Control"] = "public, max-age=600"
         return response
-    
+
     url = f"https://leetcard.jacoblin.cool/{username}?font=Poppins&ext=heatmap&border=0&radius=0&theme=dark"
-    
+
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=5) as api_response:
-            svg_data = api_response.read().decode('utf-8')
-            
+            svg_data = api_response.read().decode("utf-8")
+
             # Inject custom CSS to make the heatmap match the site's cyan theme perfectly
-            custom_styles = '''
+            custom_styles = """
             <style>
                 #background, #total-solved-bg, #total-solved-ring { fill: transparent !important; }
                 #total-solved-bg, #easy-solved-bg, #medium-solved-bg, #hard-solved-bg, line:not([id*="-solved-"]) { stroke: #2d3748 !important; }
@@ -389,19 +391,22 @@ def leetcode_proxy(request):
                 #easy-solved-count, #medium-solved-count, #hard-solved-count { font-size: 12px !important; }
                 #ext-heatmap-from, #ext-heatmap-to { font-size: 8px !important; }
             </style>
-            '''
-            if '</svg>' in svg_data:
-                final_svg = svg_data.replace('</svg>', custom_styles + '</svg>')
+            """
+            if "</svg>" in svg_data:
+                final_svg = svg_data.replace("</svg>", custom_styles + "</svg>")
             else:
                 final_svg = svg_data
-            
+
             # Cache for 10 minutes to keep it extremely fresh while avoiding spam
             cache.set(cache_key, final_svg, 600)
-            
+
             response = HttpResponse(final_svg, content_type="image/svg+xml")
-            response['Cache-Control'] = 'public, max-age=600'
+            response["Cache-Control"] = "public, max-age=600"
             return response
-            
+
     except Exception:
         logger.warning("LeetCode proxy failed for %s", username, exc_info=True)
-        return HttpResponse('<svg xmlns="http://www.w3.org/2000/svg" width="500" height="320"><rect width="100%" height="100%" fill="#0f172a"/><text x="50%" y="50%" fill="#9ca3af" text-anchor="middle" font-family="sans-serif">Failed to load LeetCode stats</text></svg>', content_type="image/svg+xml")
+        return HttpResponse(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="320"><rect width="100%" height="100%" fill="#0f172a"/><text x="50%" y="50%" fill="#9ca3af" text-anchor="middle" font-family="sans-serif">Failed to load LeetCode stats</text></svg>',
+            content_type="image/svg+xml",
+        )

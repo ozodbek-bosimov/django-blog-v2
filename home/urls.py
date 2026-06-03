@@ -1,4 +1,5 @@
 from django.urls import path
+
 from home import views
 
 urlpatterns = [
@@ -10,6 +11,10 @@ urlpatterns = [
     path("topic/<str:topic>/", views.topic, name="topic"),
     path("topics/", views.topics, name="topics"),
     path("search/", views.search, name="search"),
-    path("github-contributions/", views.github_calendar_proxy, name="github_contributions"),
+    path(
+        "github-contributions/",
+        views.github_calendar_proxy,
+        name="github_contributions",
+    ),
     path("leetcode-proxy/", views.leetcode_proxy, name="leetcode_proxy"),
 ]

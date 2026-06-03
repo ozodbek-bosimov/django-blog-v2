@@ -184,6 +184,29 @@ sudo tail -n 120 /var/log/nginx/error.log
 
 ---
 
+## 🎨 Kod Uslubi (Formatting & Linting)
+
+Loyiha bo'ylab kod uslubi bir xil bo'lishi uchun quyidagi qoidalar amal qiladi:
+
+- **Python** — `ruff` (`pyproject.toml` da sozlangan): 4 bo'shliq, ikki tirnoq (`"`).
+- **JS / CSS / HTML** — 2 bo'shliq (`.editorconfig` da belgilangan).
+- Avtomatik yaratiladigan fayllar (`migrations/`, `staticfiles/`, `static/css/dist/`) formatlanmaydi.
+
+```bash
+# Python kodni formatlash va tekshirish
+env/bin/ruff format .          # kodni avtomatik formatlash
+env/bin/ruff check . --fix     # import tartibi va boshqa xatolarni tuzatish
+env/bin/ruff check .           # faqat tekshirish (CI uchun)
+
+# Testlar
+python manage.py test home
+```
+
+> Eslatma: `.editorconfig` faylini qo'llab-quvvatlovchi muharrirlar (VS Code,
+> PyCharm) bo'shliq/indent qoidalarini avtomatik qo'llaydi.
+
+---
+
 ## 🛠 Ko‘p Uchraydigan Xatolar va Ularning Yechimi
 
 1. **Rasm yoki Fayl yuklashda "Server Error (500)" yoxud sahifada rasm ishlamay qolishi:**
