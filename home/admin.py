@@ -1,6 +1,8 @@
 import re
 from datetime import timedelta
 
+from django.core.exceptions import ValidationError
+
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
@@ -123,10 +125,10 @@ class BlogAdminForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditor5Widget(config_name="default"))
     meta = forms.CharField(
         widget=forms.Textarea(
-            attrs={"rows": 3, "style": "width:100%; resize:vertical;", "maxlength": 600}
+            attrs={"rows": 3, "style": "width:100%; resize:vertical;", "maxlength": 300}
         ),
-        max_length=600,
-        help_text="Max 600 characters. This text appears in search results and social media previews.",
+        max_length=300,
+        help_text="This text appears in search results and social media previews.",
     )
 
     class Meta:
@@ -161,8 +163,8 @@ class BlogAdminForm(forms.ModelForm):
 
     def clean_meta(self):
         meta = (self.cleaned_data.get("meta") or "").strip()
-        if len(meta) > 600:
-            raise forms.ValidationError("Meta text can be at most 600 characters.")
+        if len(meta) > 300:
+            raise forms.ValidationError("Meta text can be at most 300 characters.")
         return meta
 
 
@@ -338,9 +340,40 @@ class SkillAdmin(admin.ModelAdmin):
 
 
 class ProjectAdminForm(forms.ModelForm):
+    description = forms.CharField(
+        widget=forms.Textarea(
+            attrs={"rows": 10, "style": "width:100%; resize:vertical;", "maxlength": 2000}
+        ),
+        max_length=2000,
+        help_text="Shown on the project card with a 'more' toggle.",
+    )
+
     class Meta:
         model = Project
         fields = "__all__"
+
+    def clean_description(self):
+        description = (self.cleaned_data.get("description") or "").strip()
+        if len(description) > 2000:
+            raise forms.ValidationError(
+                "Description can be at most 2000 characters."
+            )
+        return description
+
+    def clean(self):
+        cleaned = super().clean()
+        start = cleaned.get("start_date")
+        end = cleaned.get("end_date")
+        is_current = cleaned.get("is_current", False)
+
+        if is_current and end:
+            raise ValidationError(
+                "An ongoing project should not have an end date. "
+                "Either uncheck 'Is current' or clear the end date."
+            )
+        if start and end and end < start:
+            raise ValidationError("End date cannot be before the start date.")
+        return cleaned
 
     def clean_thumbnail_img(self):
         img = self.cleaned_data.get("thumbnail_img")
@@ -357,11 +390,18 @@ class ProjectAdmin(admin.ModelAdmin):
     """Admin for Project model"""
 
     form = ProjectAdminForm
-    list_display = ["title", "order", "created_at"]
+
+    class Media:
+        js = ("js/admin_thumbnail.js", "js/admin_project_desc.js")
+
+    list_display = ["title", "date_range", "order", "created_at"]
     list_editable = ["order"]
     readonly_fields = ("thumbnail_preview", "created_at")
     fieldsets = (
-        ("Basic Info", {"fields": ("title", "description")}),
+        (
+            "Basic Info",
+            {"fields": ("title", "description", "start_date", "end_date", "is_current")},
+        ),
         (
             "Thumbnail",
             {"fields": ("thumbnail_img", "thumbnail_url", "thumbnail_preview")},
@@ -371,6 +411,16 @@ class ProjectAdmin(admin.ModelAdmin):
         ("Meta", {"fields": ("order", "created_at")}),
     )
     search_fields = ["title", "description", "technologies"]
+
+    @admin.display(description="Timeline", ordering="start_date")
+    def date_range(self, obj):
+        r = obj.date_range_display
+        if not r:
+            return "—"
+        dur = obj.duration_display
+        if dur:
+            return f"{r}  ·  {dur}"
+        return r
 
     @admin.display(description="Thumbnail Preview")
     def thumbnail_preview(self, obj):

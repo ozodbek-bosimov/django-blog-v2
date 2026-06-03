@@ -413,6 +413,50 @@ body {
     -webkit-line-clamp: 3;
 }
 
+/* Project description with inline "more / less" toggle.
+   JS truncates by words so the button sits at the end of the 3rd line and the
+   author's own line breaks are preserved. */
+.project-desc {
+    white-space: pre-line;
+    margin-bottom: 1rem;
+}
+
+/* Pre-JS / no-JS fallback: clamp to 3 lines (button added later by JS). */
+.project-desc.is-clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+}
+
+.project-desc-toggle {
+    background: none;
+    border: none;
+    color: #64748b;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    transition: color 0.2s;
+    white-space: nowrap;
+}
+
+/* "less" button — small gap so it doesn't touch the final word. */
+.project-desc-toggle--gap {
+    margin-left: 0.4rem;
+}
+
+.project-desc-toggle:hover {
+    color: #94a3b8;
+    text-decoration: underline;
+}
+
+.project-desc-ellipsis {
+    color: inherit;
+}
+
 .hero-typed-row {
     min-height: 1.5rem;
 }
@@ -496,6 +540,8 @@ body {
 @media (min-width: 640px) {
     .blog-list-card {
         flex-direction: row;
+        /* Keep image-less cards the same height as cards with a thumbnail */
+        min-height: calc(169px + 2rem);
     }
 
     .blog-list-thumb {
@@ -509,6 +555,7 @@ body {
 @media (min-width: 768px) {
     .blog-list-card {
         padding: 1.25rem;
+        min-height: calc(200px + 2.5rem);
     }
 
     .blog-list-thumb {

@@ -4,7 +4,7 @@
 
   var MAX_SIZE_MB = 15;
   var MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
-  var META_MAX_CHARS = 600;
+  var META_MAX_CHARS = 300;
 
   function validateThumbnail(input) {
     if (!input.files || input.files.length === 0) return;
@@ -47,7 +47,14 @@
   function enforceMetaLimit(input) {
     if (!input) return;
 
-    input.setAttribute('maxlength', String(META_MAX_CHARS));
+    // Read the limit straight from the field's maxlength (set by the Django
+    // form to match the model's max_length). This keeps the client counter and
+    // the server-side validation in sync with a single source of truth.
+    var maxChars = parseInt(input.getAttribute('maxlength'), 10);
+    if (!maxChars || maxChars < 1) {
+      maxChars = META_MAX_CHARS;
+    }
+    input.setAttribute('maxlength', String(maxChars));
 
     var counterId = 'meta-char-counter';
     var counter = document.getElementById(counterId);
@@ -61,14 +68,14 @@
 
     function updateCounter() {
       var length = (input.value || '').length;
-      counter.textContent = length + ' / ' + META_MAX_CHARS;
-      counter.style.color = length >= META_MAX_CHARS ? '#ba2121' : '#8f8f8f';
+      counter.textContent = length + ' / ' + maxChars;
+      counter.style.color = length >= maxChars ? '#ba2121' : '#8f8f8f';
     }
 
     function trimToLimit() {
       var value = input.value || '';
-      if (value.length > META_MAX_CHARS) {
-        input.value = value.slice(0, META_MAX_CHARS);
+      if (value.length > maxChars) {
+        input.value = value.slice(0, maxChars);
       }
       updateCounter();
     }

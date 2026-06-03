@@ -32,19 +32,25 @@
     {% if projects %} {% for project in projects %}
     <div
         class="blog-list-card glass-card solid-content-card flex flex-col gap-5 p-5 md:p-6 mb-6 overflow-hidden reveal">
+        {% if project.effective_thumbnail %}
         <div class="blog-list-thumb">
             <img class="w-full h-full object-cover" src="{{ project.effective_thumbnail }}" alt="{{ project.title }}"
                 loading="lazy" />
         </div>
+        {% endif %}
 
         <div class="flex-1 min-w-0">
-            <p class="font-bold text-lg text-gray-100 mb-2 md:mb-3">
+            <p class="font-bold text-lg text-gray-100 mb-1">
                 {{ project.title }}
             </p>
 
-            <p class="text-sm md:text-base leading-relaxed mb-4 break-words text-gray-100 line-clamp-3">
-                {{ project.description }}
+            {% if project.date_range_display %}
+            <p class="text-xs md:text-sm text-gray-400 mb-2 md:mb-3">
+                {{ project.date_range_display }}{% if project.duration_display %} · {{ project.duration_display }}{% endif %}
             </p>
+            {% endif %}
+
+            <p class="project-desc is-clamped text-sm md:text-base leading-relaxed break-words text-gray-100">{{ project.description }}</p>
 
             {% if project.technologies %}
             <div class="mb-4">
@@ -77,3 +83,7 @@
     {% endif %}
 </div>
 {% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/projects.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
+{% endblock extra_scripts %}
