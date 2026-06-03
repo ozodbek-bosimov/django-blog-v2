@@ -1182,6 +1182,8 @@ p iframe {
 .btn-icon--telegram { --brand: 38, 158, 215;  --brand-glyph: 130, 200, 240; }
 .btn-icon--x        { --brand: 225, 228, 235;  --brand-glyph: 240, 242, 248; }
 .btn-icon--leetcode { --brand: 245, 158, 30;   --brand-glyph: 250, 195, 120; }
+.btn-icon--youtube  { --brand: 255, 50, 50;    --brand-glyph: 255, 130, 130; }
+.btn-icon--instagram{ --brand: 225, 48, 108;   --brand-glyph: 245, 130, 175; }
 .btn-icon--neutral  { --brand: 210, 222, 240;  --brand-glyph: 240, 244, 250; }
 
 /* Liquid-glass inner illumination on hover — light blooms softly from

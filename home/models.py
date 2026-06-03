@@ -167,6 +167,8 @@ class AboutMe(models.Model):
     telegram_url = models.URLField(blank=True)
     x_url = models.URLField(blank=True, help_text="X (formerly Twitter) profile URL")
     leetcode_url = models.URLField(blank=True)
+    youtube_url = models.URLField(blank=True, help_text="YouTube channel URL")
+    instagram_url = models.URLField(blank=True, help_text="Instagram profile URL")
 
     @property
     def effective_resume(self):

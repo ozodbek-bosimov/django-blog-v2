@@ -278,6 +278,8 @@ class AboutMeAdmin(admin.ModelAdmin):
                     "telegram_url",
                     "x_url",
                     "leetcode_url",
+                    "youtube_url",
+                    "instagram_url",
                 )
             },
         ),
