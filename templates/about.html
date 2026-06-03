@@ -630,17 +630,6 @@
                                                                     
                                                                     const textMuted = document.querySelectorAll('#github-calendar-container .text-muted');
                                                                     textMuted.forEach(el => el.style.display = 'none');
-                                                                    
-                                                                    // Automatically scroll to the right (latest days)
-                                                                    setTimeout(() => {
-                                                                        const allDivs = document.querySelectorAll('#github-calendar-container, #github-calendar-container div');
-                                                                        allDivs.forEach(div => {
-                                                                            const style = window.getComputedStyle(div);
-                                                                            if (style.overflowX === 'auto' || style.overflowX === 'scroll' || style.overflowX === 'overlay') {
-                                                                                div.scrollLeft = 999999;
-                                                                            }
-                                                                        });
-                                                                    }, 500);
                                                                 };
 
                                                                 const enhanceCalendar = () => {
@@ -680,6 +669,55 @@
                                                                     }
                                                                     calReadyToReveal = true;
                                                                     tryRevealCal();
+
+                                                                    // Scale the GitHub grid to fill the panel width, mirroring
+                                                                    // how the LeetCode SVG (width:100%) fits its card. We use
+                                                                    // CSS `zoom` (not `transform: scale`) because zoom shrinks
+                                                                    // the element's *layout* box too — so the table truly fits
+                                                                    // the panel and leaves no overflow/scroll. transform:scale
+                                                                    // only shrinks visually, leaving the natural-width layout
+                                                                    // box behind, which caused the horizontal scrollbar.
+                                                                    const fitGithubCalendar = () => {
+                                                                        const table = container.querySelector('.ContributionCalendar-grid') || container.querySelector('table');
+                                                                        if (!table) return;
+                                                                        table.style.zoom = '1';
+                                                                        table.style.transform = 'none';
+                                                                        table.style.marginBottom = '0px';
+                                                                        const naturalW = table.offsetWidth;
+                                                                        const avail = Math.round(container.getBoundingClientRect().width);
+                                                                        if (!naturalW || !avail) return;
+                                                                        table.style.zoom = (avail / naturalW).toString();
+                                                                    };
+
+                                                                    // Run now and again on the next frame (after layout settles).
+                                                                    requestAnimationFrame(() => {
+                                                                        fitGithubCalendar();
+                                                                        requestAnimationFrame(fitGithubCalendar);
+                                                                    });
+
+                                                                    if (!container.dataset.fitBound) {
+                                                                        container.dataset.fitBound = 'true';
+                                                                        // Re-fit whenever the panel resizes.
+                                                                        if ('ResizeObserver' in window) {
+                                                                            const ro = new ResizeObserver(() => fitGithubCalendar());
+                                                                            ro.observe(container);
+                                                                        } else {
+                                                                            let resizeTimer = null;
+                                                                            window.addEventListener('resize', () => {
+                                                                                clearTimeout(resizeTimer);
+                                                                                resizeTimer = setTimeout(fitGithubCalendar, 150);
+                                                                            });
+                                                                        }
+                                                                        // The calendar library may re-render/replace the table
+                                                                        // after we fit it, which would drop our zoom. Watch for
+                                                                        // DOM changes and re-apply.
+                                                                        if ('MutationObserver' in window) {
+                                                                            const mo = new MutationObserver(() => {
+                                                                                requestAnimationFrame(fitGithubCalendar);
+                                                                            });
+                                                                            mo.observe(container, { childList: true, subtree: true });
+                                                                        }
+                                                                    }
                                                                     return true;
                                                                 };
 
