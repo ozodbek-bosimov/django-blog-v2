@@ -710,7 +710,7 @@
 @media (min-width: 640px) {
     .profile-grid {
         display: grid;
-        grid-template-columns: 1.31fr 1fr;
+        grid-template-columns: 1.55fr 1fr;
         gap: 0.75rem;
     }
 
