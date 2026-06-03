@@ -106,17 +106,7 @@
             </div>
 
             <div class="flex gap-3 justify-center sm:justify-start w-full">
-                {% if about_me.github_url %}
-                <a
-                    href="{{ about_me.github_url }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn-icon btn-icon--github"
-                    aria-label="GitHub profile"
-                >
-                    <i class="bi bi-github text-xl"></i>
-                </a>
-                {% endif %} {% if about_me.linkedin_url %}
+                {% if about_me.linkedin_url %}
                 <a
                     href="{{ about_me.linkedin_url }}"
                     target="_blank"
@@ -125,6 +115,16 @@
                     aria-label="LinkedIn profile"
                 >
                     <i class="bi bi-linkedin text-xl"></i>
+                </a>
+                {% endif %} {% if about_me.github_url %}
+                <a
+                    href="{{ about_me.github_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-icon btn-icon--github"
+                    aria-label="GitHub profile"
+                >
+                    <i class="bi bi-github text-xl"></i>
                 </a>
                 {% endif %} {% if about_me.telegram_url %}
                 <a
@@ -135,6 +135,19 @@
                     aria-label="Telegram profile"
                 >
                     <i class="bi bi-telegram text-xl"></i>
+                </a>
+                {% endif %} {% if about_me.leetcode_url %}
+                <a
+                    href="{{ about_me.leetcode_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-icon btn-icon--leetcode"
+                    aria-label="LeetCode profile"
+                >
+                    <span
+                        class="btn-icon__glyph"
+                        style="--glyph: url('{% static 'images/icons/leetcode.svg' %}')"
+                    ></span>
                 </a>
                 {% endif %} {% if about_me.x_url %}
                 <a
@@ -149,18 +162,25 @@
                         style="--glyph: url('{% static 'images/icons/x.svg' %}')"
                     ></span>
                 </a>
-                {% endif %} {% if about_me.leetcode_url %}
+                {% endif %} {% if about_me.youtube_url %}
                 <a
-                    href="{{ about_me.leetcode_url }}"
+                    href="{{ about_me.youtube_url }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="btn-icon btn-icon--leetcode"
-                    aria-label="LeetCode profile"
+                    class="btn-icon btn-icon--youtube"
+                    aria-label="YouTube channel"
                 >
-                    <span
-                        class="btn-icon__glyph"
-                        style="--glyph: url('{% static 'images/icons/leetcode.svg' %}')"
-                    ></span>
+                    <i class="bi bi-youtube text-xl"></i>
+                </a>
+                {% endif %} {% if about_me.instagram_url %}
+                <a
+                    href="{{ about_me.instagram_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-icon btn-icon--instagram"
+                    aria-label="Instagram profile"
+                >
+                    <i class="bi bi-instagram text-xl"></i>
                 </a>
                 {% endif %}
             </div>
@@ -478,7 +498,7 @@
             const leetcodeUrl = "{{ about_me.leetcode_url|escapejs }}";
             if (leetcodeUrl && leetcodeUrl.includes("leetcode.com")) {
                 // The backend handles the fetching, caching, and CSS injection natively
-                leetcodePromise = Promise.resolve(`/leetcode-proxy/`);
+                leetcodePromise = Promise.resolve(`/leetcode-proxy/?v=${cbStr}`);
             }
 
             const initGithubStats = function() {

@@ -361,12 +361,26 @@ def leetcode_proxy(request):
                 #total-solved-bg, #easy-solved-bg, #medium-solved-bg, #hard-solved-bg, line:not([id*="-solved-"]) { stroke: #2d3748 !important; }
                 rect[class^="ext-heatmap-"] { rx: 2px !important; ry: 2px !important; }
                 #ext-heatmap-cells { opacity: 1 !important; }
-                rect.ext-heatmap-0 { fill: #2d3748 !important; opacity: 1 !important; }
-                rect.ext-heatmap-1 { fill: #164e63 !important; opacity: 1 !important; }
-                rect.ext-heatmap-2 { fill: #0e7490 !important; opacity: 1 !important; }
-                rect.ext-heatmap-3 { fill: #22d3ee !important; opacity: 1 !important; }
-                rect.ext-heatmap-4 { fill: #67e8f9 !important; opacity: 1 !important; }
-                rect[class^="ext-heatmap-"]:not(.ext-heatmap-0):not(.ext-heatmap-1):not(.ext-heatmap-2):not(.ext-heatmap-3):not(.ext-heatmap-4) { fill: #67e8f9 !important; opacity: 1 !important; }
+
+                /* Graduated intensity scale by daily submission count.
+                   Default (highest tier, 21+ submissions) is the brightest cyan;
+                   the specific lower buckets below override it. */
+                rect[class^="ext-heatmap-"] { fill: #67e8f9 !important; opacity: 1 !important; }
+
+                /* No activity */
+                rect.ext-heatmap-0 { fill: #2d3748 !important; }
+                /* 1-2 submissions */
+                rect.ext-heatmap-1, rect.ext-heatmap-2 { fill: #164e63 !important; }
+                /* 3-5 submissions */
+                rect.ext-heatmap-3, rect.ext-heatmap-4, rect.ext-heatmap-5 { fill: #0e7490 !important; }
+                /* 6-10 submissions */
+                rect.ext-heatmap-6, rect.ext-heatmap-7, rect.ext-heatmap-8,
+                rect.ext-heatmap-9, rect.ext-heatmap-10 { fill: #06b6d4 !important; }
+                /* 11-20 submissions */
+                rect.ext-heatmap-11, rect.ext-heatmap-12, rect.ext-heatmap-13,
+                rect.ext-heatmap-14, rect.ext-heatmap-15, rect.ext-heatmap-16,
+                rect.ext-heatmap-17, rect.ext-heatmap-18, rect.ext-heatmap-19,
+                rect.ext-heatmap-20 { fill: #22d3ee !important; }
                 
                 #username-text, #username { font-size: 16px !important; }
                 #ranking { font-size: 12px !important; }
