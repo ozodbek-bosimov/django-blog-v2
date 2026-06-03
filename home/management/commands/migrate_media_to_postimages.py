@@ -203,16 +203,14 @@ class Command(BaseCommand):
                 aboutme_updates.append((about, new_bio))
 
         if blog_updates or aboutme_updates:
-            msg = ("\n📝 DB updates: {} blog post(s), {} aboutme").format(
-                len(blog_updates), len(aboutme_updates)
-            )
+            msg = f"\n📝 DB updates: {len(blog_updates)} blog post(s), {len(aboutme_updates)} aboutme"
             self.stdout.write(self.style.WARNING(msg))
-            for blog, new_content in blog_updates:
+            for blog, _new_content in blog_updates:
                 self.stdout.write(
                     f"   Blog #{blog.sno} [{blog.title[:40]}]: reference will be updated"
                 )
 
-            for about, new_bio in aboutme_updates:
+            for about, _new_bio in aboutme_updates:
                 self.stdout.write(
                     f"   AboutMe [{about.name[:40]}]: reference will be updated"
                 )
