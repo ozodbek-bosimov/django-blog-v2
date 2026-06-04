@@ -434,7 +434,12 @@ body {
     border: none;
     color: #64748b;
     font: inherit;
-    font-size: 0.9rem;
+    /* Match the mobile body size (text-sm) so the inline button is never
+       TALLER than the text line. A taller inline-block would grow the line
+       box and make the text jump vertically when toggling on mobile. */
+    font-size: 0.875rem;
+    line-height: 1.625;
+    vertical-align: baseline;
     font-weight: 500;
     padding: 0;
     margin: 0;
