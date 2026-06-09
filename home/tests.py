@@ -200,11 +200,13 @@ class ViewsSmokeTests(TestCase):
         self.assertEqual(resp.status_code, 404)
         self.assertTemplateUsed(resp, "404.html")
 
-    def test_topic_missing_shows_message(self):
+    def test_topic_missing_returns_404_with_message(self):
         resp = self.client.get(reverse("topic", kwargs={"topic": "nope"}))
-        self.assertEqual(resp.status_code, 200)
+        # An empty/non-existent topic returns a real 404 (avoids Google Soft 404)
+        # while still rendering the friendly topic template with a message.
+        self.assertEqual(resp.status_code, 404)
         self.assertTemplateUsed(resp, "topic.html")
-        self.assertContains(resp, "No posts found in topic")
+        self.assertContains(resp, "No posts found in topic", status_code=404)
 
     def test_search_empty_query_shows_message(self):
         resp = self.client.get(reverse("search"))
