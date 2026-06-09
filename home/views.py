@@ -165,7 +165,14 @@ def topic(request, topic):
 
     if not topic_list:
         message = f"No posts found in topic: '{topic}'"
-        return render(request, "topic.html", {"message": message, "topic": topic})
+        # Return a real 404 (not a 200) so Google treats an empty/non-existent
+        # topic as "Not found" instead of flagging it as a Soft 404.
+        return render(
+            request,
+            "topic.html",
+            {"message": message, "topic": topic},
+            status=404,
+        )
 
     paginator = Paginator(topic_list, 3)
     page = request.GET.get("page")
