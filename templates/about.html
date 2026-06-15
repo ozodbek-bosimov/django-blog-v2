@@ -399,7 +399,7 @@
             {% if about_me.github_url %}
             <article class="profile-card profile-card--github cursor-pointer relative" onclick="window.open('{{ about_me.github_url|escapejs }}', '_blank')" title="View GitHub Profile">
                 <div class="profile-card__top" style="padding-left: 5cqw; padding-top: 3cqw; margin-bottom: 1.5cqw;">
-                    <div class="flex items-center text-gray-200" style="gap: 1.8cqw;">
+                    <div class="flex items-center text-gray-200" style="gap: 4cqw;">
                         <i class="bi bi-github" style="font-size: 4.4cqw; color: #f0f0f0;"></i>
                         <h3 class="font-semibold tracking-wide" style="font-size: 3.2cqw; color: #f0f0f0; margin-top: 0.2cqw;">
                             {% if about_me.github_url %}
@@ -415,7 +415,7 @@
                     <div class="profile-grid">
                         <div class="profile-panel">
                             <p class="profile-panel__label">Overview</p>
-                            <div id="github-stats-skeleton" class="skeleton-loader" style="aspect-ratio: 495/195; margin-top: 3px;"></div>
+                            <div id="github-stats-skeleton" class="skeleton-loader" style="aspect-ratio: 467/195; margin-top: 3px;"></div>
                             <img
                                 id="github-stats-img"
                                 alt="GitHub Stats"
@@ -425,7 +425,7 @@
                         </div>
                         <div class="profile-panel">
                             <p class="profile-panel__label">Top languages</p>
-                            <div id="github-langs-skeleton" class="skeleton-loader" style="aspect-ratio: 350/165;"></div>
+                            <div id="github-langs-skeleton" class="skeleton-loader"></div>
                             <img
                                 id="github-langs-img"
                                 alt="Top Languages"
@@ -446,8 +446,8 @@
                         <div class="profile-panel profile-panel--full">
                             <p class="profile-panel__label">Contribution calendar</p>
                             <hr style="border: none; border-top: 1.5px solid #2d3748; margin: 1.5rem auto 1.2rem auto; width: 96%;" />
-                            <div style="height: 125px; margin-bottom: 1rem; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
-                                <div id="github-cal-skeleton" class="skeleton-loader" style="height: 100%; width: 100%;"></div>
+                            <div id="github-cal-wrap" style="width: 96%; margin: 0 auto 1rem auto; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden;">
+                                <div id="github-cal-skeleton" class="skeleton-loader" style="width: 100%;"></div>
                                 <div id="github-calendar-container" class="calendar-shell">
                                     <!-- Calendar injected by github-calendar library -->
                                 </div>
@@ -480,10 +480,21 @@
             // while still keeping the data reasonably fresh.
             const cbStr = Math.floor(Date.now() / 3600000).toString();
             let statsUrl = "", langsUrl = "", streakUrl = "";
-            
+
+            // The Top-languages card needs a different intrinsic width per
+            // breakpoint so it always looks balanced:
+            //  • Desktop: it sits in a narrow side column, so a 320px card keeps
+            //    its title/text the same visual size as the wider stats card.
+            //  • Mobile: it spans the full width, so a wider 495px card fills the
+            //    row with crisp, properly-sized text (no oversized title).
+            const langsMq = window.matchMedia('(min-width: 640px)');
+            const buildLangsUrl = (cardWidth) =>
+                `https://github-readme-stats-salesp07.vercel.app/api/top-langs/?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&layout=compact&card_width=${cardWidth}&v=${cbStr}`;
+            const currentLangsCardWidth = () => (langsMq.matches ? 320 : 495);
+
             if (ghUsername) {
                 statsUrl = `https://github-readme-stats-salesp07.vercel.app/api?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&include_all_commits=true&count_private=true&rank_icon=github&show_icons=true&v=${cbStr}`;
-                langsUrl = `https://github-readme-stats-salesp07.vercel.app/api/top-langs/?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&layout=compact&v=${cbStr}`;
+                langsUrl = buildLangsUrl(currentLangsCardWidth());
                 streakUrl = `https://github-readme-streak-stats-salesp07.vercel.app/?user=${ghUsername}&theme=dark&hide_border=true&background=00000000&stroke=334155&ring=06b6d4&fire=67e8f9&v=${cbStr}`;
                 
                 // Secretly preload early in the background
@@ -508,6 +519,24 @@
                     const langsImg = document.getElementById('github-langs-img');
                     const streakImg = document.getElementById('github-streak-img');
                     const container = document.getElementById('github-calendar-container');
+
+                    // Lock the contribution-calendar area to a FIXED height that is
+                    // computed the SAME way during loading, after load, and on
+                    // resize — so the card never resizes once the grid appears.
+                    // The reserve scales with the panel width and is kept a touch
+                    // taller than the grid's real rendered height, so the grid
+                    // always fits (no clipping) with at most a few px of slack.
+                    // 0.16 ≈ the grid's aspect ratio (7 day-rows over ~53 week-cols);
+                    // +14px roughly accounts for the date-range labels below it.
+                    const calWrap = document.getElementById('github-cal-wrap');
+                    const setCalReserve = () => {
+                        if (!calWrap) return;
+                        const w = calWrap.clientWidth;
+                        if (!w) return;
+                        calWrap.style.height = Math.round(0.16 * w + 14) + 'px';
+                    };
+                    setCalReserve();
+                    window.addEventListener('resize', setCalReserve);
 
                     // Best-effort sequential loading with per-item timeouts
                     const items = [
@@ -584,6 +613,18 @@
                         if (langsImg) {
                             langsImg.onload = () => handleLoad(1);
                             langsImg.src = langsUrl;
+
+                            // Swap the languages card for the correctly-sized one
+                            // whenever we cross the mobile/desktop breakpoint.
+                            const swapLangs = () => {
+                                const next = buildLangsUrl(currentLangsCardWidth());
+                                if (langsImg.src !== next) langsImg.src = next;
+                            };
+                            if (langsMq.addEventListener) {
+                                langsMq.addEventListener('change', swapLangs);
+                            } else if (langsMq.addListener) {
+                                langsMq.addListener(swapLangs);
+                            }
                         } else items[1].loaded = true;
 
                         if (streakImg) {
@@ -668,28 +709,66 @@
                                                                         graphContainer.appendChild(datesDiv);
                                                                     }
                                                                     calReadyToReveal = true;
-                                                                    tryRevealCal();
 
                                                                     // Scale the GitHub grid to fill the panel width, mirroring
-                                                                    // how the LeetCode SVG (width:100%) fits its card. We use
-                                                                    // CSS `zoom` (not `transform: scale`) because zoom shrinks
-                                                                    // the element's *layout* box too — so the table truly fits
-                                                                    // the panel and leaves no overflow/scroll. transform:scale
-                                                                    // only shrinks visually, leaving the natural-width layout
-                                                                    // box behind, which caused the horizontal scrollbar.
+                                                                    // how the LeetCode SVG (width:100%) fits its card.
+                                                                    //
+                                                                    // We use `transform: scale()` (NOT `zoom`). `zoom` forces a
+                                                                    // layout reflow in which every cell is re-snapped to whole
+                                                                    // device pixels; the accumulated rounding error lands on the
+                                                                    // trailing columns, making the last week or two visibly wider
+                                                                    // ("distorted"). `transform: scale()` is a uniform vector
+                                                                    // scale applied after layout, so every cell shrinks by the
+                                                                    // exact same factor and all columns stay perfectly even.
+                                                                    // We then collapse the left-over natural-size layout box with
+                                                                    // negative margins so it leaves no overflow/scroll or gap.
                                                                     const fitGithubCalendar = () => {
-                                                                        const table = container.querySelector('.ContributionCalendar-grid') || container.querySelector('table');
-                                                                        if (!table) return;
-                                                                        table.style.zoom = '1';
-                                                                        table.style.transform = 'none';
-                                                                        table.style.marginBottom = '0px';
-                                                                        const naturalW = table.offsetWidth;
-                                                                        const avail = Math.round(container.getBoundingClientRect().width);
-                                                                        if (!naturalW || !avail) return;
-                                                                        table.style.zoom = (avail / naturalW).toString();
+                                                                        // The github-calendar library renders an <svg>, while a
+                                                                        // raw GitHub HTML proxy renders a <table>. Support both so
+                                                                        // the grid always scales to fill the panel width (like the
+                                                                        // LeetCode heatmap) instead of sitting left-aligned with
+                                                                        // empty space on the right.
+                                                                        const grid = container.querySelector('.ContributionCalendar-grid')
+                                                                            || container.querySelector('svg.js-calendar-graph-svg')
+                                                                            || container.querySelector('.calendar-graph svg')
+                                                                            || container.querySelector('svg')
+                                                                            || container.querySelector('table');
+                                                                        if (!grid) return;
+                                                                        grid.style.zoom = '';
+                                                                        grid.style.transform = 'none';
+                                                                        grid.style.transformOrigin = 'top left';
+                                                                        grid.style.margin = '0';
+                                                                        // Use real rendered geometry rather than reading the width
+                                                                        // of GitHub's intermediate wrappers (they add a border,
+                                                                        // `tmp-mx-3` margins and `flex-items-end` alignment, so their
+                                                                        // reported widths are unreliable and caused the grid to spill
+                                                                        // off the right edge). With transform-origin at top-left the
+                                                                        // grid scales out from wherever it currently sits, so the
+                                                                        // space available is simply: container right edge minus the
+                                                                        // grid's current left edge.
+                                                                        const gridRect = grid.getBoundingClientRect();
+                                                                        const contRect = container.getBoundingClientRect();
+                                                                        const naturalW = gridRect.width;
+                                                                        const naturalH = gridRect.height;
+                                                                        const avail = contRect.right - gridRect.left;
+                                                                        if (!naturalW || avail <= 0) return;
+                                                                        const scale = avail / naturalW;
+                                                                        grid.style.transform = `scale(${scale})`;
+                                                                        // transform doesn't shrink the layout box, so reclaim the
+                                                                        // leftover width (prevents horizontal scroll) and height
+                                                                        // (prevents an empty gap under the grid).
+                                                                        grid.style.marginRight = `-${naturalW - avail}px`;
+                                                                        grid.style.marginBottom = `-${naturalH * (1 - scale)}px`;
                                                                     };
 
-                                                                    // Run now and again on the next frame (after layout settles).
+                                                                    // Fit synchronously FIRST, so the grid is already scaled to
+                                                                    // the panel width before we reveal it. Otherwise the grid
+                                                                    // would flash at its natural size and then resize on the next
+                                                                    // frame, changing the card height right after it loads.
+                                                                    fitGithubCalendar();
+                                                                    tryRevealCal();
+
+                                                                    // Run again on the next frames (after fonts/layout settle).
                                                                     requestAnimationFrame(() => {
                                                                         fitGithubCalendar();
                                                                         requestAnimationFrame(fitGithubCalendar);
@@ -709,8 +788,8 @@
                                                                             });
                                                                         }
                                                                         // The calendar library may re-render/replace the table
-                                                                        // after we fit it, which would drop our zoom. Watch for
-                                                                        // DOM changes and re-apply.
+                                                                        // after we fit it, which would drop our scale transform.
+                                                                        // Watch for DOM changes and re-apply.
                                                                         if ('MutationObserver' in window) {
                                                                             const mo = new MutationObserver(() => {
                                                                                 requestAnimationFrame(fitGithubCalendar);
