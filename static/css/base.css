@@ -24,7 +24,8 @@
     box-shadow:
         0 1px 2px rgba(0, 0, 0, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    overflow: hidden; /* Hide icon when it flies out */
+    overflow: hidden;
+    /* Hide icon when it flies out */
 }
 
 #back-to-top.visible {
@@ -37,7 +38,8 @@
     #back-to-top:hover {
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
         border-color: rgba(255, 255, 255, 0.15) !important;
-        transform: translateY(0) translateZ(0); /* No jumping */
+        transform: translateY(0) translateZ(0);
+        /* No jumping */
         box-shadow:
             0 1px 2px rgba(0, 0, 0, 0.2),
             inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -61,19 +63,26 @@
     0% {
         transform: translateY(0);
     }
+
     30% {
-        transform: translateY(-40px); /* Fly out top quickly */
+        transform: translateY(-40px);
+        /* Fly out top quickly */
         opacity: 0;
     }
+
     31% {
-        transform: translateY(40px); /* Instantly move to bottom */
+        transform: translateY(40px);
+        /* Instantly move to bottom */
         opacity: 0;
     }
+
     60% {
         opacity: 1;
     }
+
     100% {
-        transform: translateY(0); /* Smoothly slide back into place */
+        transform: translateY(0);
+        /* Smoothly slide back into place */
     }
 }
 
@@ -123,14 +132,17 @@ html {
     width: 10px;
     height: 10px;
 }
+
 ::-webkit-scrollbar-track {
     background: #111827;
 }
+
 ::-webkit-scrollbar-thumb {
     background: #374151;
     border-radius: 5px;
     border: 2px solid #111827;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: #4b5563;
 }
@@ -140,6 +152,7 @@ html {
     background: rgba(6, 182, 212, 0.3);
     color: #ffffff;
 }
+
 ::-moz-selection {
     background: rgba(6, 182, 212, 0.3);
     color: #ffffff;
@@ -179,6 +192,7 @@ body {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -189,6 +203,7 @@ body {
         opacity: 0;
         transform: translateY(24px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -196,6 +211,7 @@ body {
 }
 
 @keyframes shake {
+
     from,
     to {
         transform: translate3d(0, 0, 0);
@@ -232,6 +248,7 @@ body {
 }
 
 @keyframes caret-blink {
+
     0%,
     100% {
         opacity: 1;
@@ -324,7 +341,7 @@ body {
     line-height: 1;
     text-decoration: none;
     white-space: nowrap;
-    transform: translate3d(0,0,0);
+    transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transition:
@@ -593,7 +610,8 @@ body {
     align-items: center;
     gap: 0.125rem 0.25rem;
     color: #9ca3af;
-    font-size: 0.875rem; /* text-sm equivalent */
+    font-size: 0.875rem;
+    /* text-sm equivalent */
     /* text-gray-400 */
     margin-top: 0.5rem;
     margin-bottom: 1rem;
@@ -629,7 +647,8 @@ body {
     padding: 0.875rem 1.25rem;
 }
 
-.btn-hero-primary, .btn-cyan {
+.btn-hero-primary,
+.btn-cyan {
     background: linear-gradient(180deg, rgba(6, 182, 212, 0.12) 0%, rgba(6, 182, 212, 0.03) 100%);
     border-color: rgba(6, 182, 212, 0.2) !important;
     color: #cffafe;
@@ -638,7 +657,8 @@ body {
         inset 0 1px 0 rgba(6, 182, 212, 0.15);
 }
 
-.btn-hero-primary:hover, .btn-cyan:hover {
+.btn-hero-primary:hover,
+.btn-cyan:hover {
     background: linear-gradient(180deg, rgba(6, 182, 212, 0.18) 0%, rgba(6, 182, 212, 0.06) 100%);
     border-color: rgba(6, 182, 212, 0.35) !important;
     color: #ffffff;
@@ -653,6 +673,7 @@ body {
 
 /* ── Mobile Touch Enhancements ────────────────────────────────── */
 @media (hover: none) and (pointer: coarse) {
+
     /* Solid content cards should NOT go transparent on tap (grid bleeds through) */
     .solid-content-card:active,
     .solid-content-card.tapped {
@@ -735,6 +756,7 @@ span a.tapped,
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
@@ -814,11 +836,11 @@ span a.tapped,
 }
 
 /* Stagger children: each child delays slightly */
-.reveal-stagger > .reveal {
+.reveal-stagger>.reveal {
     transition-delay: calc(var(--reveal-i, 0) * 0.08s);
 }
 
-.reveal-stagger > .reveal-scale {
+.reveal-stagger>.reveal-scale {
     transition-delay: calc(var(--reveal-i, 0) * 0.06s);
 }
 
@@ -955,12 +977,15 @@ span a.tapped,
 .blog-content .text-tiny {
     font-size: 0.75em;
 }
+
 .blog-content .text-small {
     font-size: 0.875em;
 }
+
 .blog-content .text-big {
     font-size: 1.25em;
 }
+
 .blog-content .text-huge {
     font-size: 1.5em;
 }
@@ -1150,7 +1175,13 @@ p iframe {
 /* ── Interactive Micro-Animations ────────────────────────────── */
 
 /* Button Click/Active State */
-.btn-primary:active, .btn-ghost:active, .btn-icon:active, .btn-pagination:active, .btn-hero-primary:active, .btn-hero-ghost:active, .nav-btn:active {
+.btn-primary:active,
+.btn-ghost:active,
+.btn-icon:active,
+.btn-pagination:active,
+.btn-hero-primary:active,
+.btn-hero-ghost:active,
+.nav-btn:active {
     transform: scale(0.95) translateZ(0) !important;
     transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
@@ -1229,14 +1260,45 @@ p iframe {
 }
 
 /* Per-brand colours (resting glyph stays neutral via the base `color`). */
-.btn-icon--github   { --brand: 240, 246, 252; --brand-glyph: 245, 248, 252; }
-.btn-icon--linkedin { --brand: 20, 120, 220;  --brand-glyph: 130, 185, 250; }
-.btn-icon--telegram { --brand: 38, 158, 215;  --brand-glyph: 130, 200, 240; }
-.btn-icon--x        { --brand: 225, 228, 235;  --brand-glyph: 240, 242, 248; }
-.btn-icon--leetcode { --brand: 245, 158, 30;   --brand-glyph: 250, 195, 120; }
-.btn-icon--youtube  { --brand: 255, 50, 50;    --brand-glyph: 255, 130, 130; }
-.btn-icon--instagram{ --brand: 225, 48, 108;   --brand-glyph: 245, 130, 175; }
-.btn-icon--neutral  { --brand: 210, 222, 240;  --brand-glyph: 240, 244, 250; }
+.btn-icon--github {
+    --brand: 240, 246, 252;
+    --brand-glyph: 245, 248, 252;
+}
+
+.btn-icon--linkedin {
+    --brand: 20, 120, 220;
+    --brand-glyph: 130, 185, 250;
+}
+
+.btn-icon--telegram {
+    --brand: 38, 158, 215;
+    --brand-glyph: 130, 200, 240;
+}
+
+.btn-icon--x {
+    --brand: 225, 228, 235;
+    --brand-glyph: 240, 242, 248;
+}
+
+.btn-icon--leetcode {
+    --brand: 245, 158, 30;
+    --brand-glyph: 250, 195, 120;
+}
+
+.btn-icon--youtube {
+    --brand: 255, 50, 50;
+    --brand-glyph: 255, 130, 130;
+}
+
+.btn-icon--instagram {
+    --brand: 225, 48, 108;
+    --brand-glyph: 245, 130, 175;
+}
+
+.btn-icon--neutral {
+    --brand: 210, 222, 240;
+    --brand-glyph: 240, 244, 250;
+}
 
 /* Liquid-glass inner illumination on hover — light blooms softly from
    inside, fully contained within the button (Apple Control Center feel:
@@ -1258,7 +1320,9 @@ p iframe {
 /* ── Equal-width helper — for paired action buttons that should
    line up (e.g. GitHub / Live site on a project card). ─────────── */
 .btn-uniform {
-    width: 8rem;
+    width: 7rem;
+    text-align: center;
+    justify-content: center;
 }
 
 /* ── Full-width action pair helper — used on 404 / empty states.

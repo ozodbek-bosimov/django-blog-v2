@@ -488,10 +488,12 @@
 
 .profile-panel__img {
     width: 100%;
-    max-width: 100%;
+    max-width: 495px;
     height: auto;
     display: block;
     border-radius: 0.35rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* ── Calendar Panel ───────────────────────────────────────────── */
@@ -574,6 +576,7 @@
     border-radius: 2px !important;
     width: 8px !important;
     height: 8px !important;
+    box-sizing: border-box !important;
     outline: none !important;
 }
 
@@ -653,8 +656,7 @@
 #github-calendar-container .calendar-graph svg,
 #github-calendar-container .js-calendar-graph svg {
     height: auto;
-    min-width: 600px;
-    /* Ensure SVG doesn't shrink infinitely */
+    display: block;
 }
 
 /* The GitHub grid is a <table> scaled to fit the panel via JS
@@ -664,6 +666,10 @@
 #github-calendar-container .calendar-graph {
     overflow-x: hidden !important;
     align-items: flex-start !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 #github-calendar-container table.ContributionCalendar-grid {
@@ -681,6 +687,18 @@
 #github-calendar-container .ContributionCalendar-label {
     padding-left: 0.35rem !important;
     padding-right: 1.5rem !important;
+}
+
+/* The month labels (top row, <thead>) are <td colspan> cells. The
+   padding-right above, applied to the current month's small colspan (e.g.
+   "Jun" spanning ~2 weeks), forces those last columns wider — so the final
+   week's cells render as wide rectangles instead of squares. Month text is
+   absolutely positioned, so it still shows with zero padding. Only touch
+   horizontal padding here; leave heights/widths alone so rows aren't
+   affected. */
+#github-calendar-container thead .ContributionCalendar-label {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 #github-calendar-container {
@@ -704,6 +722,35 @@
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite linear;
     border-radius: 0.5rem;
+}
+
+/* Keep panel skeletons in lock-step with the stat images they replace
+   so there is no oversize/layout-shift on mobile. */
+.profile-panel .skeleton-loader {
+    max-width: 495px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* The contribution grid lives in a fixed-height wrapper (#github-cal-wrap,
+   sized by setCalReserve in about.html) that stays the same before and after
+   load, so the card never resizes. The skeleton simply fills that wrapper. */
+#github-cal-skeleton {
+    max-width: 100%;
+    height: 100%;
+    flex: none;
+}
+
+/* Languages skeleton mirrors the breakpoint-swapped languages card:
+   495x165 on mobile (full width), 320x165 on desktop (side column). */
+#github-langs-skeleton {
+    aspect-ratio: 495 / 165;
+}
+
+@media (min-width: 640px) {
+    #github-langs-skeleton {
+        aspect-ratio: 320 / 165;
+    }
 }
 
 @keyframes shimmer {
@@ -789,12 +836,19 @@
 
 /* ── Streak responsive sizing ────────────────────────────────── */
 .streak-responsive {
-    max-width: 100%;
+    max-width: 495px;
     width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 @media (min-width: 640px) {
-    .streak-responsive {
+    /* The second selector matches the streak skeleton specifically. It needs
+       higher specificity than `.profile-panel .skeleton-loader { max-width:
+       495px }` (0,2,0); otherwise the skeleton would render wider (and taller)
+       than the 65% streak image, making the card shrink once the image loads. */
+    .streak-responsive,
+    .profile-panel .skeleton-loader.streak-responsive {
         max-width: 65%;
     }
 }
