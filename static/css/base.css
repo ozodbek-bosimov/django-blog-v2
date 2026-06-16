@@ -121,6 +121,20 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-ExtraBold.woff2") format("woff2");
+    font-weight: 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Black.woff2") format("woff2");
+    font-weight: 900;
+    font-display: swap;
+}
+
 html {
     overflow-anchor: none;
     scrollbar-width: thin;
@@ -509,6 +523,50 @@ body {
     color: #94a3b8;
 }
 
+/* ── Topics grid cards ──────────────────────────────────────────
+   Icon-led, left-aligned list cards that match the site's blog/
+   project cards (tag icon + title + meta) instead of plain centred
+   text boxes. Hover stays subtle: colour shift + a small arrow nudge,
+   layered on top of the shared .glass-card hover. */
+.topic-card {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1rem 1.125rem;
+    text-decoration: none;
+    height: 100%;
+}
+
+.topic-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.topic-card-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e5e7eb;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.topic-card-arrow {
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    color: #64748b;
+}
+
+/* Press feedback — quick scale-down on click/tap. !important is required
+   to override the .reveal/.reveal-visible transform (which otherwise wins
+   by source order on desktop and via !important on mobile). */
+.topic-card:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
 @media (min-width: 640px) {
     .blog-cards-grid {
         max-width: 760px;
@@ -888,22 +946,34 @@ span a.tapped,
     font-weight: revert;
 }
 
+.blog-content h1,
 .blog-content h2,
 .blog-content h3,
 .blog-content h4,
 .blog-content h5,
 .blog-content h6 {
     color: #f3f4f6;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
     font-weight: 600;
     line-height: 1.3;
     letter-spacing: 0.025em;
 }
 
+.blog-content h1 {
+    font-size: 1.75rem;
+    margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+    .blog-content h1 {
+        font-size: 2.25rem;
+    }
+}
+
 .blog-content h2 {
     font-size: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(55, 65, 81, 0.5);
     padding-bottom: 0.5rem;
 }
 
@@ -924,8 +994,8 @@ span a.tapped,
 }
 
 .blog-content p {
-    margin-bottom: 1.5rem;
-    line-height: 1.8;
+    margin-bottom: 1rem;
+    line-height: 1.65;
     color: #f3f4f6;
     font-size: 1.05rem;
     overflow-wrap: anywhere;
@@ -934,10 +1004,10 @@ span a.tapped,
 
 .blog-content ul,
 .blog-content ol {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     padding-left: 1.5rem;
     color: #f3f4f6;
-    line-height: 1.8;
+    line-height: 1.65;
     font-size: 1.05rem;
 }
 
@@ -976,18 +1046,22 @@ span a.tapped,
 /* CKEditor font-size utility classes — canonical values */
 .blog-content .text-tiny {
     font-size: 0.75em;
+    color: inherit;
 }
 
 .blog-content .text-small {
     font-size: 0.875em;
+    color: inherit;
 }
 
 .blog-content .text-big {
     font-size: 1.25em;
+    color: inherit;
 }
 
 .blog-content .text-huge {
     font-size: 1.5em;
+    color: inherit;
 }
 
 .blog-content a {
@@ -1037,12 +1111,92 @@ p iframe {
     border-radius: 0 !important;
 }
 
+/* Images resized via the editor handles carry an inline width on the
+   <figure>; make the inner <img> fill that width so the resize sticks. */
+.blog-content figure.image.image_resized {
+    box-sizing: border-box;
+    display: block;
+}
+
+.blog-content figure.image.image_resized img {
+    width: 100%;
+}
+
 .blog-content figure.image figcaption {
     padding: 0.3rem 0.75rem;
     text-align: center;
     font-size: 0.85em;
     color: #e2e8f0;
     background: rgba(55, 65, 81, 0.8);
+}
+
+/* ── Image alignment (CKEditor imageStyle: alignLeft/Center/Right) ──
+   These classes are emitted by the editor but only styled inside the
+   admin bundle. Re-declare them so alignment works on the public site. */
+.blog-content figure.image.image-style-align-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.blog-content figure.image.image-style-align-left {
+    float: left;
+    max-width: 50%;
+    margin: 0.5rem 1.5rem 1rem 0;
+}
+
+.blog-content figure.image.image-style-align-right {
+    float: right;
+    max-width: 50%;
+    margin: 0.5rem 0 1rem 1.5rem;
+}
+
+/* On narrow screens floated images become full-width blocks so text
+   never gets squeezed into an unreadable column beside them. */
+@media (max-width: 640px) {
+    .blog-content figure.image.image-style-align-left,
+    .blog-content figure.image.image-style-align-right {
+        float: none;
+        max-width: 100%;
+        margin: 1.5rem auto;
+    }
+}
+
+/* ── Highlight markers & pens (CKEditor highlight feature) ──────────
+   Background markers keep dark text for contrast on the bright fills;
+   pen colours are brightened for legibility on the dark theme. */
+.blog-content .marker-yellow,
+.blog-content .marker-green,
+.blog-content .marker-pink,
+.blog-content .marker-blue {
+    color: #0f172a;
+    padding: 0 0.1em;
+    border-radius: 2px;
+}
+
+.blog-content .marker-yellow {
+    background-color: #fdfd77;
+}
+
+.blog-content .marker-green {
+    background-color: #62f962;
+}
+
+.blog-content .marker-pink {
+    background-color: #fc7899;
+}
+
+.blog-content .marker-blue {
+    background-color: #72ccfd;
+}
+
+.blog-content .pen-red {
+    background-color: transparent;
+    color: #f87171;
+}
+
+.blog-content .pen-green {
+    background-color: transparent;
+    color: #4ade80;
 }
 
 .blog-content iframe {
@@ -1116,8 +1270,8 @@ p iframe {
 .blog-content hr {
     border: none;
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 2.5rem 0;
+    background: rgba(55, 65, 81, 0.5);
+    margin: 1.5rem 0;
 }
 
 /* ── Todo / Checkbox List ───────────────────────────────────────── */

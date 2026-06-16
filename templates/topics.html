@@ -29,17 +29,21 @@
 </div>
 
 <div class='text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
+  {% if all_topics %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
     {% for topic in all_topics %}
-    <a href="{% url 'topic' topic.topic %}" 
-      class="group relative glass-card px-6 py-5 hover:ring-cyan-500/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center text-center reveal-scale">
-        <div>
-          <h3 class="text-sm md:text-base font-medium text-gray-200 group-hover:text-cyan-300 transition-colors">{{ topic.topic }}</h3>
-          <div class="topic-count mt-1">{{ topic.count }} post{{ topic.count|pluralize }}</div>
-        </div>
+    <a href="{% url 'topic' topic.topic %}" class="topic-card glass-card reveal">
+        <span class="topic-card-body">
+          <span class="topic-card-name">{{ topic.topic }}</span>
+          <span class="topic-count">{{ topic.count }} post{{ topic.count|pluralize }}</span>
+        </span>
+        <i class="bi bi-arrow-right topic-card-arrow"></i>
     </a>
     {% endfor %}
   </div>
+  {% else %}
+  <p class="text-center text-gray-400 py-10">No topics available yet.</p>
+  {% endif %}
 </div>
 
 {% endblock %}
