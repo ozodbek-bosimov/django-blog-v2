@@ -28,7 +28,9 @@
 .bi-arrow-right::before { content: "\f138"; }
 .bi-box-arrow-up-right::before { content: "\f1c5"; }
 .bi-calendar4-event::before { content: "\f215"; }
+.bi-check2::before { content: "\f272"; }
 .bi-chevron-up::before { content: "\f286"; }
+.bi-clipboard::before { content: "\f290"; }
 .bi-clock::before { content: "\f293"; }
 .bi-code-slash::before { content: "\f2c6"; }
 .bi-dot::before { content: "\f309"; }

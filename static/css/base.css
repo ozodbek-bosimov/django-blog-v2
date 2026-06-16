@@ -535,6 +535,12 @@ body {
     padding: 1rem 1.125rem;
     text-decoration: none;
     height: 100%;
+    /* Fix Android Chrome: overflow:hidden + border-radius fails to clip
+       during momentum/overscroll. contain:paint forces compositor-level
+       clipping so content never bleeds outside rounded corners. */
+    contain: paint;
+    -webkit-transform-style: flat;
+    transform-style: flat;
 }
 
 .topic-card-body {
