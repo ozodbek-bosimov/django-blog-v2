@@ -535,9 +535,7 @@ body {
     padding: 1rem 1.125rem;
     text-decoration: none;
     height: 100%;
-    /* Fix Android Chrome: overflow:hidden + border-radius fails to clip
-       during momentum/overscroll. contain:paint forces compositor-level
-       clipping so content never bleeds outside rounded corners. */
+    overflow: hidden;
     contain: paint;
     -webkit-transform-style: flat;
     transform-style: flat;
@@ -776,6 +774,20 @@ body {
     .blog-list-card {
         content-visibility: auto;
         contain-intrinsic-size: auto 360px;
+    }
+
+    /* Topic cards: all 5-6 are visible at once (unlike blog cards which
+       lazy-render via content-visibility). backdrop-filter on this many
+       simultaneous elements causes GPU seams / broken border-radius on
+       Android Chrome. Swap blur for a slightly more opaque solid fill
+       (visually identical on the dark background) and force a mask so
+       the compositor clips rounded corners pixel-perfectly. */
+    .topic-card.glass-card {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(255, 255, 255, 0.04);
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
+        mask-image: linear-gradient(#000, #000);
     }
 
     .btn-primary,
