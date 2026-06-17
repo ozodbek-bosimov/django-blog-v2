@@ -613,9 +613,13 @@
 
 #github-calendar-container .ContributionCalendar-day {
     background-color: #2d3748 !important;
-    border-radius: 2px !important;
-    width: 8px !important;
-    height: 8px !important;
+    border-radius: 4px !important;
+    /* Bigger cells + tighter gap (see border-spacing below) so the grid reads
+       as dense as the LeetCode heatmap instead of small, spaced-out dots.
+       Final on-screen size is set by the fit-to-width scale; what matters
+       here is the cell-to-gap ratio. */
+    width: 17px !important;
+    height: 17px !important;
     box-sizing: border-box !important;
     outline: none !important;
 }

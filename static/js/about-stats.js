@@ -234,7 +234,8 @@ document.addEventListener("DOMContentLoaded", function () {
           );
           const lastCell = validCells[validCells.length - 1];
 
-          lastCell.style.boxShadow = "inset 0 0 0 1px #ffa116";
+          lastCell.style.boxShadow =
+            "0 0 0 1px #ffa116, inset 0 0 0 1px #ffa116";
           lastCell.style.boxSizing = "border-box";
           lastCell.style.backgroundColor = "transparent";
 
