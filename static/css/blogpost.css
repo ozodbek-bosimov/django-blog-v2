@@ -108,12 +108,24 @@ pre[class*="language-"] {
     padding: 0.2rem 0.45rem;
     border-radius: 9999px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .copy-btn:hover {
     color: #67e8f9;
     border-color: rgba(103, 232, 249, 0.5);
+}
+
+.copy-btn:active {
+    transform: scale(0.92) translateZ(0);
+    transition: transform 90ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .copy-btn.copied {

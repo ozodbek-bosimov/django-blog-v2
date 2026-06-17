@@ -193,7 +193,7 @@ if (searchModal) {
   var interactive =
     "a, button, .glass-card, .btn-icon, .btn-primary, .btn-ghost, " +
     ".btn-hero-primary, .btn-hero-ghost, .btn-pagination, .nav-btn, " +
-    ".solid-content-card";
+    ".solid-content-card, .profile-card";
 
   // ── Fix 1: Clear sticky hover on page restore ──────────────────
   // Pre-blur before page is cached
