@@ -177,7 +177,7 @@ body {
 }
 
 * {
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent !important;
     /* iOS/Android: kill the default grey/blue flash on every tap.
        Our own :active + .tapped animations provide the feedback instead. */
 }
