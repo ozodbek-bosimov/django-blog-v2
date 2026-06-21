@@ -117,51 +117,56 @@
     <!-- Inline lazy-load: progressive background loading + scroll-triggered -->
     <script>
     (function(){
-        var phs = document.querySelectorAll(".lazy-iframe-ph");
-        if (!phs.length) return;
+        function runLazyIframes() {
+            var phs = document.querySelectorAll(".lazy-iframe-ph");
+            if (!phs.length) return;
 
-        var queue = [];  // iframes waiting to be loaded
+            var queue = [];
 
-        function loadIframe(ph) {
-            if (ph._loaded) return;  // already loaded (guard against double-fire)
-            ph._loaded = true;
-            var tpl = ph.nextElementSibling;
-            if (!tpl || tpl.tagName !== "TEMPLATE") return;
-            var el = tpl.content.firstElementChild;
-            if (!el) return;
-            var iframe = el.cloneNode(true);
-            ph.parentNode.insertBefore(iframe, ph);
-            ph.remove();
-            tpl.remove();
+            function loadIframe(ph) {
+                if (ph._loaded) return;
+                ph._loaded = true;
+                var tpl = ph.nextElementSibling;
+                if (!tpl || tpl.tagName !== "TEMPLATE") return;
+                var el = tpl.content.firstElementChild;
+                if (!el) return;
+                var iframe = el.cloneNode(true);
+                ph.parentNode.insertBefore(iframe, ph);
+                ph.remove();
+                tpl.remove();
+            }
+
+            if ("IntersectionObserver" in window) {
+                var obs = new IntersectionObserver(function(entries){
+                    entries.forEach(function(e){
+                        if (e.isIntersecting) {
+                            obs.unobserve(e.target);
+                            loadIframe(e.target);
+                        }
+                    });
+                }, {rootMargin: "300px 0px"});
+                phs.forEach(function(ph){ obs.observe(ph); queue.push(ph); });
+            } else {
+                phs.forEach(loadIframe);
+                return;
+            }
+
+            setTimeout(function tick(){
+                while (queue.length && queue[0]._loaded) queue.shift();
+                if (!queue.length) return;
+                var ph = queue.shift();
+                obs.unobserve(ph);
+                loadIframe(ph);
+                if (queue.length) setTimeout(tick, 1500);
+            }, 2000);
         }
 
-        // 1) IntersectionObserver: load immediately when user scrolls near
-        if ("IntersectionObserver" in window) {
-            var obs = new IntersectionObserver(function(entries){
-                entries.forEach(function(e){
-                    if (e.isIntersecting) {
-                        obs.unobserve(e.target);
-                        loadIframe(e.target);
-                    }
-                });
-            }, {rootMargin: "300px 0px"});
-            phs.forEach(function(ph){ obs.observe(ph); queue.push(ph); });
+        // Works on hard load AND HTMX boost navigation
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", runLazyIframes);
         } else {
-            phs.forEach(loadIframe);
-            return;
+            runLazyIframes();
         }
-
-        // 2) Background: after 2s, load remaining one by one every 1.5s
-        setTimeout(function tick(){
-            // Skip already-loaded placeholders
-            while (queue.length && queue[0]._loaded) queue.shift();
-            if (!queue.length) return;
-            var ph = queue.shift();
-            obs.unobserve(ph);
-            loadIframe(ph);
-            // Continue with remaining
-            if (queue.length) setTimeout(tick, 1500);
-        }, 2000);
     })();
     </script>
 
@@ -250,52 +255,45 @@
 
 <!-- Custom script to convert oembeds and standalone links to actual embeds -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const content = document.querySelector('.blog-content');
-        if (!content) return;
+    (function() {
+        function processEmbeds() {
+            const content = document.querySelector('.blog-content');
+            if (!content) return;
 
-        // 1. Process <oembed> tags (Twitter, Instagram)
-        const oembeds = content.querySelectorAll('oembed');
-        oembeds.forEach(oembed => {
-            let url = oembed.getAttribute('url') || '';
-            if (!url) return;
-            
-            let figure = oembed.closest('figure.media') || oembed.parentElement;
-            
-            // X / Twitter
-            if (url.includes('twitter.com') || url.includes('x.com')) {
-                url = url.replace('x.com', 'twitter.com');
-                const blockquote = document.createElement('blockquote');
-                blockquote.className = 'twitter-tweet';
-                blockquote.setAttribute('data-theme', 'dark'); // Match site theme
-                const a = document.createElement('a');
-                a.href = url;
-                blockquote.appendChild(a);
-                figure.parentNode.replaceChild(blockquote, figure);
-            }
-            // Instagram
-            else if (url.includes('instagram.com')) {
-                const blockquote = document.createElement('blockquote');
-                blockquote.className = 'instagram-media';
-                blockquote.setAttribute('data-instgrm-permalink', url);
-                blockquote.setAttribute('data-instgrm-version', '14');
-                blockquote.setAttribute('data-theme', 'dark');
-                blockquote.style.maxWidth = '540px';
-                blockquote.style.width = '100%';
-                figure.parentNode.replaceChild(blockquote, figure);
-            }
-        });
+            // 1. Process <oembed> tags (Twitter, Instagram)
+            content.querySelectorAll('oembed').forEach(oembed => {
+                let url = oembed.getAttribute('url') || '';
+                if (!url) return;
+                let figure = oembed.closest('figure.media') || oembed.parentElement;
 
-        // 2. Convert bare links (LinkedIn, unsupported Instagram reels) into embeds
-        const links = content.querySelectorAll('a');
-        links.forEach(link => {
-            const url = link.href;
-            const parent = link.parentElement;
-            
-            // Only process if the link is the only content in its paragraph
-            if (parent && parent.tagName === 'P' && parent.textContent.trim() === link.textContent.trim()) {
-                
-                // LinkedIn Posts
+                if (url.includes('twitter.com') || url.includes('x.com')) {
+                    url = url.replace('x.com', 'twitter.com');
+                    const blockquote = document.createElement('blockquote');
+                    blockquote.className = 'twitter-tweet';
+                    blockquote.setAttribute('data-theme', 'dark');
+                    const a = document.createElement('a');
+                    a.href = url;
+                    blockquote.appendChild(a);
+                    figure.parentNode.replaceChild(blockquote, figure);
+                } else if (url.includes('instagram.com')) {
+                    const blockquote = document.createElement('blockquote');
+                    blockquote.className = 'instagram-media';
+                    blockquote.setAttribute('data-instgrm-permalink', url);
+                    blockquote.setAttribute('data-instgrm-version', '14');
+                    blockquote.setAttribute('data-theme', 'dark');
+                    blockquote.style.maxWidth = '540px';
+                    blockquote.style.width = '100%';
+                    figure.parentNode.replaceChild(blockquote, figure);
+                }
+            });
+
+            // 2. Convert bare links (LinkedIn, Instagram reels) into embeds
+            content.querySelectorAll('a').forEach(link => {
+                const url = link.href;
+                const parent = link.parentElement;
+                if (!parent || parent.tagName !== 'P') return;
+                if (parent.textContent.trim() !== link.textContent.trim()) return;
+
                 if (url.includes('linkedin.com/posts/')) {
                     const match = url.match(/-([0-9]{19})/);
                     if (match && match[1]) {
@@ -303,7 +301,6 @@
                         let urnType = 'share';
                         if (url.includes('ugcPost')) urnType = 'ugcPost';
                         else if (url.includes('activity')) urnType = 'activity';
-                        
                         const iframe = document.createElement('iframe');
                         iframe.src = `https://www.linkedin.com/embed/feed/update/urn:li:${urnType}:${urnId}?theme=dark`;
                         iframe.height = "600";
@@ -314,13 +311,9 @@
                         iframe.allowFullscreen = true;
                         iframe.title = "Embedded LinkedIn post";
                         iframe.classList.add("w-full", "rounded-lg", "shadow-sm", "my-4");
-                        
                         parent.parentNode.replaceChild(iframe, parent);
                     }
-                }
-
-                // Instagram bare links (like /reels/ which CKEditor might miss)
-                else if (url.includes('instagram.com/')) {
+                } else if (url.includes('instagram.com/')) {
                     const blockquote = document.createElement('blockquote');
                     blockquote.className = 'instagram-media';
                     blockquote.setAttribute('data-instgrm-permalink', url);
@@ -330,18 +323,20 @@
                     blockquote.style.width = '100%';
                     parent.parentNode.replaceChild(blockquote, parent);
                 }
-            }
-        });
+            });
 
-        // Trigger Twitter/Instagram widgets to re-scan the DOM since we dynamically created the blockquotes
-        setTimeout(() => {
-            if (window.twttr && window.twttr.widgets) {
-                window.twttr.widgets.load();
-            }
-            if (window.instgrm && window.instgrm.Embeds) {
-                window.instgrm.Embeds.process();
-            }
-        }, 500);
-    });
+            setTimeout(() => {
+                if (window.twttr && window.twttr.widgets) window.twttr.widgets.load();
+                if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
+            }, 500);
+        }
+
+        // Works on hard load AND HTMX boost navigation
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', processEmbeds);
+        } else {
+            processEmbeds();
+        }
+    })();
 </script>
 {% endblock extra_scripts %}
