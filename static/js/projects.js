@@ -147,7 +147,6 @@
         setTimeout(setupAll, 50);
       }
     };
-    document.body.addEventListener("htmx:afterSettle", triggerInit);
     document.body.addEventListener("htmx:restored", triggerInit);
     window._projectsListenerAdded = true;
   }
