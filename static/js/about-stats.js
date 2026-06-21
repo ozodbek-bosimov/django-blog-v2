@@ -59,6 +59,9 @@ function initAboutStats() {
       calWrap.style.height = Math.round(0.16 * w + 14) + "px";
     };
     setCalReserve();
+    // Clean up previous resize listener to prevent accumulation
+    if (window._aboutCalResize) window.removeEventListener("resize", window._aboutCalResize);
+    window._aboutCalResize = setCalReserve;
     window.addEventListener("resize", setCalReserve);
 
     // Sequential reveal: stats → langs → streak → calendar
@@ -137,6 +140,11 @@ function initAboutStats() {
         const next = buildLangsUrl(currentLangsCardWidth());
         if (langsImg.src !== next) langsImg.src = next;
       };
+      // Clean up previous matchMedia listener to prevent accumulation
+      if (window._aboutLangsMqHandler && langsMq.removeEventListener) {
+        langsMq.removeEventListener("change", window._aboutLangsMqHandler);
+      }
+      window._aboutLangsMqHandler = swapLangs;
       if (langsMq.addEventListener) langsMq.addEventListener("change", swapLangs);
       else if (langsMq.addListener)  langsMq.addListener(swapLangs);
     } else items[1].loaded = true;
@@ -409,7 +417,6 @@ if (!window._aboutStatsListenerAdded) {
   };
   document.body.addEventListener("htmx:afterSettle", triggerInit);
   document.body.addEventListener("htmx:restored", triggerInit);
-  window.addEventListener("popstate", triggerInit);
   window._aboutStatsListenerAdded = true;
 }
 
