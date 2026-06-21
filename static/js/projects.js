@@ -135,8 +135,20 @@
     document.querySelectorAll(".project-desc").forEach(setupCard);
   }
 
-  // Run immediately — script re-executes on HTMX navigation
-  setupAll();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupAll);
+  } else {
+    setupAll();
+  }
+
+  if (!window._projectsListenerAdded) {
+    document.body.addEventListener("htmx:afterSettle", function () {
+      if (window.location.pathname.includes('/projects')) {
+        setupAll();
+      }
+    });
+    window._projectsListenerAdded = true;
+  }
 
   var resizeTimer = null;
   window.addEventListener("resize", function () {

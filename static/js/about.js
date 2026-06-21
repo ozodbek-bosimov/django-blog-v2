@@ -5,9 +5,20 @@ function initAbout() {
   });
 }
 
-// Run immediately — this script is inside {% block content %},
-// so it re-executes on every HTMX navigation automatically.
-initAbout();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAbout);
+} else {
+  initAbout();
+}
+
+if (!window._aboutListenerAdded) {
+  document.body.addEventListener("htmx:afterSettle", function () {
+    if (window.location.pathname.includes('/about')) {
+      initAbout();
+    }
+  });
+  window._aboutListenerAdded = true;
+}
 
 
 function toggleBullets(listId) {
