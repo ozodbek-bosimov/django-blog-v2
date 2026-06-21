@@ -90,18 +90,6 @@
         blockquote.appendChild(a);
         container.appendChild(blockquote);
 
-        // Load or trigger Twitter widgets.js
-        if (!document.getElementById('twitter-wjs')) {
-          const script = document.createElement('script');
-          script.id = 'twitter-wjs';
-          script.src = 'https://platform.twitter.com/widgets.js';
-          script.async = true;
-          script.charset = 'utf-8';
-          document.head.appendChild(script);
-        } else if (window.twttr && window.twttr.widgets) {
-          setTimeout(() => { window.twttr.widgets.load(container); }, 50);
-        }
-
         return container;
       }
 
@@ -174,6 +162,21 @@
           }
         }
       });
+
+      // 3. Trigger Twitter widgets.js to render the created blockquotes
+      const hasTwitter = content.querySelector('.twitter-tweet');
+      if (hasTwitter) {
+        if (!document.getElementById('twitter-wjs')) {
+          const script = document.createElement('script');
+          script.id = 'twitter-wjs';
+          script.src = 'https://platform.twitter.com/widgets.js';
+          script.async = true;
+          script.charset = 'utf-8';
+          document.head.appendChild(script);
+        } else if (window.twttr && window.twttr.widgets) {
+          window.twttr.widgets.load(content);
+        }
+      }
     }
 
     try {
