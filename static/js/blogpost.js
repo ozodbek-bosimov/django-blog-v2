@@ -133,28 +133,41 @@
         }
       });
 
+      const hasTwitter = !!content.querySelector('.twitter-tweet') || !!content.querySelector('blockquote.twitter-tweet');
+      const hasInstagram = !!content.querySelector('.instagram-media') || !!content.querySelector('blockquote.instagram-media');
+
+      if (hasTwitter && !document.getElementById('twitter-wjs')) {
+        const s = document.createElement('script');
+        s.id = 'twitter-wjs';
+        s.src = 'https://platform.twitter.com/widgets.js';
+        s.async = true;
+        document.head.appendChild(s);
+      }
+
+      if (hasInstagram && !document.getElementById('instagram-wjs')) {
+        const s = document.createElement('script');
+        s.id = 'instagram-wjs';
+        s.src = 'https://www.instagram.com/embed.js';
+        s.async = true;
+        document.head.appendChild(s);
+      }
+
       // 3. Process widgets with retries if scripts are still loading
       let retries = 0;
       function tryProcessWidgets() {
-        let processedTwitter = false;
-        let processedInstagram = false;
+        let processedTwitter = !hasTwitter;
+        let processedInstagram = !hasInstagram;
 
-        if (window.twttr && window.twttr.widgets) {
-          window.twttr.widgets.load();
+        if (hasTwitter && window.twttr && window.twttr.widgets) {
+          try { window.twttr.widgets.load(); } catch(e){}
           processedTwitter = true;
         }
-        if (window.instgrm && window.instgrm.Embeds) {
-          window.instgrm.Embeds.process();
+        if (hasInstagram && window.instgrm && window.instgrm.Embeds) {
+          try { window.instgrm.Embeds.process(); } catch(e){}
           processedInstagram = true;
         }
 
-        const hasTwitter = !!content.querySelector('.twitter-tweet') || !!content.querySelector('blockquote.twitter-tweet');
-        const hasInstagram = !!content.querySelector('.instagram-media') || !!content.querySelector('blockquote.instagram-media');
-
-        const needTwitterRetry = hasTwitter && !processedTwitter;
-        const needInstagramRetry = hasInstagram && !processedInstagram;
-
-        if ((needTwitterRetry || needInstagramRetry) && retries < 15) {
+        if ((!processedTwitter || !processedInstagram) && retries < 20) {
           retries++;
           setTimeout(tryProcessWidgets, 300);
         }
