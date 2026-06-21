@@ -83,9 +83,9 @@
             iframe.src = `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}&theme=dark`;
             iframe.className = "w-full rounded-lg shadow-sm my-4";
             iframe.style.maxWidth = "550px";
-            iframe.style.height = "600px";
+            iframe.style.height = "750px";
             iframe.frameBorder = "0";
-            iframe.scrolling = "yes";
+            iframe.scrolling = "auto";
             iframe.allowTransparency = "true";
             iframe.allowFullscreen = "true";
             figure.parentNode.replaceChild(iframe, figure);
@@ -98,9 +98,9 @@
             iframe.src = `https://www.instagram.com/p/${shortcode}/embed/?theme=dark`;
             iframe.className = "w-full rounded-lg shadow-sm my-4 bg-white/5";
             iframe.style.maxWidth = "540px";
-            iframe.style.height = "650px";
+            iframe.style.height = "850px";
             iframe.frameBorder = "0";
-            iframe.scrolling = "yes";
+            iframe.scrolling = "auto";
             iframe.allowTransparency = "true";
             iframe.allowFullscreen = "true";
             figure.parentNode.replaceChild(iframe, figure);
@@ -142,9 +142,9 @@
             iframe.src = `https://www.instagram.com/p/${shortcode}/embed/?theme=dark`;
             iframe.className = "w-full rounded-lg shadow-sm my-4 bg-white/5";
             iframe.style.maxWidth = "540px";
-            iframe.style.height = "650px";
+            iframe.style.height = "850px";
             iframe.frameBorder = "0";
-            iframe.scrolling = "yes";
+            iframe.scrolling = "auto";
             iframe.allowTransparency = "true";
             iframe.allowFullscreen = "true";
             parent.parentNode.replaceChild(iframe, parent);
@@ -158,9 +158,9 @@
             iframe.src = `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}&theme=dark`;
             iframe.className = "w-full rounded-lg shadow-sm my-4";
             iframe.style.maxWidth = "550px";
-            iframe.style.height = "600px";
+            iframe.style.height = "750px";
             iframe.frameBorder = "0";
-            iframe.scrolling = "yes";
+            iframe.scrolling = "auto";
             iframe.allowTransparency = "true";
             iframe.allowFullscreen = "true";
             parent.parentNode.replaceChild(iframe, parent);
