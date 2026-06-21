@@ -4,42 +4,45 @@
 // On a hard page load the DOM is already parsed when this runs (script is at
 // the bottom of the block), so we call initAboutStats() directly.
 
+let _aboutStatsInitTimer = null;
 function initAboutStats() {
-  const configData = document.getElementById("about-config-data");
-  const githubUrl = configData ? configData.dataset.github : "";
-  let ghUsername = null;
-  if (githubUrl) {
-    const match = githubUrl.match(/github\.com\/([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) ghUsername = match[1];
-  }
+  if (_aboutStatsInitTimer) clearTimeout(_aboutStatsInitTimer);
+  _aboutStatsInitTimer = setTimeout(() => {
+    const configData = document.getElementById("about-config-data");
+    const githubUrl = configData ? configData.dataset.github : "";
+    let ghUsername = null;
+    if (githubUrl) {
+      const match = githubUrl.match(/github\.com\/([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) ghUsername = match[1];
+    }
 
-  // Time-bucketed cache-buster: refreshes once per hour.
-  const cbStr = Math.floor(Date.now() / 3600000).toString();
-  let statsUrl = "", langsUrl = "", streakUrl = "";
+    // Time-bucketed cache-buster: refreshes once per hour.
+    const cbStr = Math.floor(Date.now() / 3600000).toString();
+    let statsUrl = "", langsUrl = "", streakUrl = "";
 
-  const langsMq = window.matchMedia("(min-width: 640px)");
-  const buildLangsUrl = (cardWidth) =>
-    `https://github-readme-stats-salesp07.vercel.app/api/top-langs/?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&layout=compact&card_width=${cardWidth}&v=${cbStr}`;
-  const currentLangsCardWidth = () => (langsMq.matches ? 320 : 495);
+    const langsMq = window.matchMedia("(min-width: 640px)");
+    const buildLangsUrl = (cardWidth) =>
+      `https://github-readme-stats-salesp07.vercel.app/api/top-langs/?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&layout=compact&card_width=${cardWidth}&v=${cbStr}`;
+    const currentLangsCardWidth = () => (langsMq.matches ? 320 : 495);
 
-  if (ghUsername) {
-    statsUrl = `https://github-readme-stats-salesp07.vercel.app/api?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&include_all_commits=true&count_private=true&rank_icon=github&show_icons=true&v=${cbStr}`;
-    langsUrl = buildLangsUrl(currentLangsCardWidth());
-    streakUrl = `https://github-readme-streak-stats-salesp07.vercel.app/?user=${ghUsername}&theme=dark&hide_border=true&background=00000000&stroke=334155&ring=06b6d4&fire=67e8f9&v=${cbStr}`;
+    if (ghUsername) {
+      statsUrl = `https://github-readme-stats-salesp07.vercel.app/api?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&include_all_commits=true&count_private=true&rank_icon=github&show_icons=true&v=${cbStr}`;
+      langsUrl = buildLangsUrl(currentLangsCardWidth());
+      streakUrl = `https://github-readme-streak-stats-salesp07.vercel.app/?user=${ghUsername}&theme=dark&hide_border=true&background=00000000&stroke=334155&ring=06b6d4&fire=67e8f9&v=${cbStr}`;
 
-    // Preload in the background
-    setTimeout(() => {
-      new Image().src = statsUrl;
-      new Image().src = langsUrl;
-      new Image().src = streakUrl;
-    }, 50);
-  }
+      // Preload in the background
+      setTimeout(() => {
+        new Image().src = statsUrl;
+        new Image().src = langsUrl;
+        new Image().src = streakUrl;
+      }, 50);
+    }
 
-  let leetcodeUrl = configData ? configData.dataset.leetcode : "";
-  let leetcodeProxyUrl = null;
-  if (leetcodeUrl && leetcodeUrl.includes("leetcode.com")) {
-    leetcodeProxyUrl = `/leetcode-proxy/?v=${cbStr}`;
-  }
+    let leetcodeUrl = configData ? configData.dataset.leetcode : "";
+    let leetcodeProxyUrl = null;
+    if (leetcodeUrl && leetcodeUrl.includes("leetcode.com")) {
+      leetcodeProxyUrl = `/leetcode-proxy/?v=${cbStr}`;
+    }
 
   // ── GitHub Stats ──────────────────────────────────────────────────────────
   const initGithubStats = function () {
@@ -401,21 +404,24 @@ function initAboutStats() {
   } else {
     initLeetcodeStats();
   }
+  }, 50); // end of debounce
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initAboutStats);
-} else {
-  initAboutStats();
-}
+// Run immediately for initial page load (DOM is already parsed up to this point)
+setTimeout(initAboutStats, 10);
 
+// Set up HTMX navigation listeners (only once)
 if (!window._aboutStatsListenerAdded) {
-  const triggerInit = function () {
+  document.body.addEventListener("htmx:afterSettle", function () {
     if (window.location.pathname.includes("/about")) {
       setTimeout(initAboutStats, 50);
     }
-  };
-  document.body.addEventListener("htmx:restored", triggerInit);
+  });
+  document.body.addEventListener("htmx:restored", function () {
+    if (window.location.pathname.includes("/about")) {
+      setTimeout(initAboutStats, 50);
+    }
+  });
   window._aboutStatsListenerAdded = true;
 }
 

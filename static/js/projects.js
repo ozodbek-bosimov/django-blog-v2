@@ -135,19 +135,26 @@
     document.querySelectorAll(".project-desc").forEach(setupCard);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setupAll);
-  } else {
-    setupAll();
+  let _projectsInitTimer = null;
+  function debouncedSetupAll() {
+    if (_projectsInitTimer) clearTimeout(_projectsInitTimer);
+    _projectsInitTimer = setTimeout(setupAll, 50);
   }
 
+  // Run immediately for initial page load
+  setTimeout(debouncedSetupAll, 10);
+
   if (!window._projectsListenerAdded) {
-    const triggerInit = function () {
+    document.body.addEventListener("htmx:afterSettle", function () {
       if (window.location.pathname.includes('/projects')) {
-        setTimeout(setupAll, 50);
+        debouncedSetupAll();
       }
-    };
-    document.body.addEventListener("htmx:restored", triggerInit);
+    });
+    document.body.addEventListener("htmx:restored", function () {
+      if (window.location.pathname.includes('/projects')) {
+        debouncedSetupAll();
+      }
+    });
     window._projectsListenerAdded = true;
   }
 
