@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons-subset.css' %}?v={{ STATIC_ASSET_VERSION }}" />
     <link rel="stylesheet" href="{% static 'css/base.css' %}?v={{ STATIC_ASSET_VERSION }}" />
     <title>{% block title %}{% endblock title %} - Ozodbek Bosimov</title>
-    <script src="{% static 'js/htmx.min.js' %}"></script>
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
     {% block meta %}{% endblock meta %}
 </head>
 
