@@ -1,11 +1,9 @@
 (function () {
-  let scrollListener = null;
-
   function initBlogPost() {
     // Clean up previous scroll listener
-    if (scrollListener) {
-      window.removeEventListener("scroll", scrollListener);
-      scrollListener = null;
+    if (window._blogpostScrollListener) {
+      window.removeEventListener("scroll", window._blogpostScrollListener);
+      window._blogpostScrollListener = null;
     }
 
     /* ── Lazy Load Iframes (Run First to ensure they load even if other things fail) ────────────────────────────────────────── */
@@ -78,8 +76,8 @@
         progressBar.style.width = Math.min(progress, 100) + "%";
       }
 
-      scrollListener = updateProgressBar;
-      window.addEventListener("scroll", scrollListener, { passive: true });
+      window._blogpostScrollListener = updateProgressBar;
+      window.addEventListener("scroll", window._blogpostScrollListener, { passive: true });
       updateProgressBar();
     }
 
@@ -214,11 +212,21 @@
     document.body.addEventListener("htmx:afterSettle", function () {
       if (window.location.pathname.includes('/blog/')) {
         debouncedInitBlogPost();
+      } else {
+        if (window._blogpostScrollListener) {
+          window.removeEventListener("scroll", window._blogpostScrollListener);
+          window._blogpostScrollListener = null;
+        }
       }
     });
     document.body.addEventListener("htmx:restored", function () {
       if (window.location.pathname.includes('/blog/')) {
         debouncedInitBlogPost();
+      } else {
+        if (window._blogpostScrollListener) {
+          window.removeEventListener("scroll", window._blogpostScrollListener);
+          window._blogpostScrollListener = null;
+        }
       }
     });
     window._blogPostListenerAdded = true;
