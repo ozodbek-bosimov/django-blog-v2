@@ -506,13 +506,9 @@
 
 </div>
 <script src="{% static 'js/about.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
-{% endblock %}
 
-{% block extra_scripts %}
-<!-- GitHub Calendar Library -->
+<!-- GitHub Calendar Library + Stats (must be in content block so HTMX re-executes on every navigation) -->
 <script src="https://unpkg.com/github-calendar@2.3.4/dist/github-calendar.min.js"></script>
-
-<!-- GitHub / LeetCode profile-stats loader -->
 {% if about_me %}
 <script>
     window.ABOUT_CONFIG = {
@@ -522,4 +518,4 @@
 </script>
 <script src="{% static 'js/about-stats.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 {% endif %}
-{% endblock extra_scripts %}
+{% endblock %}
