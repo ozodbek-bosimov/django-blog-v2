@@ -166,15 +166,32 @@
       // 3. Trigger Twitter widgets.js to render the created blockquotes
       const hasTwitter = content.querySelector('.twitter-tweet');
       if (hasTwitter) {
-        if (!document.getElementById('twitter-wjs')) {
-          const script = document.createElement('script');
-          script.id = 'twitter-wjs';
-          script.src = 'https://platform.twitter.com/widgets.js';
-          script.async = true;
-          script.charset = 'utf-8';
-          document.head.appendChild(script);
-        } else if (window.twttr && window.twttr.widgets) {
-          window.twttr.widgets.load(content);
+        if (!window.twttr) {
+          window.twttr = (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0],
+              t = window.twttr || {};
+            if (d.getElementById(id)) return t;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://platform.twitter.com/widgets.js";
+            js.async = true;
+            if (fjs) {
+              fjs.parentNode.insertBefore(js, fjs);
+            } else {
+              d.head.appendChild(js);
+            }
+            t._e = [];
+            t.ready = function(f) {
+              t._e.push(f);
+            };
+            return t;
+          }(document, "script", "twitter-wjs"));
+        }
+        
+        if (window.twttr && window.twttr.ready) {
+          window.twttr.ready(function(twttr) {
+            twttr.widgets.load();
+          });
         }
       }
     }
