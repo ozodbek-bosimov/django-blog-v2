@@ -384,7 +384,7 @@
         <div class="profiles-section">
             <div class="profiles-grid" id="profiles-container">
             {% if about_me.leetcode_url %}
-            <article class="profile-card profile-card--leetcode cursor-pointer relative" onclick="window.open('{{ about_me.leetcode_url|escapejs }}', '_blank')" title="View LeetCode Profile">
+            <a href="{{ about_me.leetcode_url }}" target="_blank" rel="noopener noreferrer" hx-boost="false" class="profile-card profile-card--leetcode cursor-pointer relative no-underline" title="View LeetCode Profile">
                 <div class="profile-card__body p-0">
                     <div class="profile-media skeleton-loader" id="leetcode-stats-wrapper">
                         <img
@@ -394,11 +394,11 @@
                         />
                     </div>
                 </div>
-            </article>
+            </a>
             {% endif %}
 
             {% if about_me.github_url %}
-            <article class="profile-card profile-card--github cursor-pointer relative" onclick="window.open('{{ about_me.github_url|escapejs }}', '_blank')" title="View GitHub Profile">
+            <a href="{{ about_me.github_url }}" target="_blank" rel="noopener noreferrer" hx-boost="false" class="profile-card profile-card--github cursor-pointer relative no-underline" title="View GitHub Profile">
                 <div class="profile-card__top" style="padding-left: 5cqw; padding-top: 3cqw; margin-bottom: 1.5cqw;">
                     <div class="flex items-center text-gray-200" style="gap: 4cqw;">
                         <i class="bi bi-github" style="font-size: 4.4cqw; color: #f0f0f0;"></i>
@@ -456,7 +456,7 @@
                         </div>
                     </div>
                 </div>
-            </article>
+            </a>
             {% endif %}
             </div>
         </div>
