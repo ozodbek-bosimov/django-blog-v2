@@ -63,6 +63,112 @@
         console.error("Lazy iframe error:", e);
     }
 
+    /* ── CKEditor / Bare Links Embeds Processing ───────────────────── */
+    function processEmbeds() {
+      const content = document.querySelector('.blog-content');
+      if (!content) return;
+
+      // 1. Process <oembed> tags (Twitter, Instagram)
+      content.querySelectorAll('oembed').forEach(oembed => {
+        let url = oembed.getAttribute('url') || '';
+        if (!url) return;
+        let figure = oembed.closest('figure.media') || oembed.parentElement;
+
+        if (url.includes('twitter.com') || url.includes('x.com')) {
+          url = url.replace('x.com', 'twitter.com');
+          const blockquote = document.createElement('blockquote');
+          blockquote.className = 'twitter-tweet';
+          blockquote.setAttribute('data-theme', 'dark');
+          const a = document.createElement('a');
+          a.href = url;
+          blockquote.appendChild(a);
+          figure.parentNode.replaceChild(blockquote, figure);
+        } else if (url.includes('instagram.com')) {
+          const blockquote = document.createElement('blockquote');
+          blockquote.className = 'instagram-media';
+          blockquote.setAttribute('data-instgrm-permalink', url);
+          blockquote.setAttribute('data-instgrm-version', '14');
+          blockquote.setAttribute('data-theme', 'dark');
+          blockquote.style.maxWidth = '540px';
+          blockquote.style.width = '100%';
+          figure.parentNode.replaceChild(blockquote, figure);
+        }
+      });
+
+      // 2. Convert bare links (LinkedIn, Instagram reels) into embeds
+      content.querySelectorAll('a').forEach(link => {
+        const url = link.href;
+        const parent = link.parentElement;
+        if (!parent || parent.tagName !== 'P') return;
+        if (parent.textContent.trim() !== link.textContent.trim()) return;
+
+        if (url.includes('linkedin.com/posts/')) {
+          const match = url.match(/-([0-9]{19})/);
+          if (match && match[1]) {
+            const urnId = match[1];
+            let urnType = 'share';
+            if (url.includes('ugcPost')) urnType = 'ugcPost';
+            else if (url.includes('activity')) urnType = 'activity';
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.linkedin.com/embed/feed/update/urn:li:${urnType}:${urnId}?theme=dark`;
+            iframe.height = "600";
+            iframe.width = "100%";
+            iframe.style.minHeight = "550px";
+            iframe.style.colorScheme = "dark";
+            iframe.frameBorder = "0";
+            iframe.allowFullscreen = true;
+            iframe.title = "Embedded LinkedIn post";
+            iframe.classList.add("w-full", "rounded-lg", "shadow-sm", "my-4");
+            parent.parentNode.replaceChild(iframe, parent);
+          }
+        } else if (url.includes('instagram.com/')) {
+          const blockquote = document.createElement('blockquote');
+          blockquote.className = 'instagram-media';
+          blockquote.setAttribute('data-instgrm-permalink', url);
+          blockquote.setAttribute('data-instgrm-version', '14');
+          blockquote.setAttribute('data-theme', 'dark');
+          blockquote.style.maxWidth = '540px';
+          blockquote.style.width = '100%';
+          parent.parentNode.replaceChild(blockquote, parent);
+        }
+      });
+
+      // 3. Process widgets with retries if scripts are still loading
+      let retries = 0;
+      function tryProcessWidgets() {
+        let processedTwitter = false;
+        let processedInstagram = false;
+
+        if (window.twttr && window.twttr.widgets) {
+          window.twttr.widgets.load();
+          processedTwitter = true;
+        }
+        if (window.instgrm && window.instgrm.Embeds) {
+          window.instgrm.Embeds.process();
+          processedInstagram = true;
+        }
+
+        const hasTwitter = !!content.querySelector('.twitter-tweet') || !!content.querySelector('blockquote.twitter-tweet');
+        const hasInstagram = !!content.querySelector('.instagram-media') || !!content.querySelector('blockquote.instagram-media');
+
+        const needTwitterRetry = hasTwitter && !processedTwitter;
+        const needInstagramRetry = hasInstagram && !processedInstagram;
+
+        if ((needTwitterRetry || needInstagramRetry) && retries < 15) {
+          retries++;
+          setTimeout(tryProcessWidgets, 300);
+        }
+      }
+      
+      setTimeout(tryProcessWidgets, 100);
+    }
+
+    try {
+      processEmbeds();
+    } catch (e) {
+      console.error("Embed processing error:", e);
+    }
+
     /* ── Reading Progress Bar ─────────────────────────────────────── */
     const progressBar = document.getElementById("reading-progress-bar");
 
