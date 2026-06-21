@@ -7,7 +7,7 @@ from home.models import AboutMe, Blog
 
 USED_TAGS_CACHE_KEY = "used_tags"
 USED_TAGS_CACHE_TTL = 300  # 5 minutes
-STATIC_ASSET_VERSION_CACHE_KEY = "static_asset_version"
+STATIC_ASSET_VERSION_CACHE_KEY = "static_asset_version_v2"
 STATIC_ASSET_VERSION_CACHE_TTL = 300  # 5 minutes
 
 # Sentinel: distinguishes "key not in cache" from "key in cache with value None".
