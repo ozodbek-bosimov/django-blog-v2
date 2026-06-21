@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+function initAboutStats() {
   const ABOUT = window.ABOUT_CONFIG || {};
   const githubUrl = ABOUT.githubUrl || "";
   let ghUsername = null;
@@ -179,6 +179,10 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       if (container && typeof GitHubCalendar !== "undefined") {
+        // Prevent duplicate initializations
+        if (container.dataset.initialized) return;
+        container.dataset.initialized = "true";
+
         revealCalendarFn = () => {
           if (container.dataset.revealed) return;
           container.dataset.revealed = "true";
@@ -476,4 +480,12 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     initLeetcodeStats();
   }
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAboutStats);
+} else {
+  initAboutStats();
+}
+
+document.body.addEventListener("htmx:afterSettle", initAboutStats);
