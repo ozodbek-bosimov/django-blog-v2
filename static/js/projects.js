@@ -141,11 +141,6 @@
     setupAll();
   }
 
-  if (!window._projectsListenerAdded) {
-    document.body.addEventListener("htmx:afterSettle", function () {
-      if (window.location.pathname.includes('/projects')) {
-        setupAll();
-      }
     });
     window._projectsListenerAdded = true;
   }
