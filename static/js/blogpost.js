@@ -208,11 +208,14 @@
   }
 
   if (!window._blogPostListenerAdded) {
-    document.body.addEventListener("htmx:afterSettle", function () {
+    const triggerInit = function () {
       if (window.location.pathname.includes('/blog/')) {
-        initBlogPost();
+        setTimeout(initBlogPost, 50); // Small delay to ensure DOM is ready on popstate
       }
-    });
+    };
+    document.body.addEventListener("htmx:afterSettle", triggerInit);
+    document.body.addEventListener("htmx:restored", triggerInit);
+    window.addEventListener("popstate", triggerInit);
     window._blogPostListenerAdded = true;
   }
 

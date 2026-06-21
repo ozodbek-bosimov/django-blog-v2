@@ -402,11 +402,14 @@ if (document.readyState === "loading") {
 }
 
 if (!window._aboutStatsListenerAdded) {
-  document.body.addEventListener("htmx:afterSettle", function () {
+  const triggerInit = function () {
     if (window.location.pathname.includes("/about")) {
-      initAboutStats();
+      setTimeout(initAboutStats, 50);
     }
-  });
+  };
+  document.body.addEventListener("htmx:afterSettle", triggerInit);
+  document.body.addEventListener("htmx:restored", triggerInit);
+  window.addEventListener("popstate", triggerInit);
   window._aboutStatsListenerAdded = true;
 }
 

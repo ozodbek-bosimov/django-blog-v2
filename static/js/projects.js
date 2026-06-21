@@ -142,11 +142,14 @@
   }
 
   if (!window._projectsListenerAdded) {
-    document.body.addEventListener("htmx:afterSettle", function () {
+    const triggerInit = function () {
       if (window.location.pathname.includes('/projects')) {
-        setupAll();
+        setTimeout(setupAll, 50);
       }
-    });
+    };
+    document.body.addEventListener("htmx:afterSettle", triggerInit);
+    document.body.addEventListener("htmx:restored", triggerInit);
+    window.addEventListener("popstate", triggerInit);
     window._projectsListenerAdded = true;
   }
 
