@@ -490,11 +490,6 @@ function initAboutStats() {
     initLeetcodeStats();
   }
 }
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initAboutStats);
-} else {
-  initAboutStats();
-}
-
-document.body.addEventListener("htmx:afterSettle", initAboutStats);
+// Run immediately — this script is re-loaded on each HTMX navigation
+// via {% block extra_scripts %}, so no htmx:afterSettle listener needed.
+initAboutStats();

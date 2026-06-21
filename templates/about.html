@@ -42,6 +42,7 @@
     rel="stylesheet"
     href="{% static 'css/about.css' %}?v={{ STATIC_ASSET_VERSION }}"
 />
+<link rel="stylesheet" href="https://unpkg.com/github-calendar@2.3.4/dist/github-calendar-responsive.css"/>
 {% endblock meta %} {% block content %}
 
 <div class="px-8 md:px-20 w-full mt-6 md:mt-8 mb-2 reveal">
@@ -461,21 +462,6 @@
         </div>
     </div>
 
-    <!-- GitHub Calendar Library -->
-    <link rel="stylesheet" href="https://unpkg.com/github-calendar@2.3.4/dist/github-calendar-responsive.css"/>
-    <script src="https://unpkg.com/github-calendar@2.3.4/dist/github-calendar.min.js"></script>
-
-    <!-- GitHub / LeetCode profile-stats loader (external, see static/js/about-stats.js) -->
-    {% if about_me %}
-    <script>
-        window.ABOUT_CONFIG = {
-            githubUrl: "{{ about_me.github_url|escapejs }}",
-            leetcodeUrl: "{{ about_me.leetcode_url|escapejs }}",
-        };
-    </script>
-    <script src="{% static 'js/about-stats.js' %}?v={{ STATIC_ASSET_VERSION }}" defer></script>
-    {% endif %}
-
     <!-- ── Skills ────────────────────────────────────────────────────── -->
     <div class="mt-12 mb-6">
         <h2
@@ -517,6 +503,23 @@
         <p class="text-center text-gray-400">No skills added yet.</p>
         {% endif %}
     </div>
+
 </div>
 <script src="{% static 'js/about.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 {% endblock %}
+
+{% block extra_scripts %}
+<!-- GitHub Calendar Library -->
+<script src="https://unpkg.com/github-calendar@2.3.4/dist/github-calendar.min.js"></script>
+
+<!-- GitHub / LeetCode profile-stats loader -->
+{% if about_me %}
+<script>
+    window.ABOUT_CONFIG = {
+        githubUrl: "{{ about_me.github_url|escapejs }}",
+        leetcodeUrl: "{{ about_me.leetcode_url|escapejs }}",
+    };
+</script>
+<script src="{% static 'js/about-stats.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
+{% endif %}
+{% endblock extra_scripts %}

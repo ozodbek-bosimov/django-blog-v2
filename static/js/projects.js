@@ -135,13 +135,8 @@
     document.querySelectorAll(".project-desc").forEach(setupCard);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setupAll);
-  } else {
-    setupAll();
-  }
-
-  document.body.addEventListener("htmx:afterSettle", setupAll);
+  // Run immediately — script re-executes on HTMX navigation
+  setupAll();
 
   var resizeTimer = null;
   window.addEventListener("resize", function () {

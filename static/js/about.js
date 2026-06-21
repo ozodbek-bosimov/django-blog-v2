@@ -5,13 +5,10 @@ function initAbout() {
   });
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initAbout);
-} else {
-  initAbout();
-}
+// Run immediately — this script is inside {% block content %},
+// so it re-executes on every HTMX navigation automatically.
+initAbout();
 
-document.body.addEventListener("htmx:afterSettle", initAbout);
 
 function toggleBullets(listId) {
     const list = document.getElementById(listId);
