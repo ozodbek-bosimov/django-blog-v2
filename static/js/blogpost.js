@@ -140,6 +140,18 @@
     }
   }
 
-  // Run immediately — script re-executes on HTMX navigation
-  initBlogPost();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initBlogPost);
+  } else {
+    initBlogPost();
+  }
+
+  if (!window._blogPostListenerAdded) {
+    document.body.addEventListener("htmx:afterSettle", function () {
+      if (window.location.pathname.includes('/blog/')) {
+        initBlogPost();
+      }
+    });
+    window._blogPostListenerAdded = true;
+  }
 })();

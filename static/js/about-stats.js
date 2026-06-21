@@ -143,11 +143,13 @@ function initAboutStats() {
       if (statsImg) {
         statsImg.onload = () => handleLoad(0);
         statsImg.src = statsUrl;
+        if (statsImg.complete) handleLoad(0);
       } else items[0].loaded = true;
 
       if (langsImg) {
         langsImg.onload = () => handleLoad(1);
         langsImg.src = langsUrl;
+        if (langsImg.complete) handleLoad(1);
 
         // Swap the languages card for the correctly-sized one
         // whenever we cross the mobile/desktop breakpoint.
@@ -165,6 +167,7 @@ function initAboutStats() {
       if (streakImg) {
         streakImg.onload = () => handleLoad(2);
         streakImg.src = streakUrl;
+        if (streakImg.complete) handleLoad(2);
       } else items[2].loaded = true;
 
       const tryFallbackCalendar = () => {
@@ -468,6 +471,10 @@ function initAboutStats() {
         lcImg.classList.replace("github-img-hidden", "github-img-show");
       };
       lcImg.src = finalUrl;
+      if (lcImg.complete) {
+        lcWrapper.classList.remove("skeleton-loader");
+        lcImg.classList.replace("github-img-hidden", "github-img-show");
+      }
     });
   };
 
@@ -490,6 +497,17 @@ function initAboutStats() {
     initLeetcodeStats();
   }
 }
-// Run immediately — this script is re-loaded on each HTMX navigation
-// via {% block extra_scripts %}, so no htmx:afterSettle listener needed.
-initAboutStats();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAboutStats);
+} else {
+  initAboutStats();
+}
+
+if (!window._aboutStatsListenerAdded) {
+  document.body.addEventListener("htmx:afterSettle", function () {
+    if (window.location.pathname.includes('/about')) {
+      initAboutStats();
+    }
+  });
+  window._aboutStatsListenerAdded = true;
+}
