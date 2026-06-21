@@ -85,5 +85,5 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="{% static 'js/projects.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
+<script data-cfasync="false" src="{% static 'js/projects.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 {% endblock extra_scripts %}
