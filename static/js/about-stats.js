@@ -439,25 +439,6 @@ function initAboutStats() {
     }
   };
 
-  const ghContainer = document.querySelector(".profile-card--github");
-  if (ghContainer && "IntersectionObserver" in window) {
-    const ghObserver = new IntersectionObserver(
-      (entries, obs) => {
-        if (
-          entries[0].isIntersecting ||
-          entries[0].boundingClientRect.top < window.innerHeight
-        ) {
-          obs.disconnect();
-          initGithubStats();
-        }
-      },
-      { rootMargin: "50px", threshold: 0.1 },
-    );
-    ghObserver.observe(ghContainer);
-  } else {
-    initGithubStats();
-  }
-
   const initLeetcodeStats = function () {
     if (!leetcodePromise) return;
     const lcWrapper = document.getElementById("leetcode-stats-wrapper");
@@ -478,8 +459,33 @@ function initAboutStats() {
     });
   };
 
+  // When arriving via HTMX boost navigation, elements are already in the
+  // viewport so IntersectionObserver may never fire. Detect this case and
+  // initialise directly; only use the observer on a real page load where the
+  // section might be below the fold.
+  const isHtmxNavigation = window._htmxAboutVisit === true;
+
+  const ghContainer = document.querySelector(".profile-card--github");
+  if (ghContainer && "IntersectionObserver" in window && !isHtmxNavigation) {
+    const ghObserver = new IntersectionObserver(
+      (entries, obs) => {
+        if (
+          entries[0].isIntersecting ||
+          entries[0].boundingClientRect.top < window.innerHeight
+        ) {
+          obs.disconnect();
+          initGithubStats();
+        }
+      },
+      { rootMargin: "50px", threshold: 0.01 },
+    );
+    ghObserver.observe(ghContainer);
+  } else {
+    initGithubStats();
+  }
+
   const lcContainer = document.querySelector(".profile-card--leetcode");
-  if (lcContainer && "IntersectionObserver" in window) {
+  if (lcContainer && "IntersectionObserver" in window && !isHtmxNavigation) {
     const observer = new IntersectionObserver(
       (entries, obs) => {
         if (
@@ -490,7 +496,7 @@ function initAboutStats() {
           initLeetcodeStats();
         }
       },
-      { rootMargin: "50px", threshold: 0.1 },
+      { rootMargin: "50px", threshold: 0.01 },
     );
     observer.observe(lcContainer);
   } else {
@@ -498,15 +504,27 @@ function initAboutStats() {
   }
 }
 if (document.readyState === "loading") {
+  // Normal hard-load: DOM not yet built. Use IntersectionObserver so we
+  // wait until the stats card scrolls into view before firing requests.
   document.addEventListener("DOMContentLoaded", initAboutStats);
 } else {
+  // Script is executing after the DOM is already ready. This happens when
+  // HTMX boost swaps the page content and re-executes the inline <script>
+  // tags. The stats elements are already in the DOM (and likely already in
+  // the viewport), so skip the IntersectionObserver and start loading now.
+  window._htmxAboutVisit = true;
   initAboutStats();
+  window._htmxAboutVisit = false;
 }
 
 if (!window._aboutStatsListenerAdded) {
   document.body.addEventListener("htmx:afterSettle", function () {
-    if (window.location.pathname.includes('/about')) {
+    if (window.location.pathname.includes("/about")) {
+      // Arriving via HTMX history restore or link click when the script
+      // was already present from a previous visit — re-run without observer.
+      window._htmxAboutVisit = true;
       initAboutStats();
+      window._htmxAboutVisit = false;
     }
   });
   window._aboutStatsListenerAdded = true;
