@@ -511,8 +511,8 @@
 <script data-cfasync="false" src="https://unpkg.com/github-calendar@2.3.4/dist/github-calendar.min.js"></script>
 {% if about_me %}
 <div id="about-config-data" 
-     data-github="{{ about_me.github_url|escapejs }}" 
-     data-leetcode="{{ about_me.leetcode_url|escapejs }}" 
+     data-github="{{ about_me.github_url }}" 
+     data-leetcode="{{ about_me.leetcode_url }}" 
      style="display:none;"></div>
 <script data-cfasync="false" src="{% static 'js/about-stats.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 {% endif %}
