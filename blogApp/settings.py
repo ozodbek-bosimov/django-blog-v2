@@ -42,7 +42,7 @@ def _get_bool_env(name, default=False):
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _get_bool_env("DJANGO_DEBUG", False)
-STATIC_ASSET_VERSION = os.getenv("APP_STATIC_ASSET_VERSION", "20260621_05")
+STATIC_ASSET_VERSION = os.getenv("APP_STATIC_ASSET_VERSION", "20260621_06")
 
 _allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS")
 if not (_allowed_hosts and _allowed_hosts.strip()):
