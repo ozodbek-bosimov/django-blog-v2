@@ -68,6 +68,55 @@
       const content = document.querySelector('.blog-content');
       if (!content) return;
 
+      // Helper: create a Twitter/X embed using official widgets.js
+      function makeTwitterEmbed(tweetId) {
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.justifyContent = 'center';
+        container.style.width = '100%';
+        container.style.margin = '1.5rem 0';
+        
+        const blockquote = document.createElement('blockquote');
+        blockquote.className = "twitter-tweet";
+        blockquote.setAttribute("data-theme", "dark");
+        blockquote.setAttribute("data-align", "center");
+        // Limit width to 450px to match Instagram/design
+        // Fallback max-width on blockquote just in case
+        blockquote.style.maxWidth = "450px";
+        blockquote.style.width = "100%";
+        
+        const a = document.createElement('a');
+        a.href = `https://twitter.com/user/status/${tweetId}`;
+        blockquote.appendChild(a);
+        container.appendChild(blockquote);
+
+        // Load or trigger Twitter widgets.js
+        if (!document.getElementById('twitter-wjs')) {
+          const script = document.createElement('script');
+          script.id = 'twitter-wjs';
+          script.src = 'https://platform.twitter.com/widgets.js';
+          script.async = true;
+          script.charset = 'utf-8';
+          document.head.appendChild(script);
+        } else if (window.twttr && window.twttr.widgets) {
+          setTimeout(() => { window.twttr.widgets.load(container); }, 50);
+        }
+
+        return container;
+      }
+
+      // Helper: create an Instagram embed iframe
+      function makeInstagramEmbed(shortcode) {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.instagram.com/p/${shortcode}/embed/?theme=dark`;
+        iframe.className = "embed-responsive embed-responsive--instagram";
+        iframe.frameBorder = "0";
+        iframe.scrolling = "no";
+        iframe.allowTransparency = "true";
+        iframe.allowFullscreen = "true";
+        return iframe;
+      }
+
       // 1. Process <oembed> tags (Twitter, Instagram)
       content.querySelectorAll('oembed').forEach(oembed => {
         let url = oembed.getAttribute('url') || '';
@@ -78,36 +127,12 @@
           url = url.replace('x.com', 'twitter.com');
           const match = url.match(/\/status\/(\d+)/);
           if (match && match[1]) {
-            const tweetId = match[1];
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}&theme=dark`;
-            iframe.className = "w-full rounded-lg shadow-sm";
-            iframe.style.display = "block";
-            iframe.style.margin = "1.5rem auto";
-            iframe.style.maxWidth = "550px";
-            iframe.style.height = "800px";
-            iframe.frameBorder = "0";
-            iframe.scrolling = "no";
-            iframe.allowTransparency = "true";
-            iframe.allowFullscreen = "true";
-            figure.parentNode.replaceChild(iframe, figure);
+            figure.parentNode.replaceChild(makeTwitterEmbed(match[1]), figure);
           }
         } else if (url.includes('instagram.com')) {
           const match = url.match(/\/(?:p|reel)\/([^\/?#&]+)/);
           if (match && match[1]) {
-            const shortcode = match[1];
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://www.instagram.com/p/${shortcode}/embed/?theme=dark`;
-            iframe.className = "w-full rounded-lg shadow-sm bg-white/5";
-            iframe.style.display = "block";
-            iframe.style.margin = "1.5rem auto";
-            iframe.style.maxWidth = "540px";
-            iframe.style.height = "850px";
-            iframe.frameBorder = "0";
-            iframe.scrolling = "no";
-            iframe.allowTransparency = "true";
-            iframe.allowFullscreen = "true";
-            figure.parentNode.replaceChild(iframe, figure);
+            figure.parentNode.replaceChild(makeInstagramEmbed(match[1]), figure);
           }
         }
       });
@@ -128,9 +153,7 @@
             else if (url.includes('activity')) urnType = 'activity';
             const iframe = document.createElement('iframe');
             iframe.src = `https://www.linkedin.com/embed/feed/update/urn:li:${urnType}:${urnId}?theme=dark`;
-            iframe.className = "w-full rounded-lg shadow-sm my-4";
-            iframe.style.height = "600px";
-            iframe.style.minHeight = "550px";
+            iframe.className = "embed-responsive embed-responsive--linkedin";
             iframe.frameBorder = "0";
             iframe.scrolling = "yes";
             iframe.allowTransparency = "true";
@@ -141,37 +164,13 @@
         } else if (url.includes('instagram.com/')) {
           const match = url.match(/\/(?:p|reel)\/([^\/?#&]+)/);
           if (match && match[1]) {
-            const shortcode = match[1];
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://www.instagram.com/p/${shortcode}/embed/?theme=dark`;
-            iframe.className = "w-full rounded-lg shadow-sm bg-white/5";
-            iframe.style.display = "block";
-            iframe.style.margin = "1.5rem auto";
-            iframe.style.maxWidth = "540px";
-            iframe.style.height = "850px";
-            iframe.frameBorder = "0";
-            iframe.scrolling = "no";
-            iframe.allowTransparency = "true";
-            iframe.allowFullscreen = "true";
-            parent.parentNode.replaceChild(iframe, parent);
+            parent.parentNode.replaceChild(makeInstagramEmbed(match[1]), parent);
           }
         } else if (url.includes('twitter.com/') || url.includes('x.com/')) {
           const normalizedUrl = url.replace('x.com', 'twitter.com');
           const match = normalizedUrl.match(/\/status\/(\d+)/);
           if (match && match[1]) {
-            const tweetId = match[1];
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://platform.twitter.com/embed/Tweet.html?id=${tweetId}&theme=dark`;
-            iframe.className = "w-full rounded-lg shadow-sm";
-            iframe.style.display = "block";
-            iframe.style.margin = "1.5rem auto";
-            iframe.style.maxWidth = "550px";
-            iframe.style.height = "800px";
-            iframe.frameBorder = "0";
-            iframe.scrolling = "no";
-            iframe.allowTransparency = "true";
-            iframe.allowFullscreen = "true";
-            parent.parentNode.replaceChild(iframe, parent);
+            parent.parentNode.replaceChild(makeTwitterEmbed(match[1]), parent);
           }
         }
       });
@@ -181,6 +180,59 @@
       processEmbeds();
     } catch (e) {
       console.error("Embed processing error:", e);
+    }
+
+    /* ── Auto-resize Twitter & Instagram embed iframes ──────────── */
+    if (!window._embedResizeListenerAdded) {
+      window._embedResizeListenerAdded = true;
+      window.addEventListener('message', function (e) {
+        // Twitter embed resize
+        if (e.origin === 'https://platform.twitter.com' && e.data) {
+          var data = e.data;
+          if (typeof data === 'string') {
+            try { data = JSON.parse(data); } catch (err) { return; }
+          }
+          var height = null;
+          if (data['twttr.private.resize']) {
+            var arr = data['twttr.private.resize'];
+            if (Array.isArray(arr) && arr[0] && arr[0].height) {
+              height = arr[0].height;
+            }
+          } else if (data.method === 'twttr.private.resize' && data.params) {
+            var arr2 = data.params;
+            if (Array.isArray(arr2) && arr2[0] && arr2[0].height) {
+              height = arr2[0].height;
+            }
+          }
+          if (height && height > 50) {
+            document.querySelectorAll('.embed-responsive--twitter').forEach(function (iframe) {
+              try {
+                if (iframe.contentWindow === e.source) {
+                  iframe.style.height = height + 'px';
+                }
+              } catch (err) { }
+            });
+          }
+        }
+
+        // Instagram embed resize
+        if (e.origin && e.origin.includes('instagram.com') && e.data) {
+          var igData = e.data;
+          if (typeof igData === 'string') {
+            try { igData = JSON.parse(igData); } catch (err) { return; }
+          }
+          if (igData.type === 'MEASURE' && igData.details && igData.details.height) {
+            var igH = igData.details.height;
+            document.querySelectorAll('.embed-responsive--instagram').forEach(function (iframe) {
+              try {
+                if (iframe.contentWindow === e.source) {
+                  iframe.style.height = igH + 'px';
+                }
+              } catch (err) { }
+            });
+          }
+        }
+      });
     }
 
     /* ── Reading Progress Bar ─────────────────────────────────────── */

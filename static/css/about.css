@@ -334,6 +334,9 @@
 }
 
 .profile-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
     container-type: inline-size;
     --accent: #22d3ee;
     border-radius: 1.125rem;

@@ -60,6 +60,54 @@
     border: none;
 }
 
+/* ── Social Media Embed Iframes (responsive) ──────────────────── */
+/* All sizing lives in CSS so embeds scale to every viewport.      */
+.blog-content .embed-responsive {
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 0.75rem;
+    margin: 1.5rem auto;
+    overflow: hidden;
+}
+
+/* ── Twitter / X ─────────────────────────────────────────────── */
+.blog-content .embed-responsive--twitter {
+    max-width: 450px;
+    min-height: 400px;
+    background: #15202b;
+    transition: height 0.3s ease-out;
+}
+
+/* ── Instagram ───────────────────────────────────────────────── */
+.blog-content .embed-responsive--instagram {
+    max-width: 450px;
+    min-height: 400px;
+    background: #000;
+    transition: height 0.3s ease-out;
+}
+
+/* ── LinkedIn ────────────────────────────────────────────────── */
+.blog-content .embed-responsive--linkedin {
+    max-width: 100%;
+    height: 600px;
+    min-height: 550px;
+}
+
+/* ── Mobile: shorter heights to avoid excess empty space ──────── */
+@media (max-width: 640px) {
+    .blog-content .embed-responsive--linkedin {
+        height: 550px;
+    }
+}
+
+/* ── Very small phones ───────────────────────────────────────── */
+@media (max-width: 380px) {
+    .blog-content .embed-responsive--linkedin {
+        height: 500px;
+    }
+}
+
 /* ── Code Block Styles ───────────────────────────────────────────── */
 pre[class*="language-"] {
     margin: 1rem 0 !important;
