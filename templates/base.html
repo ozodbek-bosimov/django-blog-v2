@@ -17,8 +17,8 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons-subset.css' %}?v={{ STATIC_ASSET_VERSION }}" />
     <link rel="stylesheet" href="{% static 'css/base.css' %}?v={{ STATIC_ASSET_VERSION }}" />
     <title>{% block title %}{% endblock title %} - Ozodbek Bosimov</title>
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
-    <script src="{% static 'js/head-support.js' %}" defer></script>
+    <script data-cfasync="false" src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script data-cfasync="false" src="{% static 'js/head-support.js' %}" defer></script>
     {% block meta %}{% endblock meta %}
 </head>
 
@@ -159,10 +159,10 @@
         <i class="bi bi-chevron-up text-xl"></i>
     </button>
 
-    <script src="{% static 'js/base.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
+    <script data-cfasync="false" src="{% static 'js/base.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 
     <!-- HTMX: Update nav active state after boosted navigation -->
-    <script>
+    <script data-cfasync="false">
     (function() {
         function updateNav() {
             var path = window.location.pathname;
