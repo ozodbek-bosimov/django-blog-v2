@@ -401,11 +401,4 @@ if (document.readyState === "loading") {
   initAboutStats();
 }
 
-if (!window._aboutStatsListenerAdded) {
-  document.body.addEventListener("htmx:afterSettle", function () {
-    if (window.location.pathname.includes("/about")) {
-      initAboutStats();
-    }
-  });
-  window._aboutStatsListenerAdded = true;
-}
+
