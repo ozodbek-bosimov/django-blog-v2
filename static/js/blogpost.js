@@ -140,11 +140,6 @@
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initBlogPost);
-  } else {
-    initBlogPost();
-  }
-
-  document.body.addEventListener("htmx:afterSettle", initBlogPost);
+  // Run immediately — script re-executes on HTMX navigation
+  initBlogPost();
 })();
