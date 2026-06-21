@@ -95,7 +95,7 @@
           if (match && match[1]) {
             const shortcode = match[1];
             const iframe = document.createElement('iframe');
-            iframe.src = `https://www.instagram.com/p/${shortcode}/embed/dark/`;
+            iframe.src = `https://www.instagram.com/p/${shortcode}/embed/?theme=dark`;
             iframe.className = "w-full rounded-lg shadow-sm my-4 bg-white/5";
             iframe.style.maxWidth = "540px";
             iframe.style.height = "650px";
@@ -139,7 +139,7 @@
           if (match && match[1]) {
             const shortcode = match[1];
             const iframe = document.createElement('iframe');
-            iframe.src = `https://www.instagram.com/p/${shortcode}/embed/dark/`;
+            iframe.src = `https://www.instagram.com/p/${shortcode}/embed/?theme=dark`;
             iframe.className = "w-full rounded-lg shadow-sm my-4 bg-white/5";
             iframe.style.maxWidth = "540px";
             iframe.style.height = "650px";
