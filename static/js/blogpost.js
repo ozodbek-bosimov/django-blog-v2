@@ -210,12 +210,11 @@
   if (!window._blogPostListenerAdded) {
     const triggerInit = function () {
       if (window.location.pathname.includes('/blog/')) {
-        setTimeout(initBlogPost, 50); // Small delay to ensure DOM is ready on popstate
+        setTimeout(initBlogPost, 50);
       }
     };
     document.body.addEventListener("htmx:afterSettle", triggerInit);
     document.body.addEventListener("htmx:restored", triggerInit);
-    window.addEventListener("popstate", triggerInit);
     window._blogPostListenerAdded = true;
   }
 

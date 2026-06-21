@@ -149,7 +149,6 @@
     };
     document.body.addEventListener("htmx:afterSettle", triggerInit);
     document.body.addEventListener("htmx:restored", triggerInit);
-    window.addEventListener("popstate", triggerInit);
     window._projectsListenerAdded = true;
   }
 
