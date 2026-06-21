@@ -213,7 +213,6 @@
         setTimeout(initBlogPost, 50);
       }
     };
-    document.body.addEventListener("htmx:afterSettle", triggerInit);
     document.body.addEventListener("htmx:restored", triggerInit);
     window._blogPostListenerAdded = true;
   }
