@@ -5,8 +5,8 @@
 // the bottom of the block), so we call initAboutStats() directly.
 
 function initAboutStats() {
-  const ABOUT = window.ABOUT_CONFIG || {};
-  const githubUrl = ABOUT.githubUrl || "";
+  const configData = document.getElementById("about-config-data");
+  const githubUrl = configData ? configData.dataset.github : "";
   let ghUsername = null;
   if (githubUrl) {
     const match = githubUrl.match(/github\.com\/([a-zA-Z0-9_-]+)/);
@@ -35,7 +35,7 @@ function initAboutStats() {
     }, 50);
   }
 
-  let leetcodeUrl = ABOUT.leetcodeUrl || "";
+  let leetcodeUrl = configData ? configData.dataset.leetcode : "";
   let leetcodeProxyUrl = null;
   if (leetcodeUrl && leetcodeUrl.includes("leetcode.com")) {
     leetcodeProxyUrl = `/leetcode-proxy/?v=${cbStr}`;
@@ -360,12 +360,15 @@ function initAboutStats() {
   if (ghContainer && "IntersectionObserver" in window) {
     const ghObserver = new IntersectionObserver(
       (entries, obs) => {
-        if (entries[0].isIntersecting || entries[0].boundingClientRect.top < window.innerHeight) {
+        if (
+          entries[0].isIntersecting ||
+          entries[0].boundingClientRect.top < window.innerHeight
+        ) {
           obs.disconnect();
           initGithubStats();
         }
       },
-      { rootMargin: "200px", threshold: 0 },
+      { rootMargin: "50px", threshold: 0.1 },
     );
     ghObserver.observe(ghContainer);
   } else {
@@ -374,21 +377,35 @@ function initAboutStats() {
 
   const lcContainer = document.querySelector(".profile-card--leetcode");
   if (lcContainer && "IntersectionObserver" in window) {
-    const lcObserver = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries, obs) => {
-        if (entries[0].isIntersecting || entries[0].boundingClientRect.top < window.innerHeight) {
+        if (
+          entries[0].isIntersecting ||
+          entries[0].boundingClientRect.top < window.innerHeight
+        ) {
           obs.disconnect();
           initLeetcodeStats();
         }
       },
-      { rootMargin: "200px", threshold: 0 },
+      { rootMargin: "50px", threshold: 0.1 },
     );
-    lcObserver.observe(lcContainer);
+    observer.observe(lcContainer);
   } else {
     initLeetcodeStats();
   }
 }
 
-// Execute immediately — DOM is ready since this script is at the bottom of
-// {% block content %} and HTMX has already swapped the new body content in.
-initAboutStats();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAboutStats);
+} else {
+  initAboutStats();
+}
+
+if (!window._aboutStatsListenerAdded) {
+  document.body.addEventListener("htmx:afterSettle", function () {
+    if (window.location.pathname.includes("/about")) {
+      initAboutStats();
+    }
+  });
+  window._aboutStatsListenerAdded = true;
+}

@@ -510,12 +510,10 @@
 <!-- GitHub Calendar Library + Stats (must be in content block so HTMX re-executes on every navigation) -->
 <script src="https://unpkg.com/github-calendar@2.3.4/dist/github-calendar.min.js"></script>
 {% if about_me %}
-<script>
-    window.ABOUT_CONFIG = {
-        githubUrl: "{{ about_me.github_url|escapejs }}",
-        leetcodeUrl: "{{ about_me.leetcode_url|escapejs }}",
-    };
-</script>
+<div id="about-config-data" 
+     data-github="{{ about_me.github_url|escapejs }}" 
+     data-leetcode="{{ about_me.leetcode_url|escapejs }}" 
+     style="display:none;"></div>
 <script src="{% static 'js/about-stats.js' %}?v={{ STATIC_ASSET_VERSION }}"></script>
 {% endif %}
 {% endblock %}
