@@ -178,7 +178,22 @@ function initAboutStats() {
         }
       };
 
-      if (container && typeof GitHubCalendar !== "undefined") {
+      const initGitHubCalendarWithRetry = (attempt = 0) => {
+        if (!container) return;
+        if (typeof GitHubCalendar === "undefined") {
+          if (attempt < 20) {
+            setTimeout(() => initGitHubCalendarWithRetry(attempt + 1), 100);
+          } else {
+            revealCalendarFn = () => {
+              if (container.dataset.revealed) return;
+              container.dataset.revealed = "true";
+              tryFallbackCalendar();
+            };
+            calReadyToReveal = true;
+          }
+          return;
+        }
+
         // Prevent duplicate initializations
         if (container.dataset.initialized) return;
         container.dataset.initialized = "true";
@@ -414,15 +429,9 @@ function initAboutStats() {
         } else {
           waitForCalendar();
         }
-      } else if (container) {
-        // Library completely failed to load -> Setup sequential fallback
-        revealCalendarFn = () => {
-          if (container.dataset.revealed) return;
-          container.dataset.revealed = "true";
-          tryFallbackCalendar();
-        };
-        calReadyToReveal = true;
-      }
+      };
+
+      initGitHubCalendarWithRetry();
       startTurn(0);
     }
   };
