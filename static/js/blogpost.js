@@ -201,19 +201,26 @@
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initBlogPost);
-  } else {
-    initBlogPost();
+  let _blogPostInitTimer = null;
+  function debouncedInitBlogPost() {
+    if (_blogPostInitTimer) clearTimeout(_blogPostInitTimer);
+    _blogPostInitTimer = setTimeout(initBlogPost, 50);
   }
 
+  // Run immediately for initial page load (DOM is already parsed up to this point)
+  setTimeout(debouncedInitBlogPost, 10);
+
   if (!window._blogPostListenerAdded) {
-    const triggerInit = function () {
+    document.body.addEventListener("htmx:afterSettle", function () {
       if (window.location.pathname.includes('/blog/')) {
-        setTimeout(initBlogPost, 50);
+        debouncedInitBlogPost();
       }
-    };
-    document.body.addEventListener("htmx:restored", triggerInit);
+    });
+    document.body.addEventListener("htmx:restored", function () {
+      if (window.location.pathname.includes('/blog/')) {
+        debouncedInitBlogPost();
+      }
+    });
     window._blogPostListenerAdded = true;
   }
 
