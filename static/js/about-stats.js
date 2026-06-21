@@ -19,13 +19,13 @@ function initAboutStats() {
 
   const langsMq = window.matchMedia("(min-width: 640px)");
   const buildLangsUrl = (cardWidth) =>
-    `https://github-readme-stats.vercel.app/api/top-langs/?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&layout=compact&card_width=${cardWidth}&v=${cbStr}`;
+    `https://github-readme-stats-salesp07.vercel.app/api/top-langs/?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&layout=compact&card_width=${cardWidth}&v=${cbStr}`;
   const currentLangsCardWidth = () => (langsMq.matches ? 320 : 495);
 
   if (ghUsername) {
-    statsUrl = `https://github-readme-stats.vercel.app/api?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&include_all_commits=true&count_private=true&rank_icon=github&show_icons=true&v=${cbStr}`;
+    statsUrl = `https://github-readme-stats-salesp07.vercel.app/api?username=${ghUsername}&title_color=67e8f9&text_color=c9d1d9&icon_color=06b6d4&bg_color=00000000&hide_border=true&include_all_commits=true&count_private=true&rank_icon=github&show_icons=true&v=${cbStr}`;
     langsUrl = buildLangsUrl(currentLangsCardWidth());
-    streakUrl = `https://github-readme-streak-stats.herokuapp.com/?user=${ghUsername}&theme=dark&hide_border=true&background=00000000&stroke=334155&ring=06b6d4&fire=67e8f9&v=${cbStr}`;
+    streakUrl = `https://github-readme-streak-stats-salesp07.vercel.app/?user=${ghUsername}&theme=dark&hide_border=true&background=00000000&stroke=334155&ring=06b6d4&fire=67e8f9&v=${cbStr}`;
 
     // Preload in the background
     setTimeout(() => {
