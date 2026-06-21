@@ -466,6 +466,7 @@
     <script src="https://unpkg.com/github-calendar@2.3.4/dist/github-calendar.min.js"></script>
 
     <!-- GitHub / LeetCode profile-stats loader (external, see static/js/about-stats.js) -->
+    {% if about_me %}
     <script>
         window.ABOUT_CONFIG = {
             githubUrl: "{{ about_me.github_url|escapejs }}",
@@ -473,6 +474,7 @@
         };
     </script>
     <script src="{% static 'js/about-stats.js' %}?v={{ STATIC_ASSET_VERSION }}" defer></script>
+    {% endif %}
 
     <!-- ── Skills ────────────────────────────────────────────────────── -->
     <div class="mt-12 mb-6">
