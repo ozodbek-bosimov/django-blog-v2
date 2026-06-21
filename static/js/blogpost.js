@@ -8,6 +8,63 @@
       scrollListener = null;
     }
 
+    /* ── Lazy Load Iframes (Run First to ensure they load even if other things fail) ────────────────────────────────────────── */
+    function runLazyIframes() {
+        var phs = document.querySelectorAll(".lazy-iframe-ph");
+        if (!phs.length) return;
+
+        var queue = [];
+
+        function loadIframe(ph) {
+            if (ph._loaded) return;
+            ph._loaded = true;
+            var tpl = ph.nextElementSibling;
+            if (!tpl || tpl.tagName !== "TEMPLATE") return;
+            var el = tpl.content.firstElementChild;
+            if (!el) return;
+            var iframe = el.cloneNode(true);
+            ph.parentNode.insertBefore(iframe, ph);
+            ph.remove();
+            tpl.remove();
+        }
+
+        if ("IntersectionObserver" in window) {
+            try {
+                var obs = new IntersectionObserver(function(entries){
+                    entries.forEach(function(e){
+                        if (e.isIntersecting) {
+                            obs.unobserve(e.target);
+                            loadIframe(e.target);
+                        }
+                    });
+                }, {rootMargin: "300px 0px"});
+                phs.forEach(function(ph){ obs.observe(ph); queue.push(ph); });
+            } catch (err) {
+                console.error("IntersectionObserver failed:", err);
+                phs.forEach(loadIframe);
+                return;
+            }
+        } else {
+            phs.forEach(loadIframe);
+            return;
+        }
+
+        setTimeout(function tick(){
+            while (queue.length && queue[0]._loaded) queue.shift();
+            if (!queue.length) return;
+            var ph = queue.shift();
+            if (obs) try { obs.unobserve(ph); } catch(e){}
+            loadIframe(ph);
+            if (queue.length) setTimeout(tick, 1500);
+        }, 2000);
+    }
+
+    try {
+        runLazyIframes();
+    } catch (e) {
+        console.error("Lazy iframe error:", e);
+    }
+
     /* ── Reading Progress Bar ─────────────────────────────────────── */
     const progressBar = document.getElementById("reading-progress-bar");
 
@@ -136,59 +193,12 @@
     });
 
     if (typeof Prism !== "undefined") {
-      Prism.highlightAll();
+      try {
+        Prism.highlightAll();
+      } catch (e) {
+        console.error("Prism highlight error:", e);
+      }
     }
-
-    /* ── Lazy Load Iframes ────────────────────────────────────────── */
-    function runLazyIframes() {
-        var phs = document.querySelectorAll(".lazy-iframe-ph");
-        if (!phs.length) return;
-
-        var queue = [];
-
-        function loadIframe(ph) {
-            if (ph._loaded) return;
-            ph._loaded = true;
-            var tpl = ph.nextElementSibling;
-            if (!tpl || tpl.tagName !== "TEMPLATE") return;
-            var el = tpl.content.firstElementChild;
-            if (!el) return;
-            var iframe = el.cloneNode(true);
-            ph.parentNode.insertBefore(iframe, ph);
-            ph.remove();
-            tpl.remove();
-        }
-
-        // We use IntersectionObserver even for HTMX navigation
-        // because we want progressive loading, but we need to ensure
-        // elements in viewport are loaded. The observer fires immediately
-        // for elements in view.
-        if ("IntersectionObserver" in window) {
-            var obs = new IntersectionObserver(function(entries){
-                entries.forEach(function(e){
-                    if (e.isIntersecting) {
-                        obs.unobserve(e.target);
-                        loadIframe(e.target);
-                    }
-                });
-            }, {rootMargin: "300px 0px"});
-            phs.forEach(function(ph){ obs.observe(ph); queue.push(ph); });
-        } else {
-            phs.forEach(loadIframe);
-            return;
-        }
-
-        setTimeout(function tick(){
-            while (queue.length && queue[0]._loaded) queue.shift();
-            if (!queue.length) return;
-            var ph = queue.shift();
-            obs.unobserve(ph);
-            loadIframe(ph);
-            if (queue.length) setTimeout(tick, 1500);
-        }, 2000);
-    }
-
-    runLazyIframes();
   }
 
   if (document.readyState === "loading") {
