@@ -259,127 +259,151 @@
 
 {% endblock %} {% block extra_scripts %}
 <script>
-    // ── Hero Interactive Dot Grid ────────────────────────────────────
+    // ── Hero Interactive Dot Grid & Typing Effect ───────────────────
     (function () {
-        const canvas = document.getElementById("hero-grid");
-        if (!canvas) return;
-
-        const ctx = canvas.getContext("2d");
-        let w, h, cols, rows, offsetX, offsetY;
-        const gap = 32;
-        const dotBase = 0.4;
-        const mouse = { x: -1000, y: -1000 };
-        const radius = 120;
-
         let animationFrameId = null;
+        let resizeListener = null;
+        let pointerMoveListener = null;
+        let resetListener = null;
+        let typeTimeout = null;
 
-        function render() {
-            ctx.clearRect(0, 0, w / devicePixelRatio, h / devicePixelRatio);
-            for (let i = 0; i < cols; i++) {
-                for (let j = 0; j < rows; j++) {
-                    const x = offsetX + i * gap;
-                    const y = offsetY + j * gap;
-                    const dx = mouse.x - x;
-                    const dy = mouse.y - y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    const intensity = Math.max(0, 1 - dist / radius);
-                    ctx.beginPath();
-                    ctx.arc(x, y, dotBase + intensity * 2, 0, Math.PI * 2);
-                    if (intensity > 0) {
-                        ctx.fillStyle = `rgba(103, 232, 249, ${0.08 + intensity * 0.7})`;
-                    } else {
-                        // Very faint static dots in the background
-                        ctx.fillStyle = "rgba(156, 163, 175, 0.08)";
+        function initHero() {
+            // Clean up previous event listeners if any
+            if (resizeListener) window.removeEventListener("resize", resizeListener);
+            if (pointerMoveListener) window.removeEventListener("pointermove", pointerMoveListener);
+            if (resetListener) {
+                window.removeEventListener("pointerleave", resetListener);
+                window.removeEventListener("scroll", resetListener);
+            }
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            if (typeTimeout) {
+                clearTimeout(typeTimeout);
+                typeTimeout = null;
+            }
+
+            const canvas = document.getElementById("hero-grid");
+            if (canvas) {
+                const ctx = canvas.getContext("2d");
+                let w, h, cols, rows, offsetX, offsetY;
+                const gap = 32;
+                const dotBase = 0.4;
+                const mouse = { x: -1000, y: -1000 };
+                const radius = 120;
+
+                function render() {
+                    ctx.clearRect(0, 0, w / devicePixelRatio, h / devicePixelRatio);
+                    for (let i = 0; i < cols; i++) {
+                        for (let j = 0; j < rows; j++) {
+                            const x = offsetX + i * gap;
+                            const y = offsetY + j * gap;
+                            const dx = mouse.x - x;
+                            const dy = mouse.y - y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            const intensity = Math.max(0, 1 - dist / radius);
+                            ctx.beginPath();
+                            ctx.arc(x, y, dotBase + intensity * 2, 0, Math.PI * 2);
+                            if (intensity > 0) {
+                                ctx.fillStyle = `rgba(103, 232, 249, ${0.08 + intensity * 0.7})`;
+                            } else {
+                                ctx.fillStyle = "rgba(156, 163, 175, 0.08)";
+                            }
+                            ctx.fill();
+                        }
                     }
-                    ctx.fill();
+                    animationFrameId = null;
                 }
-            }
-            animationFrameId = null;
-        }
 
-        function queueRedraw() {
-            if (!animationFrameId) {
-                animationFrameId = requestAnimationFrame(render);
-            }
-        }
-
-        function resize() {
-            w = canvas.width = window.innerWidth * devicePixelRatio;
-            h = canvas.height = window.innerHeight * devicePixelRatio;
-            canvas.style.width = window.innerWidth + "px";
-            canvas.style.height = window.innerHeight + "px";
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.scale(devicePixelRatio, devicePixelRatio);
-            cols = Math.floor(window.innerWidth / gap) + 1;
-            rows = Math.floor(window.innerHeight / gap) + 1;
-            const gridWidth = (cols - 1) * gap;
-            const gridHeight = (rows - 1) * gap;
-            offsetX = (window.innerWidth - gridWidth) / 2;
-            offsetY = (window.innerHeight - gridHeight) / 2;
-            queueRedraw();
-        }
-
-        resize();
-        window.addEventListener("resize", resize);
-        
-        window.addEventListener("pointermove", (e) => {
-            // Ignore touch pointers so the grid doesn't stick on mobile
-            // or in DevTools mobile emulation
-            if (e.pointerType === "touch") return;
-            if (mouse.x !== e.clientX || mouse.y !== e.clientY) {
-                mouse.x = e.clientX;
-                mouse.y = e.clientY;
-                queueRedraw();
-            }
-        });
-        
-        const resetMouse = () => {
-            if (mouse.x !== -1000 || mouse.y !== -1000) {
-                mouse.x = -1000;
-                mouse.y = -1000;
-                queueRedraw();
-            }
-        };
-
-        window.addEventListener("pointerleave", resetMouse);
-        window.addEventListener("scroll", resetMouse, { passive: true });
-    })();
-
-    // ── Hero Typing Effect ───────────────────────────────────────────
-    (function () {
-        const el = document.getElementById("hero-typed");
-        if (!el) return;
-        const phrases = [
-            "Sharing what I learn",
-            "Documenting the journey",
-            "Exploring new ideas",
-            "Thinking out loud",
-        ];
-        let pi = 0,
-            ci = 0,
-            deleting = false;
-        function tick() {
-            const phrase = phrases[pi];
-            if (!deleting) {
-                el.textContent = phrase.slice(0, ci + 1);
-                ci++;
-                if (ci === phrase.length) {
-                    deleting = true;
-                    return setTimeout(tick, 2200);
+                function queueRedraw() {
+                    if (!animationFrameId) {
+                        animationFrameId = requestAnimationFrame(render);
+                    }
                 }
-                return setTimeout(tick, 55);
-            } else {
-                el.textContent = phrase.slice(0, ci - 1);
-                ci--;
-                if (ci === 0) {
-                    deleting = false;
-                    pi = (pi + 1) % phrases.length;
-                    return setTimeout(tick, 350);
+
+                resizeListener = function () {
+                    w = canvas.width = window.innerWidth * devicePixelRatio;
+                    h = canvas.height = window.innerHeight * devicePixelRatio;
+                    canvas.style.width = window.innerWidth + "px";
+                    canvas.style.height = window.innerHeight + "px";
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.scale(devicePixelRatio, devicePixelRatio);
+                    cols = Math.floor(window.innerWidth / gap) + 1;
+                    rows = Math.floor(window.innerHeight / gap) + 1;
+                    const gridWidth = (cols - 1) * gap;
+                    const gridHeight = (rows - 1) * gap;
+                    offsetX = (window.innerWidth - gridWidth) / 2;
+                    offsetY = (window.innerHeight - gridHeight) / 2;
+                    queueRedraw();
+                };
+
+                resizeListener();
+                window.addEventListener("resize", resizeListener);
+                
+                pointerMoveListener = function (e) {
+                    if (e.pointerType === "touch") return;
+                    if (mouse.x !== e.clientX || mouse.y !== e.clientY) {
+                        mouse.x = e.clientX;
+                        mouse.y = e.clientY;
+                        queueRedraw();
+                    }
+                };
+                window.addEventListener("pointermove", pointerMoveListener);
+                
+                resetListener = function () {
+                    if (mouse.x !== -1000 || mouse.y !== -1000) {
+                        mouse.x = -1000;
+                        mouse.y = -1000;
+                        queueRedraw();
+                    }
+                };
+                window.addEventListener("pointerleave", resetListener);
+                window.addEventListener("scroll", resetListener, { passive: true });
+            }
+
+            // Typing Effect
+            const el = document.getElementById("hero-typed");
+            if (el) {
+                const phrases = [
+                    "Sharing what I learn",
+                    "Documenting the journey",
+                    "Exploring new ideas",
+                    "Thinking out loud",
+                ];
+                let pi = 0, ci = 0, deleting = false;
+                
+                function tick() {
+                    if (!document.getElementById("hero-typed")) return; // Stop if element is gone
+                    const phrase = phrases[pi];
+                    if (!deleting) {
+                        el.textContent = phrase.slice(0, ci + 1);
+                        ci++;
+                        if (ci === phrase.length) {
+                            deleting = true;
+                            typeTimeout = setTimeout(tick, 2200);
+                            return;
+                        }
+                        typeTimeout = setTimeout(tick, 55);
+                    } else {
+                        el.textContent = phrase.slice(0, ci - 1);
+                        ci--;
+                        if (ci === 0) {
+                            deleting = false;
+                            pi = (pi + 1) % phrases.length;
+                            typeTimeout = setTimeout(tick, 350);
+                            return;
+                        }
+                        typeTimeout = setTimeout(tick, 30);
+                    }
                 }
-                return setTimeout(tick, 30);
+                typeTimeout = setTimeout(tick, 600);
             }
         }
-        setTimeout(tick, 600);
+
+        // Initialize on load and on HTMX swap
+        initHero();
+        document.body.addEventListener("htmx:afterSettle", initHero);
     })();
 </script>
 {% endblock extra_scripts %}

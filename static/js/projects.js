@@ -141,6 +141,8 @@
     setupAll();
   }
 
+  document.body.addEventListener("htmx:afterSettle", setupAll);
+
   var resizeTimer = null;
   window.addEventListener("resize", function () {
     clearTimeout(resizeTimer);

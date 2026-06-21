@@ -1,9 +1,17 @@
-document.addEventListener("DOMContentLoaded", function () {
+function initAbout() {
   document.querySelectorAll('.skill-bar').forEach(bar => {
     const percentage = bar.getAttribute('data-percentage');
     bar.style.setProperty('--target-width', percentage + '%');
   });
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAbout);
+} else {
+  initAbout();
+}
+
+document.body.addEventListener("htmx:afterSettle", initAbout);
 
 function toggleBullets(listId) {
     const list = document.getElementById(listId);
