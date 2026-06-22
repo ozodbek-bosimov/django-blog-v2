@@ -76,7 +76,7 @@
     display: block;
     margin: 1.5rem auto;
     max-width: 450px;
-    height: 450px;
+    height: 550px;
     background: #15202b;
     border-radius: 8px;
 }
@@ -105,7 +105,7 @@
         height: 550px;
     }
     .blog-content .embed-responsive--twitter {
-        height: 400px;
+        height: 500px;
     }
 }
 
@@ -115,7 +115,7 @@
         height: 500px;
     }
     .blog-content .embed-responsive--twitter {
-        height: 380px;
+        height: 450px;
     }
 }
 
