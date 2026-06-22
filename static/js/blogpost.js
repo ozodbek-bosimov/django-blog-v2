@@ -68,7 +68,7 @@
       const content = document.querySelector('.blog-content');
       if (!content) return;
 
-      // Helper: create a Twitter/X embed using official widgets.js
+      // Helper: create a Twitter/X embed using official widgets.js dynamically
       function makeTwitterEmbed(tweetId) {
         const container = document.createElement('div');
         container.style.display = 'flex';
@@ -76,19 +76,45 @@
         container.style.width = '100%';
         container.style.margin = '1.5rem 0';
         
-        const blockquote = document.createElement('blockquote');
-        blockquote.className = "twitter-tweet";
-        blockquote.setAttribute("data-theme", "dark");
-        blockquote.setAttribute("data-align", "center");
-        // Limit width to 450px to match Instagram/design
-        // Fallback max-width on blockquote just in case
-        blockquote.style.maxWidth = "450px";
-        blockquote.style.width = "100%";
-        
-        const a = document.createElement('a');
-        a.href = `https://twitter.com/user/status/${tweetId}`;
-        blockquote.appendChild(a);
-        container.appendChild(blockquote);
+        const inner = document.createElement('div');
+        inner.style.width = '100%';
+        inner.style.maxWidth = '450px';
+        container.appendChild(inner);
+
+        // Ensure Twitter script is loaded
+        if (!window.twttr) {
+          window.twttr = (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0],
+              t = window.twttr || {};
+            if (d.getElementById(id)) return t;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://platform.twitter.com/widgets.js";
+            js.async = true;
+            if (fjs) {
+              fjs.parentNode.insertBefore(js, fjs);
+            } else {
+              d.head.appendChild(js);
+            }
+            t._e = [];
+            t.ready = function(f) {
+              t._e.push(f);
+            };
+            return t;
+          }(document, "script", "twitter-wjs"));
+        }
+
+        // Dynamically create the tweet inside the container
+        if (window.twttr && window.twttr.ready) {
+          window.twttr.ready(function(twttr) {
+            twttr.widgets.createTweet(tweetId, inner, {
+              theme: 'dark',
+              align: 'center',
+              width: 450,
+              dnt: true
+            });
+          });
+        }
 
         return container;
       }
@@ -162,38 +188,6 @@
           }
         }
       });
-
-      // 3. Trigger Twitter widgets.js to render the created blockquotes
-      const hasTwitter = content.querySelector('.twitter-tweet');
-      if (hasTwitter) {
-        if (!window.twttr) {
-          window.twttr = (function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0],
-              t = window.twttr || {};
-            if (d.getElementById(id)) return t;
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "https://platform.twitter.com/widgets.js";
-            js.async = true;
-            if (fjs) {
-              fjs.parentNode.insertBefore(js, fjs);
-            } else {
-              d.head.appendChild(js);
-            }
-            t._e = [];
-            t.ready = function(f) {
-              t._e.push(f);
-            };
-            return t;
-          }(document, "script", "twitter-wjs"));
-        }
-        
-        if (window.twttr && window.twttr.ready) {
-          window.twttr.ready(function(twttr) {
-            twttr.widgets.load();
-          });
-        }
-      }
     }
 
     try {
