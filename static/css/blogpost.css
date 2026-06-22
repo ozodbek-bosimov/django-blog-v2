@@ -73,22 +73,17 @@
 
 /* ── Twitter / X ─────────────────────────────────────────────── */
 .blog-content .embed-responsive--twitter {
-    display: block;
-    margin: 1.5rem auto;
     max-width: 450px;
-    height: 700px;
+    min-height: 400px;
     background: #15202b;
-    border-radius: 8px;
+    transition: height 0.3s ease-out;
 }
 
 /* ── Instagram ───────────────────────────────────────────────── */
 .blog-content .embed-responsive--instagram {
-    display: block;
-    margin: 1.5rem auto;
     max-width: 450px;
     min-height: 400px;
     background: #000;
-    border-radius: 8px;
     transition: height 0.3s ease-out;
 }
 
