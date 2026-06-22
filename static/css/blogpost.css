@@ -76,7 +76,7 @@
     display: block;
     margin: 1.5rem auto;
     max-width: 450px;
-    height: 700px;
+    height: 450px;
     background: #15202b;
     border-radius: 8px;
 }
@@ -104,12 +104,18 @@
     .blog-content .embed-responsive--linkedin {
         height: 550px;
     }
+    .blog-content .embed-responsive--twitter {
+        height: 400px;
+    }
 }
 
 /* ── Very small phones ───────────────────────────────────────── */
 @media (max-width: 380px) {
     .blog-content .embed-responsive--linkedin {
         height: 500px;
+    }
+    .blog-content .embed-responsive--twitter {
+        height: 380px;
     }
 }
 
