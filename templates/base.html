@@ -10,9 +10,9 @@
     <link rel="preload" href="{% static 'fonts/Poppins-Regular.woff2' %}" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="{% static 'fonts/Poppins-Bold.woff2' %}" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="{% static 'fonts/bootstrap-icons.woff2' %}" as="font" type="font/woff2" crossorigin />
-    <link rel="icon" href="{% static 'favicon/favicon.ico' %}?v=20260219" sizes="any" />
-    <link rel="shortcut icon" href="{% static 'favicon/favicon.ico' %}?v=20260219" type="image/x-icon" />
-    <link rel="icon" href="{% static 'favicon/favicon.svg' %}?v=20260219" type="image/svg+xml" />
+    <link rel="icon" href="{% static 'favicon/favicon.svg' %}?v={{ STATIC_ASSET_VERSION }}" type="image/svg+xml" />
+    <link rel="icon" href="{% static 'favicon/favicon.ico' %}?v={{ STATIC_ASSET_VERSION }}" sizes="any" />
+    <link rel="shortcut icon" href="{% static 'favicon/favicon.ico' %}?v={{ STATIC_ASSET_VERSION }}" type="image/x-icon" />
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}?v={{ STATIC_ASSET_VERSION }}" />
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons-subset.css' %}?v={{ STATIC_ASSET_VERSION }}" />
     <link rel="stylesheet" href="{% static 'css/base.css' %}?v={{ STATIC_ASSET_VERSION }}" />
@@ -28,8 +28,10 @@
     <nav
         class="nav sticky top-0 z-40 backdrop-blur-lg bg-gray-900/80 border-b border-gray-800 text-white flex justify-between items-center py-3 px-6 md:px-20">
         <a href="{% url 'home' %}"
-            class="text-xl font-bold bg-gradient-to-r from-cyan-300 to-blue-500 bg-clip-text text-transparent hover:from-cyan-200 hover:to-blue-400 transition-all"
-            >Ozodbek Bosimov</a>
+            class="flex items-center gap-3 text-xl font-bold bg-gradient-to-r from-cyan-300 to-blue-500 bg-clip-text text-transparent hover:from-cyan-200 hover:to-blue-400 transition-all">
+            <img src="{% static 'favicon/favicon.svg' %}" alt="Logo" class="w-8 h-8 rounded-full border border-gray-700 shadow-sm" />
+            <span>Ozodbek Bosimov</span>
+        </a>
         <div class="flex items-center md:hidden" style="gap: 4px;">
             <button
                 class="searchBtn text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all cursor-pointer flex items-center justify-center"
