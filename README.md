@@ -2,7 +2,7 @@
 
 A personal blog and portfolio website built with **Django 5**, **Tailwind CSS**, and **CKEditor 5**. Features a modern design, a convenient admin panel, robust security defaults, and optimized performance out of the box.
 
-## 🚀 Key Features
+## Key Features
 
 - **Blog System** — Write and publish articles, organize them by topics, auto-calculate reading time, and embed YouTube videos with sanitized iframes.
 - **Portfolio & Experience** — Showcase projects, work experience (displayed in a timeline format), and skills — all fully manageable from the admin panel.
@@ -15,7 +15,7 @@ A personal blog and portfolio website built with **Django 5**, **Tailwind CSS**,
 - **Rate Limiting & Security** — IP-based request throttling middleware to mitigate DDoS and bot abuse, plus built-in CSRF, XSS, and other attack protections.
 - **Admin Session & Log Pruning** — Configurable admin session timeout and automatic (or manual) pruning of old admin action log entries.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 | --- | --- |
@@ -28,7 +28,7 @@ A personal blog and portfolio website built with **Django 5**, **Tailwind CSS**,
 
 ---
 
-## 💻 Local Development Setup
+## Local Development Setup
 
 ### 1. Clone the repository and install dependencies
 ```bash
@@ -66,7 +66,7 @@ python manage.py runserver
 
 ---
 
-## 🌍 Production Deployment
+## Production Deployment
 
 ### 1. Environment Variables
 Copy the provided example file and adjust it for your server:
@@ -160,7 +160,7 @@ sudo nginx -t && sudo systemctl reload nginx
 
 ---
 
-## 🚀 Deploy Checklist (Copy-Paste)
+## Deploy Checklist (Copy-Paste)
 
 A one-liner to pull the latest changes and restart services:
 ```bash
@@ -176,7 +176,7 @@ sudo systemctl reload nginx
 
 ---
 
-## 💡 Useful Commands
+## Useful Commands
 
 ```bash
 python manage.py check --deploy          # Full security audit
@@ -189,7 +189,7 @@ sudo tail -n 120 /var/log/nginx/error.log
 
 ---
 
-## 🎨 Code Style (Formatting & Linting)
+## Code Style (Formatting & Linting)
 
 The following conventions are enforced across the project to maintain consistent code style:
 
@@ -211,7 +211,7 @@ python manage.py test home
 
 ---
 
-## 🛠 Common Issues & Troubleshooting
+## Common Issues & Troubleshooting
 
 1. **"Server Error (500)" on image/file upload, or images not displaying:**
    The Nginx/Gunicorn user (`www-data`) must have write permissions on the `media`, `shared`, `logs` directories and the `db.sqlite3` file.
