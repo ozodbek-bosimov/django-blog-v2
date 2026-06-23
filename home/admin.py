@@ -119,7 +119,6 @@ def _sanitize_youtube_embeds(html_content):
     return html_content
 
 
-# Register your models here.
 class BlogAdminForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditor5Widget(config_name="default"))
     meta = forms.CharField(

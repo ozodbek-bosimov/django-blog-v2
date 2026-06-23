@@ -1,34 +1,36 @@
-# Django Blog & Portfolio (O'zbekcha)
+# Django Blog & Portfolio
 
-Shaxsiy blog va portfolio sayti. Django, Tailwind CSS va CKEditor 5 asosida yaratilgan. Ushbu loyiha zamonaviy dizayn, qulay boshqaruv tizimi, yuqori xavfsizlik va optimal ishlash tezligi (performance) kabi xususiyatlarni o'z ichiga oladi.
+A personal blog and portfolio website built with **Django 5**, **Tailwind CSS**, and **CKEditor 5**. Features a modern design, a convenient admin panel, robust security defaults, and optimized performance out of the box.
 
-## 🚀 Asosiy Imkoniyatlar
+## 🚀 Key Features
 
-- **Blog Tizimi**: Maqolalar yozish, kategoriyalar bo'yicha ajratish (topics), o'qish vaqtini avtomatik hisoblash (reading time) va YouTube videolarini xavfsiz formatda (sanitized iframe) joylashtirish.
-- **Portfolio & Tajriba**: Loyihalar (Projects), ish tajribasi (Experience & Roles, timeline formatida) hamda ko'nikmalar (Skills) sahifalari. Barcha ma'lumotlar Admin paneldan to'liq boshqariladi.
-- **About Me (Singleton)**: Bosh sahifadagi shaxsiy ma'lumotlar, ijtimoiy tarmoq linklari va rezyumeni (CV) boshqarish tizimi. Faqat bitta (yagona) ob'yekt sifatida saqlanadi.
-- **Admin Panel & Rich Text**: CKEditor 5 orqali maqola va bio matnlarini chiroyli yozish, formatlash va rasm/videolarni to'g'ridan-to'g'ri matn ichiga joylash.
-- **Fayllar Boshqaruvi (Shared Files)**: Katta hajmli fayllarni yuklash, ro'yxatini ko'rish, Admin paneldan turib URL-dan bevosita nusxa olish (Copy URL) va `/shared/` linki orqali ulashish.
-- **Avtomatik Kesh (Caching)**: Sayt sahifalari va ma'lumotlar (LocMemCache yordamida) xotirada saqlanadi. Model o'zgarganda (Signallar yordamida) kesh avtomatik tozalanadi.
-- **Avtomatik WebP va Siqish**: Rasm yuklanganda sifati saqlab qolingan holda hajmi kichraytiriladi va avtomatik ravishda WebP formatiga o'tkaziladi.
-- **Avto-tozalash tizimi (Cleanup Signals)**: Maqola yoki biror ob'yekt tahrirlanganda yoki o'chirilganda, u bilan bog'liq eski rasmlar, CKEditor ichidagi ishlatilmayotgan media fayllar diskdan o'zi tozalanadi.
-- **Rate Limiting & Xavfsizlik**: IP orqali so'rovlar sonini cheklash (DDOS va botlarga qarshi middleware). CSRF, XSS va boshqa hujumlarga qarshi xavfsizlik choralari.
-- **Admin Session & Log Pruning**: Admin seanslari xavfsizligini ta'minlash maqsadida belgilangan vaqt (Timeout) sozlamasi va Admin panel harakatlari tarixini (LogEntry) eski yozuvlardan avtomatik/qo'lda tozalash.
+- **Blog System** — Write and publish articles, organize them by topics, auto-calculate reading time, and embed YouTube videos with sanitized iframes.
+- **Portfolio & Experience** — Showcase projects, work experience (displayed in a timeline format), and skills — all fully manageable from the admin panel.
+- **About Me (Singleton)** — A single-instance model for managing personal info, social links, and a downloadable CV on the homepage.
+- **Rich Text Editing** — CKEditor 5 integration for beautifully formatted articles and bio sections with inline images and videos.
+- **Shared Files** — Upload large files, browse them, copy their public URL directly from the admin panel, and share via `/shared/` links.
+- **Auto Caching** — Pages and querysets are cached in memory (LocMemCache). Caches are automatically invalidated through Django signals whenever a model changes.
+- **Auto WebP & Compression** — Uploaded images are automatically compressed (preserving quality) and converted to WebP format.
+- **Auto Cleanup (Signals)** — When an object is edited or deleted, its orphaned images and unused CKEditor media files are automatically removed from disk.
+- **Rate Limiting & Security** — IP-based request throttling middleware to mitigate DDoS and bot abuse, plus built-in CSRF, XSS, and other attack protections.
+- **Admin Session & Log Pruning** — Configurable admin session timeout and automatic (or manual) pruning of old admin action log entries.
 
-## 🛠 Texnologiyalar
+## 🛠 Tech Stack
 
-- **Backend:** Django 5.x
-- **Baza (Database):** SQLite (Standart konfiguratsiya, ko'chirish oson)
-- **Frontend:** Django Templates, Tailwind CSS
-- **Matn Muharriri:** django-ckeditor-5
-- **Server / Deploy:** Gunicorn, Nginx, WhiteNoise (static fayllar uchun)
-- **Rasm Bilan Ishlash:** Pillow (WebP siqish va o'lchamlarini moslash)
+| Layer | Technology |
+| --- | --- |
+| **Backend** | Django 5.x |
+| **Database** | SQLite (default — portable and easy to migrate) |
+| **Frontend** | Django Templates, Tailwind CSS |
+| **Rich Text Editor** | django-ckeditor-5 |
+| **Deployment** | Gunicorn, Nginx, WhiteNoise (static files) |
+| **Image Processing** | Pillow (WebP conversion & resizing) |
 
 ---
 
-## 💻 Lokal Muhitda Ishga Tushirish (Development)
+## 💻 Local Development Setup
 
-### 1. Loyihani yuklab olish va paketlarni o'rnatish
+### 1. Clone the repository and install dependencies
 ```bash
 git clone <repo-url>
 cd django-blog-v2
@@ -38,8 +40,8 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. `.env` faylini yaratish
-Loyiha papkasida `.env` fayl yarating va quyidagilarni kiriting:
+### 2. Create the `.env` file
+Create a `.env` file in the project root with the following contents:
 ```env
 DJANGO_SECRET_KEY=your-local-secret-key
 DJANGO_DEBUG=true
@@ -52,7 +54,7 @@ DJANGO_FILE_LOGGING=false
 GLOBAL_RATE_LIMIT_ENABLED=false
 ```
 
-### 3. Migratsiya va serverni yurgizish
+### 3. Run migrations and start the server
 ```bash
 python manage.py makemigrations
 python manage.py migrate
@@ -60,21 +62,21 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-*(Tailwind CSS o'zgarishlarini kuzatish uchun alohida terminal oynasida: `python manage.py tailwind start` yozishingiz mumkin)*
+> **Tip:** To watch Tailwind CSS changes in real time, open a separate terminal and run: `python manage.py tailwind start`
 
 ---
 
-## 🌍 Serverga Joylash (Production Deployment)
+## 🌍 Production Deployment
 
-### 1. Muhit O'zgaruvchilari (Environment Variables)
-Production muhiti uchun loyihadagi `.env.deploy` nusxasidan foydalaning:
+### 1. Environment Variables
+Copy the provided example file and adjust it for your server:
 ```bash
-cp .env.deploy .env
+cp .env.example .env
 ```
-Fayl ichidagi o'zgaruvchilarni serveringiz (domen nomlari) ga qarab to'g'rilab chiqing. Xavfsizlik va Rate Limit (Himoya) sozlamalari odatda yoqiq bo'lishi kerak.
+Edit the variables inside to match your domain names. Security settings and rate limiting should generally be enabled in production.
 
-### 2. Gunicorn (systemd) xizmatini sozlash
-Tavsiya etiladigan `/etc/systemd/system/gunicorn.service` fayli:
+### 2. Gunicorn (systemd) Service
+Recommended `/etc/systemd/system/gunicorn.service` configuration:
 
 ```ini
 [Unit]
@@ -96,14 +98,14 @@ RestartSec=3
 [Install]
 WantedBy=multi-user.target
 ```
-Servisni faollashtirish:
+Enable and start the service:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable gunicorn
 sudo systemctl start gunicorn
 ```
 
-### 3. Nginx Konfiguratsiyasi (Asosiy ko'rinish)
+### 3. Nginx Configuration
 `/etc/nginx/sites-available/django-blog`
 
 ```nginx
@@ -151,13 +153,16 @@ server {
     return 301 https://$host$request_uri;
 }
 ```
-O'zgarishlarni kiritgach tekshirish: `sudo nginx -t && sudo systemctl reload nginx`
+After making changes, verify and reload:
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
 
 ---
 
 ## 🚀 Deploy Checklist (Copy-Paste)
 
-Yangi o'zgarishlarni serverga tortish va ishga tushirish uchun qisqa buyruq:
+A one-liner to pull the latest changes and restart services:
 ```bash
 cd /var/www/django-blog-v2 && \
 git pull && \
@@ -171,12 +176,12 @@ sudo systemctl reload nginx
 
 ---
 
-## 💡 Foydali Buyruqlar
+## 💡 Useful Commands
 
 ```bash
-python manage.py check --deploy  # Xavfsizlik bo'yicha to'liq tekshirish
-python manage.py migrate
-python manage.py collectstatic --noinput
+python manage.py check --deploy          # Full security audit
+python manage.py migrate                 # Apply database migrations
+python manage.py collectstatic --noinput # Collect static files
 sudo systemctl status gunicorn --no-pager -l
 sudo journalctl -u gunicorn -n 120 --no-pager
 sudo tail -n 120 /var/log/nginx/error.log
@@ -184,40 +189,39 @@ sudo tail -n 120 /var/log/nginx/error.log
 
 ---
 
-## 🎨 Kod Uslubi (Formatting & Linting)
+## 🎨 Code Style (Formatting & Linting)
 
-Loyiha bo'ylab kod uslubi bir xil bo'lishi uchun quyidagi qoidalar amal qiladi:
+The following conventions are enforced across the project to maintain consistent code style:
 
-- **Python** — `ruff` (`pyproject.toml` da sozlangan): 4 bo'shliq, ikki tirnoq (`"`).
-- **JS / CSS / HTML** — 2 bo'shliq (`.editorconfig` da belgilangan).
-- Avtomatik yaratiladigan fayllar (`migrations/`, `staticfiles/`, `static/css/dist/`) formatlanmaydi.
+- **Python** — Formatted with `ruff` (configured in `pyproject.toml`): 4-space indentation, double quotes (`"`).
+- **JS / CSS / HTML** — 2-space indentation (defined in `.editorconfig`).
+- Auto-generated files (`migrations/`, `staticfiles/`, `static/css/dist/`) are excluded from formatting.
 
 ```bash
-# Python kodni formatlash va tekshirish
-env/bin/ruff format .          # kodni avtomatik formatlash
-env/bin/ruff check . --fix     # import tartibi va boshqa xatolarni tuzatish
-env/bin/ruff check .           # faqat tekshirish (CI uchun)
+# Format and lint Python code
+env/bin/ruff format .          # Auto-format code
+env/bin/ruff check . --fix     # Fix import ordering and other issues
+env/bin/ruff check .           # Check only (for CI)
 
-# Testlar
+# Run tests
 python manage.py test home
 ```
 
-> Eslatma: `.editorconfig` faylini qo'llab-quvvatlovchi muharrirlar (VS Code,
-> PyCharm) bo'shliq/indent qoidalarini avtomatik qo'llaydi.
+> **Note:** Editors that support `.editorconfig` (VS Code, PyCharm, etc.) will automatically apply the indentation rules.
 
 ---
 
-## 🛠 Ko‘p Uchraydigan Xatolar va Ularning Yechimi
+## 🛠 Common Issues & Troubleshooting
 
-1. **Rasm yoki Fayl yuklashda "Server Error (500)" yoxud sahifada rasm ishlamay qolishi:**
-   `media`, `shared`, jurnallar papkasi `logs` va `db.sqlite3` fayllariga Nginx/Gunicorn foydalanuvchisi (`www-data`) yozish ruxsatiga ega bo'lishi shart.
+1. **"Server Error (500)" on image/file upload, or images not displaying:**
+   The Nginx/Gunicorn user (`www-data`) must have write permissions on the `media`, `shared`, `logs` directories and the `db.sqlite3` file.
    ```bash
    sudo chown -R www-data:www-data /var/www/django-blog-v2/media /var/www/django-blog-v2/shared /var/www/django-blog-v2/logs
    sudo chown www-data:www-data /var/www/django-blog-v2/db.sqlite3
    sudo chmod -R 775 /var/www/django-blog-v2/media /var/www/django-blog-v2/shared
    sudo chmod 664 /var/www/django-blog-v2/db.sqlite3
    ```
-2. **Katta fayl (Masalan `SharedFiles` orqali) yuklayotganda "413 Request Entity Too Large":**
-   Nginx konfiguratsiyasidagi `client_max_body_size` qiymati Django limitidan (`DATA_UPLOAD_MAX_MEMORY_SIZE`) kichik bo'lmasligi kerak (masalan `20m;`). Qo'shgach Nginx-ni qayta ishga tushiring.
-3. **Sahifalar tez-tez kirilganda "429 Too Many Requests" (IP bloklanishi):**
-   Saytdagi DDOS va agressiv botlarga qarshi Rate Limit himoyasi ishlab ketdi. `.env` dagi `GLOBAL_RATE_LIMIT_ENABLED` va tegishli sozlamalarni ko'rib chiqing. Statik fayllar (rasm, dizaynlar) bloklanmasligi uchun `GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES` ichida `/static/,/media/,/shared/` kabilar albatta kiritilganligini tekshiring.
+2. **"413 Request Entity Too Large" when uploading large files (e.g. via Shared Files):**
+   The `client_max_body_size` value in your Nginx config must be equal to or greater than Django's `DATA_UPLOAD_MAX_MEMORY_SIZE` (e.g. `20m;`). Reload Nginx after making the change.
+3. **"429 Too Many Requests" (IP blocked) during heavy browsing:**
+   The rate limiting middleware has kicked in to protect against DDoS and aggressive bots. Review `GLOBAL_RATE_LIMIT_ENABLED` and related settings in your `.env`. Make sure static assets are exempted by verifying that `GLOBAL_RATE_LIMIT_EXEMPT_PATH_PREFIXES` includes `/static/,/media/,/shared/`.
