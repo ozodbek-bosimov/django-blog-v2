@@ -81,7 +81,6 @@ def _compress_and_rename_image(image_field, max_size=(1000, 1000), quality=80):
         return image_field
 
 
-# Create your models here.
 class Blog(models.Model):
     sno = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200)
