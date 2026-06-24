@@ -81,7 +81,7 @@ Recommended `/etc/systemd/system/gunicorn.service` configuration:
 
 ```ini
 [Unit]
-Description=gunicorn daemon for django-blog
+Description=gunicorn daemon for personal-site
 After=network.target
 
 [Service]
@@ -107,7 +107,7 @@ sudo systemctl start gunicorn
 ```
 
 ### 3. Nginx Configuration
-`/etc/nginx/sites-available/django-blog`
+`/etc/nginx/sites-available/personal-site`
 
 ```nginx
 upstream gunicorn {
