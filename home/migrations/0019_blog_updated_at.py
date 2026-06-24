@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0018_rename_blog_category_to_topic'),
+        ("home", "0018_rename_blog_category_to_topic"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blog',
-            name='updated_at',
+            model_name="blog",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

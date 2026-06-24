@@ -4,20 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0020_aboutme_instagram_url_aboutme_youtube_url'),
+        ("home", "0020_aboutme_instagram_url_aboutme_youtube_url"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='blog',
-            name='meta',
-            field=models.CharField(help_text='Short summary shown on cards and in search/social previews (max 300 characters).', max_length=300),
+            model_name="blog",
+            name="meta",
+            field=models.CharField(
+                help_text="Short summary shown on cards and in search/social previews (max 300 characters).",
+                max_length=300,
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='description',
-            field=models.TextField(help_text='Project description (max 2000 characters).', max_length=2000),
+            model_name="project",
+            name="description",
+            field=models.TextField(
+                help_text="Project description (max 2000 characters).", max_length=2000
+            ),
         ),
     ]

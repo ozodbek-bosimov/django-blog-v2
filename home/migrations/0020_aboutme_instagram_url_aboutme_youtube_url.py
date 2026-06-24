@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0019_blog_updated_at'),
+        ("home", "0019_blog_updated_at"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='aboutme',
-            name='instagram_url',
-            field=models.URLField(blank=True, help_text='Instagram profile URL'),
+            model_name="aboutme",
+            name="instagram_url",
+            field=models.URLField(blank=True, help_text="Instagram profile URL"),
         ),
         migrations.AddField(
-            model_name='aboutme',
-            name='youtube_url',
-            field=models.URLField(blank=True, help_text='YouTube channel URL'),
+            model_name="aboutme",
+            name="youtube_url",
+            field=models.URLField(blank=True, help_text="YouTube channel URL"),
         ),
     ]

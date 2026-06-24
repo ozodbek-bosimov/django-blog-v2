@@ -29,6 +29,7 @@ IMAGE_EXTENSIONS = {
     ".ico",
 }
 
+
 class Command(BaseCommand):
     help = (
         "Move image files from media/ root and media/images/ into "

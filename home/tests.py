@@ -174,8 +174,9 @@ class ManagementCommandTests(TestCase):
             slug="formula-post",
         )
 
-        with tempfile.TemporaryDirectory() as tmpdir, override_settings(
-            MEDIA_ROOT=tmpdir
+        with (
+            tempfile.TemporaryDirectory() as tmpdir,
+            override_settings(MEDIA_ROOT=tmpdir),
         ):
             out = StringIO()
             call_command("migrate_media_to_postimages", stdout=out)

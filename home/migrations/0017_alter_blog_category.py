@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0016_sharedfile'),
+        ("home", "0016_sharedfile"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='blog',
-            name='category',
-            field=models.CharField(default='uncategorized', max_length=255, verbose_name='topic'),
+            model_name="blog",
+            name="category",
+            field=models.CharField(
+                default="uncategorized", max_length=255, verbose_name="topic"
+            ),
         ),
     ]
