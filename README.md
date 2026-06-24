@@ -34,7 +34,7 @@ A personal blog and portfolio website built with **Django 6**, **Tailwind CSS**,
 ### 1. Clone the repository and install dependencies
 ```bash
 git clone <repo-url>
-cd django-blog-v2
+cd personal-site
 python3 -m venv env
 source env/bin/activate
 pip install --upgrade pip
@@ -87,10 +87,10 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/var/www/django-blog-v2
-Environment="PATH=/var/www/django-blog-v2/env/bin"
+WorkingDirectory=/var/www/personal-site
+Environment="PATH=/var/www/personal-site/env/bin"
 Environment="DJANGO_ENV_FILE=.env"
-ExecStart=/var/www/django-blog-v2/env/bin/gunicorn --workers 1 --bind unix:/run/gunicorn/gunicorn.sock blogApp.wsgi:application
+ExecStart=/var/www/personal-site/env/bin/gunicorn --workers 1 --bind unix:/run/gunicorn/gunicorn.sock blogApp.wsgi:application
 RuntimeDirectory=gunicorn
 RuntimeDirectoryMode=0755
 Restart=always
@@ -119,18 +119,18 @@ server {
     client_max_body_size 20m;
 
     location /static/ {
-        alias /var/www/django-blog-v2/staticfiles/;
+        alias /var/www/personal-site/staticfiles/;
         expires 30d;
         add_header Cache-Control "public, immutable";
     }
 
     location /media/ {
-        alias /var/www/django-blog-v2/media/;
+        alias /var/www/personal-site/media/;
         expires 7d;
     }
 
     location /shared/ {
-        alias /var/www/django-blog-v2/shared/;
+        alias /var/www/personal-site/shared/;
         expires 30d;
     }
 
@@ -165,7 +165,7 @@ sudo nginx -t && sudo systemctl reload nginx
 
 A one-liner to pull the latest changes and restart services:
 ```bash
-cd /var/www/django-blog-v2 && \
+cd /var/www/personal-site && \
 git pull && \
 source env/bin/activate && \
 pip install -r requirements.txt && \
@@ -217,10 +217,10 @@ python manage.py test home
 1. **"Server Error (500)" on image/file upload, or images not displaying:**
    The Nginx/Gunicorn user (`www-data`) must have write permissions on the `media`, `shared`, `logs` directories and the `db.sqlite3` file.
    ```bash
-   sudo chown -R www-data:www-data /var/www/django-blog-v2/media /var/www/django-blog-v2/shared /var/www/django-blog-v2/logs
-   sudo chown www-data:www-data /var/www/django-blog-v2/db.sqlite3
-   sudo chmod -R 775 /var/www/django-blog-v2/media /var/www/django-blog-v2/shared
-   sudo chmod 664 /var/www/django-blog-v2/db.sqlite3
+   sudo chown -R www-data:www-data /var/www/personal-site/media /var/www/personal-site/shared /var/www/personal-site/logs
+   sudo chown www-data:www-data /var/www/personal-site/db.sqlite3
+   sudo chmod -R 775 /var/www/personal-site/media /var/www/personal-site/shared
+   sudo chmod 664 /var/www/personal-site/db.sqlite3
    ```
 2. **"413 Request Entity Too Large" when uploading large files (e.g. via Shared Files):**
    The `client_max_body_size` value in your Nginx config must be equal to or greater than Django's `DATA_UPLOAD_MAX_MEMORY_SIZE` (e.g. `20m;`). Reload Nginx after making the change.
