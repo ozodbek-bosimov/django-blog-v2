@@ -30,3 +30,7 @@ logs/
 
 # Linter cache
 .ruff_cache/
+
+# Node
+node_modules/
+npm-debug.log*
