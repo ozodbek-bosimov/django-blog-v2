@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import tempfile
+from io import StringIO
+
 from django.core.cache import cache
+from django.core.management import call_command
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
@@ -159,6 +163,28 @@ class ContextProcessorTests(TestCase):
         self.assertEqual(data["used_tags"], ["django", "python"])
 
 
+class ManagementCommandTests(TestCase):
+    def test_media_migration_does_not_rewrite_nested_media_paths_without_files(self):
+        content = '<img src="/media/math/render/svg/abc123" alt="formula">'
+        blog = Blog.objects.create(
+            title="Formula",
+            meta="meta",
+            content=content,
+            topic="math",
+            slug="formula-post",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir, override_settings(
+            MEDIA_ROOT=tmpdir
+        ):
+            out = StringIO()
+            call_command("migrate_media_to_postimages", stdout=out)
+
+        blog.refresh_from_db()
+        self.assertEqual(blog.content, content)
+        self.assertIn("No DB references to update", out.getvalue())
+
+
 @override_settings(
     CACHES={
         "default": {
@@ -259,14 +285,16 @@ class ViewsSmokeTests(TestCase):
         self.assertContains(resp, "prism.min.js")
         self.assertContains(resp, "prism-tomorrow.min.css")
 
-    def test_blogpost_with_twitter_loads_widget(self):
+    def test_blogpost_with_twitter_link_uses_local_embed_processor(self):
         blog = Blog.objects.create(
             title="Social Post",
             meta="meta",
-            content="<p>Checkout this tweet: twitter.com/test</p>",
+            content='<p><a href="https://twitter.com/test/status/1234567890">https://twitter.com/test/status/1234567890</a></p>',
             topic="python",
             slug="social-post",
         )
         resp = self.client.get(reverse("blogpost", kwargs={"slug": blog.slug}))
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "widgets.js")
+        self.assertContains(resp, "blogpost.js")
+        self.assertContains(resp, "twitter.com/test/status/1234567890")
+        self.assertNotContains(resp, "widgets.js")

@@ -11,7 +11,6 @@ Usage:
 """
 
 import os
-import re
 import shutil
 
 from django.conf import settings
@@ -29,10 +28,6 @@ IMAGE_EXTENSIONS = {
     ".tiff",
     ".ico",
 }
-
-# Subdirectories that already have a purpose — never touch these
-SKIP_DIRS = {"hero", "profile", "resume", "postimages"}
-
 
 class Command(BaseCommand):
     help = (
@@ -172,20 +167,21 @@ class Command(BaseCommand):
 
         media_url = settings.MEDIA_URL.rstrip("/")  # e.g. "/media"
 
-        # Pattern 1: /media/FILENAME (root files, not in any subdir)
-        pattern_root = re.compile(
-            rf"({re.escape(media_url)}/)"
-            rf"(?!(?:{'|'.join(SKIP_DIRS)})/)"
-            rf'([^"\'\s>/]+)'
+        replacements = {
+            f"{media_url}/{filename}": f"{media_url}/postimages/{filename}"
+            for filename in files_to_move
+        }
+        replacements.update(
+            {
+                f"{media_url}/images/{filename}": f"{media_url}/postimages/{filename}"
+                for filename in images_files
+            }
         )
 
-        # Pattern 2: /media/images/FILENAME → /media/postimages/FILENAME
-        pattern_images = re.compile(rf'({re.escape(media_url)}/)images/([^"\'\s>]+)')
-
         def replace_refs(html):
-            """Replace /media/file.jpg and /media/images/file.jpg → /media/postimages/file.jpg"""
-            html = pattern_images.sub(r"\1postimages/\2", html)
-            html = pattern_root.sub(r"\1postimages/\2", html)
+            """Replace only URLs for files this command will actually move."""
+            for old_url, new_url in replacements.items():
+                html = html.replace(old_url, new_url)
             return html
 
         # --- Blog.content ---

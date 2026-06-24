@@ -4,6 +4,7 @@
 // On a hard page load the DOM is already parsed when this runs (script is at
 // the bottom of the block), so we call initAboutStats() directly.
 
+(function () {
 let _aboutStatsInitTimer = null;
 function initAboutStats() {
   if (_aboutStatsInitTimer) clearTimeout(_aboutStatsInitTimer);
@@ -424,5 +425,4 @@ if (!window._aboutStatsListenerAdded) {
   });
   window._aboutStatsListenerAdded = true;
 }
-
-
+})();
