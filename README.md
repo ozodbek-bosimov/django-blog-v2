@@ -1,10 +1,11 @@
 # Django Blog & Portfolio
 
-A personal blog and portfolio website built with **Django 5**, **Tailwind CSS**, and **CKEditor 5**. Features a modern design, a convenient admin panel, robust security defaults, and optimized performance out of the box.
+A personal blog and portfolio website built with **Django 6**, **Tailwind CSS**, **HTMX**, and **CKEditor 5**. Features a modern design, a convenient admin panel, robust security defaults, and optimized performance out of the box.
 
 ## Key Features
 
 - **Blog System** — Write and publish articles, organize them by topics, auto-calculate reading time, and embed YouTube videos with sanitized iframes.
+- **SPA-like Navigation** — Uses HTMX for seamless page transitions without full page reloads, providing a faster, app-like user experience.
 - **Portfolio & Experience** — Showcase projects, work experience (displayed in a timeline format), and skills — all fully manageable from the admin panel.
 - **About Me (Singleton)** — A single-instance model for managing personal info, social links, and a downloadable CV on the homepage.
 - **Rich Text Editing** — CKEditor 5 integration for beautifully formatted articles and bio sections with inline images and videos.
@@ -19,9 +20,9 @@ A personal blog and portfolio website built with **Django 5**, **Tailwind CSS**,
 
 | Layer | Technology |
 | --- | --- |
-| **Backend** | Django 5.x |
+| **Backend** | Django 6.x |
 | **Database** | SQLite (default — portable and easy to migrate) |
-| **Frontend** | Django Templates, Tailwind CSS |
+| **Frontend** | Django Templates, Tailwind CSS, HTMX |
 | **Rich Text Editor** | django-ckeditor-5 |
 | **Deployment** | Gunicorn, Nginx, WhiteNoise (static files) |
 | **Image Processing** | Pillow (WebP conversion & resizing) |
