@@ -188,29 +188,7 @@ sudo journalctl -u gunicorn -n 120 --no-pager
 sudo tail -n 120 /var/log/nginx/error.log
 ```
 
----
 
-## Code Style (Formatting & Linting)
-
-The following conventions are enforced across the project to maintain consistent code style:
-
-- **Python** — Formatted with `ruff` (configured in `pyproject.toml`): 4-space indentation, double quotes (`"`).
-- **JS / CSS / HTML** — 2-space indentation (defined in `.editorconfig`).
-- Auto-generated files (`migrations/`, `staticfiles/`, `static/css/dist/`) are excluded from formatting.
-
-```bash
-# Format and lint Python code
-env/bin/ruff format .          # Auto-format code
-env/bin/ruff check . --fix     # Fix import ordering and other issues
-env/bin/ruff check .           # Check only (for CI)
-
-# Run tests
-python manage.py test home
-```
-
-> **Note:** Editors that support `.editorconfig` (VS Code, PyCharm, etc.) will automatically apply the indentation rules.
-
----
 
 ## Common Issues & Troubleshooting
 
