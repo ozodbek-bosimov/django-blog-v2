@@ -88,6 +88,8 @@ function initApp(root = document) {
     const searchQuery = searchInput.value.trim();
     if (!searchQuery) {
       event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
       searchInput.classList.add("shake");
       setTimeout(() => {
         searchInput.classList.remove("shake");
